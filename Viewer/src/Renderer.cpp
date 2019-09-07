@@ -1015,9 +1015,7 @@ void Renderer::Render(const Scene& scene)
 		// and multiply each vertex by view, projection and viewport transformation.
 		// ######################################################
 		for (std::vector<Vertex>::iterator vertex = vertexs.begin(); vertex != vertexs.end(); vertex++) 
-		{
-
-			
+		{		
 			glm::vec3 normal = vertex->getNormal();
 			glm::vec4 newVertex = glm::vec4((*vertex).getPoint().x, (*vertex).getPoint().y, (*vertex).getPoint().z, 1);
 			newVertex = scaleTransform * newVertex;
@@ -1028,7 +1026,7 @@ void Renderer::Render(const Scene& scene)
 			newVertex = worldTranslate * newVertex;
 
 			/* right now the  problem is with this transformation !!*/
-			newVertex = this->currentCamera.getViewTransformation() * newVertex;
+			//newVertex = this->currentCamera.getViewTransformation() * newVertex;
 			//newVertex.w = 1 ;
 			newVertex = this->currentCamera.getProjectionTransformation() * newVertex;
 
