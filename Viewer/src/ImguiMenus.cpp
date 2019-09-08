@@ -61,7 +61,8 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 		static float rotateWorldX = 0.0f;
 		static float rotateWorldY = 0.0f;
 		static float rotateWorldZ = 0.0f;
-		ImGui::Begin("Shahar Project");                          // Create a window called "Hello, world!" and append into it.
+		//static float width = scene.get
+		ImGui::Begin("Shahar Project");                         
 		
 		/*ImGui::Text("This is some useful text.");*/               // Display some text (you can use a format strings too)
 		//ImGui::Checkbox("Demo Window", &showDemoWindow);      // Edit bools storing our window open/close state
@@ -122,9 +123,16 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 		//	renderer.rotateWorldZ(rotateLocalZ);
 		//}
 		//left mouse down
-		if (ImGui::IsMouseDown(0) /*&& renderer.isHasModel() */) {
+		if (ImGui::IsMouseDown(0) ) {
 			ImVec2 c = ImGui::GetMousePos();
 			std::cout << "x= " << c.x << " y=" << c.y << std::endl; 
+			//renderer.getCurrentModel()->setRotationTransform(c.x, c.y, 1);
+			if (renderer.getCurrentModel() != NULL)
+			{
+				renderer.rotateWorldX(c.y);
+				renderer.rotateWorldY(c.x);
+			}
+			
 		}
 		//right mouse 
 		if (ImGui::IsMouseDown(1) && renderer.isHasModel()) {
