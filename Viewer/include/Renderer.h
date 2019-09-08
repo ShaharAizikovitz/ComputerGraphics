@@ -49,6 +49,7 @@ private:		//members
 	glm::mat4x4 worldToCameraTransformation;
 	glm::mat4x4 proj;		//delete later
 	std::shared_ptr<MeshModel> currentModel;
+	std::vector< std::shared_ptr<MeshModel>> models;
 	std::vector<Light> lights;
 	Camera currentCamera;
 	Scene scene;
@@ -114,6 +115,8 @@ public:
 	const bool & getFillTriangles() const { return this->fillTriangles; }
 	const std::vector<Light> getLights() const { return this->lights; }
 	const bool& getdrawLines() const { return this->drawLines; }
+	std::shared_ptr<MeshModel> getCurrentModel() const { return this->currentModel; }
+	std::vector<std::shared_ptr<MeshModel>> getModels() const { return this->models; }
 
 	//setters
 	void Renderer::setProj( float & fovy,  float & aspectRatio,  float & near,  float & far); 
