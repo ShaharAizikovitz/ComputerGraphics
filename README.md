@@ -1,8 +1,8 @@
 # Computer Graphics 203.3710, Winter 2018/2019
 ## Students Team data
 
-Name: 'Ofir Traubas'  
-Student Number: '301378782'
+##Name: 'Ofir Traubas'  
+##Student Number: '301378782'
 
 Name: 'Shahar Aizikovitz'  
 Student Number: '032093320'
