@@ -34,6 +34,9 @@ void ScrollCallback(GLFWwindow* window, double xoffset, double yoffset)
 	// Handle mouse scrolling here...
 }
 
+Renderer renderer;
+Scene scene;
+
 int main(int argc, char **argv)
 {
 	// Create GLFW window
@@ -54,8 +57,10 @@ int main(int argc, char **argv)
 	glfwGetFramebufferSize(window, &frameBufferWidth, &frameBufferHeight);
 
 	// Create the renderer and the scene
-	Renderer renderer = Renderer(frameBufferWidth, frameBufferHeight);
-	Scene scene = Scene();
+	renderer = Renderer(frameBufferWidth, frameBufferHeight);
+	scene = Scene();
+	/*Renderer renderer = Renderer(frameBufferWidth, frameBufferHeight);
+	Scene scene = Scene();*/
 
 	//glm::vec3 eye = glm::vec3(frameBufferWidth / 2, frameBufferHeight / 2, 400);
 	glm::vec3 eye = glm::vec3(0 ,0 , 400);

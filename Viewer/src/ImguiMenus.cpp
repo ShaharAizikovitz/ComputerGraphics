@@ -129,10 +129,9 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 			//renderer.getCurrentModel()->setRotationTransform(c.x, c.y, 1);
 			if (renderer.getCurrentModel() != NULL)
 			{
-				renderer.rotateWorldX(c.y);
-				renderer.rotateWorldY(c.x);
-			}
-			
+				renderer.rotateWorldX(c.y - size.y/2);
+				renderer.rotateWorldY(c.x - size.x/2);
+			}		
 		}
 		//right mouse 
 		if (ImGui::IsMouseDown(1) && renderer.isHasModel()) {
@@ -144,7 +143,6 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 			//FOR INSTANCE ROTATE CAMERA TO THE DIRECTION OF MOUSE
 		}
 
-		
 		ImGui::End();
 	}
 
