@@ -17,11 +17,12 @@
 #include <iostream>
 
 bool showDemoWindow = false;
-bool showControlWindow = false;
+bool showFeaturesWindow = false;
 bool showLightWindow = false;
 bool showAddLightWindow = false;
 bool showOrthoProjection = true;
 bool showPerspProjection = false;
+bool showControlWindow = false;
 
 glm::vec3 objectColor;
 glm::vec3 lightColor;
@@ -39,9 +40,32 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 		ImGui::ShowDemoWindow(&showDemoWindow);
 	}
 
+	ImVec2 size = ImGui::GetWindowSize();
+
+	if (ImGui::IsMouseDown(0)) {
+		ImVec2 c = ImGui::GetMousePos();
+		std::cout << "x= " << c.x << " y=" << c.y << std::endl;
+		//renderer.getCurrentModel()->setRotationTransform(c.x, c.y, 1);
+		if (renderer.getCurrentModel() != NULL)
+		{
+			renderer.rotateWorldX(c.y - size.y / 2);
+			renderer.rotateWorldY(c.x - size.x / 2);
+		}
+	}
+	//right mouse 
+	if (ImGui::IsMouseDown(1) && renderer.isHasModel()) {
+		//IMPLEMENT HERE WHAT HAPPENS WHEN ------RIGHT MOUSE BUTTON ------- IS DOWN
+		//FOR INSTANCE ROTATE CAMERA TO THE DIRECTION OF MOUSE
+	}
+	if (ImGui::IsMouseDown(2) && renderer.isHasModel()) {
+		//IMPLEMENT HERE WHAT HAPPENS WHEN ------MIDDLE MOUSE BUTTON ------- IS DOWN
+		//FOR INSTANCE ROTATE CAMERA TO THE DIRECTION OF MOUSE
+	}
+
 	//ImGui::Text("CAM:%s", scene.getCurrentCamera().);
 
-	// 2. Show a simple window that we create ourselves. We use a Begin/End pair to created a named window.
+	// 2. Show controls window
+	if ( showControlWindow )
 	{
 		//static float objectColor;
 		static float f = 1500.0f;
@@ -66,66 +90,66 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 		static float rotateWorldY = 0.0f;
 		static float rotateWorldZ = 0.0f;
 		//static float width = scene.get
-		ImGui::Begin("Shahar Project");                         
+		ImGui::Begin("Controls");                         
 		
 		/*ImGui::Text("This is some useful text.");*/               // Display some text (you can use a format strings too)
-		//ImGui::Checkbox("Demo Window", &showDemoWindow);      // Edit bools storing our window open/close state
-		//ImGui::Checkbox("Another Window", &showControlWindow);
+		ImGui::Checkbox("Demo Window", &showDemoWindow);      // Edit bools storing our window open/close state
+		ImGui::Checkbox("Another Window", &showControlWindow);
 		ImGui::Text("Current Camera:");
 
 		ImVec2 size = ImGui::GetWindowSize();
-		//
-		//if (ImGui::SliderFloat("turn left or right", &turnUpDown, 0.0f, 360.0f) && renderer.isHasModel()) {
-		//	renderer.setEyeX(turnUpDown);
-		//}// Edit 1 float using a slider from 0.0f to 2000.0f
-		//if (ImGui::SliderFloat("FOV", &fov, 0.0f, 90.0f) && renderer.isHasModel()) {
-		//	renderer.setPerspective(fov,ar,n,fa);
-		//}
-		//if (ImGui::SliderFloat("ASPECT RATIO", &ar, 1.0f, 90.0f) && renderer.isHasModel()) {
-		//	renderer.setPerspective(fov, ar, n, fa);
-		//}
-		//if (ImGui::SliderFloat("NEAR", &n, 1.0f, 90.0f) && renderer.isHasModel()) {
-		//	renderer.setPerspective(fov, ar, n, fa);
-		//	//renderer.setProj(fov, ar, n, fa); 
-		//}
-		//if (ImGui::SliderFloat("FAR", &fa, 10.0f, 150.0f) && renderer.isHasModel()) {
-		//	renderer.setPerspective(fov, ar, n, fa);
-		//}
-		//ImGui::Text("Current Object:");
-		//ImGui::Text("Local Rotations");
-		//if (ImGui::SliderFloat("Rotate local x", &rotateLocalX, 0.0, 360.0f) && renderer.isHasModel()) {
-		//	renderer.rotateLocalX(rotateLocalX);
-		//}
-		//if (ImGui::SliderFloat("Rotate local y", &rotateLocalY, 0.0, 360.0f) && renderer.isHasModel()) {
-		//	renderer.rotateLocalY(rotateLocalY);
-		//}
-		//if (ImGui::SliderFloat("Rotate local z", &rotateLocalZ, 0.0, 360.0f) && renderer.isHasModel()) {
-		//	renderer.rotateLocalZ(rotateLocalZ);
-		//}
-		//ImGui::Text("Scaling:");
-		//if (ImGui::SliderFloat("scale", &f, 0.0f, 6000.0f) && renderer.isHasModel()) {
-		//	renderer.setScaleNumber(f);
-		//}
-		//ImGui::Text("World Translations");
-		//if (ImGui::SliderFloat("X:", &worldX, 0.0f, 1280.0f)) {
-		//	renderer.setWorldTranslation(worldX, worldY, worldZ);
-		//}
-		//if (ImGui::SliderFloat("Y:", &worldY, 0.0f, 1280.0f)) {
-		//	renderer.setWorldTranslation(worldX, worldY, worldZ);
-		//}
-		//if (ImGui::SliderFloat("Z:", &worldZ, 0.0f, 80.0f)) {
-		//	renderer.setWorldTranslation(worldX, worldY, worldZ);
-		//}
-		//ImGui::Text("World Rotations");
-		//if (ImGui::SliderFloat("Rotate world x", &rotateWorldX, 0.0, 360.0f) && renderer.isHasModel()) {
-		//	renderer.rotateWorldX(rotateWorldX);
-		//}
-		//if (ImGui::SliderFloat("Rotate world y", &rotateWorldY, 0.0, 360.0f) && renderer.isHasModel()) {
-		//	renderer.rotateWorldY(rotateWorldY);
-		//}
-		//if (ImGui::SliderFloat("Rotate world z", &rotateWorldZ, 0.0, 360.0f) && renderer.isHasModel()) {
-		//	renderer.rotateWorldZ(rotateLocalZ);
-		//}
+		
+		if (ImGui::SliderFloat("turn left or right", &turnUpDown, 0.0f, 360.0f) && renderer.isHasModel()) {
+			renderer.setEyeX(turnUpDown);
+		}// Edit 1 float using a slider from 0.0f to 2000.0f
+		if (ImGui::SliderFloat("FOV", &fov, 0.0f, 90.0f) && renderer.isHasModel()) {
+			renderer.setPerspective(fov,ar,n,fa);
+		}
+		if (ImGui::SliderFloat("ASPECT RATIO", &ar, 1.0f, 90.0f) && renderer.isHasModel()) {
+			renderer.setPerspective(fov, ar, n, fa);
+		}
+		if (ImGui::SliderFloat("NEAR", &n, 1.0f, 90.0f) && renderer.isHasModel()) {
+			renderer.setPerspective(fov, ar, n, fa);
+			//renderer.setProj(fov, ar, n, fa); 
+		}
+		if (ImGui::SliderFloat("FAR", &fa, 10.0f, 150.0f) && renderer.isHasModel()) {
+			renderer.setPerspective(fov, ar, n, fa);
+		}
+		ImGui::Text("Current Object:");
+		ImGui::Text("Local Rotations");
+		if (ImGui::SliderFloat("Rotate local x", &rotateLocalX, 0.0, 360.0f) && renderer.isHasModel()) {
+			renderer.rotateLocalX(rotateLocalX);
+		}
+		if (ImGui::SliderFloat("Rotate local y", &rotateLocalY, 0.0, 360.0f) && renderer.isHasModel()) {
+			renderer.rotateLocalY(rotateLocalY);
+		}
+		if (ImGui::SliderFloat("Rotate local z", &rotateLocalZ, 0.0, 360.0f) && renderer.isHasModel()) {
+			renderer.rotateLocalZ(rotateLocalZ);
+		}
+		ImGui::Text("Scaling:");
+		if (ImGui::SliderFloat("scale", &f, 0.0f, 6000.0f) && renderer.isHasModel()) {
+			renderer.setScaleNumber(f);
+		}
+		ImGui::Text("World Translations");
+		if (ImGui::SliderFloat("X:", &worldX, 0.0f, 1280.0f)) {
+			renderer.setWorldTranslation(worldX, worldY, worldZ);
+		}
+		if (ImGui::SliderFloat("Y:", &worldY, 0.0f, 1280.0f)) {
+			renderer.setWorldTranslation(worldX, worldY, worldZ);
+		}
+		if (ImGui::SliderFloat("Z:", &worldZ, 0.0f, 80.0f)) {
+			renderer.setWorldTranslation(worldX, worldY, worldZ);
+		}
+		ImGui::Text("World Rotations");
+		if (ImGui::SliderFloat("Rotate world x", &rotateWorldX, 0.0, 360.0f) && renderer.isHasModel()) {
+			renderer.rotateWorldX(rotateWorldX);
+		}
+		if (ImGui::SliderFloat("Rotate world y", &rotateWorldY, 0.0, 360.0f) && renderer.isHasModel()) {
+			renderer.rotateWorldY(rotateWorldY);
+		}
+		if (ImGui::SliderFloat("Rotate world z", &rotateWorldZ, 0.0, 360.0f) && renderer.isHasModel()) {
+			renderer.rotateWorldZ(rotateLocalZ);
+		}
 		//left mouse down
 		if (ImGui::IsMouseDown(0) ) {
 			ImVec2 c = ImGui::GetMousePos();
@@ -150,11 +174,11 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 		ImGui::End();
 	}
 
-	// 3. Show another simple window.
-	if (showControlWindow)
+	// 3. Show features window.
+	if (showFeaturesWindow)
 	{
 		static int counter = 0;
-		ImGui::Begin("Another Window", &showControlWindow);   // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
+		ImGui::Begin("Features", &showFeaturesWindow);   // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
 		ImGui::BeginChild("window", ImVec2(200, 200));
 		ImGui::Text("Hello from another window!");
 		//showboundering cube (toggle)
@@ -192,14 +216,14 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 			std::cout << "vertex normals" << renderer.getToDrawVertexNormals() << std::endl;
 		}
 		//projection
-		if (ImGui::Button("Projection"))
+		/*if (ImGui::Button("Projection"))
 		{
 			renderer.setProjection(!renderer.getProjection());
 			std::cout << "projection=" << renderer.getProjection() << std::endl;
-		}
+		}*/
 		if (ImGui::Button("Close Me"))
 		{
-			showControlWindow = false;
+			showFeaturesWindow = false;
 		}
 		ImGui::SameLine();
 		ImGui::Text("counter = %d", counter);
@@ -406,6 +430,11 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 							std::cout << name << std::endl;
 						}
 					}
+				}
+
+				if (ImGui::MenuItem("Features"))
+				{
+					showFeaturesWindow = true;
 				}
 
 				ImGui::EndMenu();
