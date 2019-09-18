@@ -6,6 +6,7 @@
 #include <GLFW/glfw3.h>
 
 #define PI 3.14159265358
+#define INIT_SCALE 1000
 
 //ctor
 Camera::Camera(const glm::vec3& eye, const glm::vec3& at, const glm::vec3& up) :
@@ -18,9 +19,11 @@ Camera::Camera(const glm::vec3& eye, const glm::vec3& at, const glm::vec3& up) :
 	aspectRatio = 0.5f;
 	_near = 100;
 	_far = 500;
-	SetCameraLookAt(eye, at, up);
-	SetPerspectiveProjection(FOV , aspectRatio , _near, _far);
+	setCameraLookAt(eye, at, up);
+	setPerspectiveProjection(FOV , aspectRatio , _near, _far);
+	setOrthographicProjection(2 * _near*_CMATH_::tanf(0.5*FOV), aspectRatio, _near, _far);
 	setCameraViewWorldTransform(glm::vec4(0, 0, 0, 1)); 
+	setCameraScale();
 }
 
 Camera::~Camera()
@@ -29,7 +32,12 @@ Camera::~Camera()
 Camera::Camera()
 {
 	//SetPerspectiveProjection(45, 280, 1, 10);
-	SetCameraLookAt(glm::vec3(0, 0, 0), glm::vec3(0, 0, 0), glm::vec3(0, 0, 0));
+	setCameraLookAt(glm::vec3(0, 0, 0), glm::vec3(0, 0, 0), glm::vec3(0, 0, 0));
+}
+
+void Camera::setCameraScale()
+{
+	this->scalingTransformation = glm::mat4x4(glm::vec4(INIT_SCALE, 0, 0, 0), glm::vec4(0, INIT_SCALE, 0, 0), glm::vec4(0, 0, INIT_SCALE, 0), glm::vec4(0, 0, 0, 1));
 }
 
 const glm::mat4 Camera::getViewTransformation() {
@@ -48,7 +56,7 @@ void Camera::setCameraViewWorldTransform(glm::vec4 &v)
 	this->viewWorldTransform = glm::mat4x4(glm::vec4(1, 0, 0, 0), glm::vec4(0, 1, 0, 0), glm::vec4(0, 0, 1, 0), v); 
 }
 
-void Camera::SetCameraLookAt(const glm::vec3& eye, const glm::vec3& at, const glm::vec3& up)
+void Camera::setCameraLookAt(const glm::vec3& eye, const glm::vec3& at, const glm::vec3& up)
 {
 	glm::vec3 z = glm::normalize(eye - at);
 	glm::vec3 x = glm::normalize(glm::cross(up, z));
@@ -70,7 +78,7 @@ void Camera::SetCameraLookAt(const glm::vec3& eye, const glm::vec3& at, const gl
 //Function create the Normalized projection matrix by (P=ST)
 //1. T = translate the center of the volume to the origin
 //2. S = Scale to the volume of unit cube
-void Camera::SetOrthographicProjection(
+void Camera::setOrthographicProjection(
 	const float height,
 	const float aspectRatio,
 	const float near,
@@ -92,7 +100,7 @@ void Camera::SetOrthographicProjection(
 	this->orthographicTransformation = glm::mat4(v1, v2, v3, v4);
 }
 
-void Camera::SetPerspectiveProjection(float &fovy, float &aspectRatio, float &near, float &far)
+void Camera::setPerspectiveProjection(float &fovy, float &aspectRatio, float &near, float &far)
 {
 	float nearHeight = 2 * near * tan(0.5*fovy * PI / 180);
 	float nearWidth = aspectRatio * nearHeight;

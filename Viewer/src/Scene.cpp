@@ -21,9 +21,15 @@ const int Scene::GetModelCount() const
 	return models.size();
 }
 
-void Scene::AddCamera(const Camera& camera)
+void Scene::addCamera(const Camera& camera)
 {
 	cameras.push_back(camera);
+	this->currentCamera = camera;
+	this->currentCamera.setCameraNum(cameras.size() - 1);
+	for each (Camera c in cameras)
+		c.setCurrent(false);
+
+	this->currentCamera.setCurrent(true);
 }
 
 const int Scene::GetCameraCount() const

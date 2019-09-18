@@ -17,9 +17,11 @@
 #include <iostream>
 
 bool showDemoWindow = false;
-bool showAnotherWindow = false;
+bool showControlWindow = false;
 bool showLightWindow = false;
 bool showAddLightWindow = false;
+bool showOrthoProjection = true;
+bool showPerspProjection = false;
 
 glm::vec3 objectColor;
 glm::vec3 lightColor;
@@ -36,6 +38,8 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 	{
 		ImGui::ShowDemoWindow(&showDemoWindow);
 	}
+
+	//ImGui::Text("CAM:%s", scene.getCurrentCamera().);
 
 	// 2. Show a simple window that we create ourselves. We use a Begin/End pair to created a named window.
 	{
@@ -66,7 +70,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 		
 		/*ImGui::Text("This is some useful text.");*/               // Display some text (you can use a format strings too)
 		//ImGui::Checkbox("Demo Window", &showDemoWindow);      // Edit bools storing our window open/close state
-		//ImGui::Checkbox("Another Window", &showAnotherWindow);
+		//ImGui::Checkbox("Another Window", &showControlWindow);
 		ImGui::Text("Current Camera:");
 
 		ImVec2 size = ImGui::GetWindowSize();
@@ -147,10 +151,10 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 	}
 
 	// 3. Show another simple window.
-	if (showAnotherWindow)
+	if (showControlWindow)
 	{
 		static int counter = 0;
-		ImGui::Begin("Another Window", &showAnotherWindow);   // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
+		ImGui::Begin("Another Window", &showControlWindow);   // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
 		ImGui::BeginChild("window", ImVec2(200, 200));
 		ImGui::Text("Hello from another window!");
 		//showboundering cube (toggle)
@@ -195,7 +199,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 		}
 		if (ImGui::Button("Close Me"))
 		{
-			showAnotherWindow = false;
+			showControlWindow = false;
 		}
 		ImGui::SameLine();
 		ImGui::Text("counter = %d", counter);
@@ -259,6 +263,19 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 		ImGui::EndChild();
 		ImGui::End();
 	}
+
+	// 3.3 change projection functionality
+	if (showPerspProjection)
+	{
+		renderer.setIsProjPerspective(true);
+		renderer.setIsProjOrthographic(false);
+	}
+	else if (showOrthoProjection)
+	{
+		renderer.setIsProjPerspective(false);
+		renderer.setIsProjOrthographic(true);
+	}
+
 	// 4. Demonstrate creating a fullscreen menu bar and populating it.
 	{
 		ImGuiWindowFlags flags = ImGuiWindowFlags_NoFocusOnAppearing;
@@ -291,8 +308,30 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 				}
 				ImGui::EndMenu();
 			}
-			//load model submenu
-			if (ImGui::BeginMenu("scene models"))
+			//projection menu
+			if (ImGui::BeginMenu("Projection"))
+			{
+				if (ImGui::MenuItem("Perspective"))
+				{
+					renderer.setIsProjPerspective(true);
+					renderer.setIsProjOrthographic(false);
+				}
+
+				if (ImGui::MenuItem("Orthographic"))
+				{
+					renderer.setIsProjOrthographic(true);
+					renderer.setIsProjPerspective(false);
+				}
+
+				if (ImGui::MenuItem("Reset"))
+				{
+					renderer.setIsProjOrthographic(true);
+					renderer.setIsProjPerspective(false);
+				}
+				ImGui::EndMenu();
+			}
+			//model submenu
+			/*if (ImGui::BeginMenu("Scene Models"))
 			{
 				std::vector<std::shared_ptr<MeshModel>> models = scene.getModels(); 
 				std::vector<std::shared_ptr<MeshModel>>::iterator it;
@@ -310,7 +349,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 					}
 				}
 				ImGui::EndMenu();
-			}
+			}*/
 
 			//lighting submenu
 			if (ImGui::BeginMenu("Lights"))
@@ -343,11 +382,30 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 			}
 
 			//model submenu
-			if (ImGui::BeginMenu("model"))
+			if (ImGui::BeginMenu("Model"))
 			{
 				if (ImGui::MenuItem("model controls"))
 				{
-					showAnotherWindow = true;
+					showControlWindow = true;
+				}
+
+				if (ImGui::MenuItem("scene models"))
+				{
+					std::vector<std::shared_ptr<MeshModel>> models = scene.getModels();
+					std::vector<std::shared_ptr<MeshModel>>::iterator it;
+					const char *name;
+
+					for (it = models.begin(); it != models.end(); it++)
+					{
+						name = (*it)->GetModelName().c_str();
+						(*it)->setIsCurrentModel(false);
+
+						if (ImGui::MenuItem(name))
+						{
+							(*it)->setIsCurrentModel(true);
+							std::cout << name << std::endl;
+						}
+					}
 				}
 
 				ImGui::EndMenu();

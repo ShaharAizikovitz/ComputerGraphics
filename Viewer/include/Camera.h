@@ -27,16 +27,18 @@ private:
 	float aspectRatio;
 	float FOV;
 	bool isCurrent;
+	int number;
 
 
 public:
 	Camera(const glm::vec3& eye, const glm::vec3& at, const glm::vec3& up);
 	~Camera();
 	Camera();
-	void SetCameraLookAt(const glm::vec3& eye, const glm::vec3& at, const glm::vec3& up);
+	void setCameraLookAt(const glm::vec3& eye, const glm::vec3& at, const glm::vec3& up);
 	void scaleTransform(glm::vec3& vect);
-	void SetOrthographicProjection(float height, float aspectRatio, float _near, float _far);
-	void SetPerspectiveProjection(float &fovy, float &aspect, float &_near, float &_far);
+	void setOrthographicProjection(float height, float aspectRatio, float _near, float _far);
+	void setPerspectiveProjection(float &fovy, float &aspect, float &_near, float &_far);
+	void setCameraScale();
 
 	//getters/setters
 	//getters
@@ -48,6 +50,7 @@ public:
 	const float getFar() const { return this->_far; }
 	const float getAspectRatio() const { return this->aspectRatio; }
 	const float getFOV() const { return this->FOV; }
+	const bool getCurrent() const { return this->isCurrent; }
 
 	//setters
 	void setNear(const float &n) { this->_near = n; }
@@ -56,6 +59,6 @@ public:
 	void setFOV(const float &f) { this->FOV = f; }
 	void SetZoom(const float zoom);
 	void setCurrent(const bool &b) { this->isCurrent = b; }
-	bool getCurrent() const { return this->isCurrent; } 
 	void setCameraViewWorldTransform(glm::vec4&);
+	void setCameraNum(const int& i) { this->number = i; }
 };

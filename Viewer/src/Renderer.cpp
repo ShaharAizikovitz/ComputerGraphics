@@ -4,6 +4,11 @@
 
 
 //ctor
+Renderer::Renderer()
+{
+	init();
+}
+
 Renderer::Renderer(int viewportWidth, int viewportHeight, int viewportX, int viewportY) :
 	colorBuffer(nullptr),
 	zBuffer(nullptr),
@@ -39,6 +44,17 @@ Renderer::~Renderer()
 		delete[] zBuffer;
 }
 
+void Renderer::init()
+{
+	this->colorBuffer = nullptr;
+	this->zBuffer = nullptr;
+	this->hasModel = false;
+	this->viewportHeight = 700;
+	this->viewportWidth = 1200;
+	initOpenGLRendering();
+	SetViewport(viewportWidth, viewportHeight, viewportX, viewportY);
+}
+
 
 bool Renderer::isHasModel() {
 	return hasModel;
@@ -56,7 +72,7 @@ void Renderer::setEyeX(float eyex) {
 	//glm::vec3 at = glm::vec3(0, 0, 0);
 
 	glm::vec3 up = glm::vec3(0, 1, 0);
-	currentCamera.SetCameraLookAt(eye, at, up);
+	currentCamera.setCameraLookAt(eye, at, up);
 }
 void Renderer::rotateLocalX(float x) {
 	this->currentModel->setRotationTransform(x, 1, 1);
@@ -87,7 +103,7 @@ void Renderer::translate(float xt, float yt, float zt) {
 		this->currentModel->setTranslationTransform(xt, yt, zt);
 }
 void Renderer::setPerspective(float f, float ar, float n, float fa) {
-	this->currentCamera.SetPerspectiveProjection(f, ar, n, fa);
+	this->currentCamera.setPerspectiveProjection(f, ar, n, fa);
 }
 void Renderer::setProjection(bool p)
 {
@@ -229,7 +245,7 @@ void Renderer::setProj(float & fovy,  float & aspectRatio,  float & _near,  floa
 	this->currentCamera.setFOV(fovy);
 	this->currentCamera.setNear(_near);
 	this->currentCamera.setFar(_far); 
-	this->currentCamera.SetPerspectiveProjection(fovy, aspectRatio, _near, _far); 
+	this->currentCamera.setPerspectiveProjection(fovy, aspectRatio, _near, _far); 
 }
 
 void Renderer::SetViewport(int viewportWidth, int viewportHeight, int viewportX, int viewportY)
@@ -908,7 +924,7 @@ void Renderer::drawTriangle(std::vector<Vertex>&points, glm::vec3 &color)
 
 void Renderer::Render(const Scene& scene)
 {
-	
+	glm::mat4x4 projection;
 	glm::vec3 p1, p2, color;
 	p1.x = 0.0;
 	p1.y = (int)(viewportHeight/2);
@@ -919,14 +935,15 @@ void Renderer::Render(const Scene& scene)
 	color.x = 0.0;
 	color.y = 0.0;
 	color.z = 0.0;
-
+	Camera camera;
 	
 	
 	//we get the model list from the scene object that was passed to Render function
 	//models = vector of pointers (pointing to a MeshModel) representing this list.
 	std::vector<std::shared_ptr<MeshModel>> models = scene.getModels();
 	std::shared_ptr<MeshModel> model; 
-	this->currentCamera = scene.getCameras().at(0);
+	camera = scene.getCurrentCamera();
+	projection = (this->isProjOrthographic) ? camera.getOrthographicTransformation() : camera.getProjectionTransformation();
 	
 	//we iterate over models vector with an iterator
 	for (std::vector<std::shared_ptr<MeshModel>>::iterator it = models.begin(); it != models.end(); it++) {
@@ -1027,8 +1044,10 @@ void Renderer::Render(const Scene& scene)
 
 			/* right now the  problem is with this transformation !!*/
 			//newVertex = this->currentCamera.getViewTransformation() * newVertex;
+			newVertex = camera.getViewTransformation() * newVertex;
 			//newVertex.w = 1 ;
-			newVertex = this->currentCamera.getProjectionTransformation() * newVertex;
+			//newVertex = this->currentCamera.getProjectionTransformation() * newVertex;
+			newVertex = projection * newVertex;
 
 			//newVertex = this->proj * newVertex;
 

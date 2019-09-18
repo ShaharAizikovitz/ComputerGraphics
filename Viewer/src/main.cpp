@@ -31,11 +31,8 @@ void ScrollCallback(GLFWwindow* window, double xoffset, double yoffset)
 {
 	ImGui_ImplGlfw_ScrollCallback(window, xoffset, yoffset);
 	
-	// Handle mouse scrolling here...
 }
 
-Renderer renderer;
-Scene scene;
 
 int main(int argc, char **argv)
 {
@@ -57,10 +54,10 @@ int main(int argc, char **argv)
 	glfwGetFramebufferSize(window, &frameBufferWidth, &frameBufferHeight);
 
 	// Create the renderer and the scene
-	renderer = Renderer(frameBufferWidth, frameBufferHeight);
-	scene = Scene();
-	/*Renderer renderer = Renderer(frameBufferWidth, frameBufferHeight);
-	Scene scene = Scene();*/
+	/*renderer = Renderer(frameBufferWidth, frameBufferHeight);
+	scene = Scene();*/
+	Renderer renderer = Renderer(frameBufferWidth, frameBufferHeight);
+	Scene scene = Scene();
 
 	//glm::vec3 eye = glm::vec3(frameBufferWidth / 2, frameBufferHeight / 2, 400);
 	glm::vec3 eye = glm::vec3(0 ,0 , 400);
@@ -79,8 +76,8 @@ int main(int argc, char **argv)
 	//glm::vec3 at = glm::vec3(0, 0, 0);
 	//glm::vec3 up = glm::vec3(0,1,0);
 	//Camera camera = Camera(eye, at, up);
-	camera.setCurrent(true);
-	scene.AddCamera(camera); 
+	//camera.setCurrent(true);
+	scene.addCamera(camera); 
 	
 
 	// Setup ImGui

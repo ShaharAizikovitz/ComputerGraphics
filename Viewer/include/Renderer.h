@@ -44,6 +44,7 @@ private:		//members
 	bool projection; 
 	bool hasModel;
 	bool tooDrawaCube, toDrawFaceNormals, toDrawLineNormals, toDrawVertexNormals;
+	bool isProjPerspective, isProjOrthographic;
 	glm::vec3 ambientColor;
 	glm::vec3 diffusivePos;
 	glm::mat4x4 worldToCameraTransformation;
@@ -85,6 +86,7 @@ private:		//members
 	static bool sort_dec_y(const Vertex &x, const Vertex &y) { return x.getPoint().y > y.getPoint().y; }
 
 public:
+	Renderer();
 	Renderer(int viewportWidth, int viewportHeight, int viewportX = 0, int viewportY = 0);
 	~Renderer();
 	bool isHasModel();
@@ -100,6 +102,7 @@ public:
 	void rotateWorldZ(float z);
 	void translate(float x, float y, float z);
 	void addLight(const Light &l) { this->lights.push_back(l); }
+	void init();
 	
 	//getters\setters
 	//---------------
@@ -141,4 +144,6 @@ public:
 	void setAmbientIntensity(const float &c) { this->ambient = this->ambientK  * c; }
 	void setAmbientCoefficient(const float &c) { this->ambient = this->ambientIntensity * c; }
 	void setAmbientColor(const glm::vec3 &color) { this->ambientColor = color; }
+	void setIsProjPerspective(const bool &t) { this->isProjPerspective = t; }
+	void setIsProjOrthographic(const bool &t) { this->isProjOrthographic = t; }
 };
