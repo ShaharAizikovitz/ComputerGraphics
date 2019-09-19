@@ -93,11 +93,12 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 		ImGui::Begin("Controls");                         
 		
 		/*ImGui::Text("This is some useful text.");*/               // Display some text (you can use a format strings too)
-		ImGui::Checkbox("Demo Window", &showDemoWindow);      // Edit bools storing our window open/close state
-		ImGui::Checkbox("Another Window", &showControlWindow);
-		ImGui::Text("Current Camera:");
-
+		//ImGui::Checkbox("Demo Window", &showDemoWindow);      // Edit bools storing our window open/close state
+		//ImGui::Checkbox("Another Window", &showControlWindow);
+		//ImGui::Text("Current Camera:");
+		ImVec4 clear_color = ImVec4(0.99f, 0.55f, 0.10f, 1.00f);
 		ImVec2 size = ImGui::GetWindowSize();
+		ImGui::TextColored(clear_color, "%04d: Some text");
 		
 		if (ImGui::SliderFloat("turn left or right", &turnUpDown, 0.0f, 360.0f) && renderer.isHasModel()) {
 			renderer.setEyeX(turnUpDown);
@@ -354,26 +355,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 				}
 				ImGui::EndMenu();
 			}
-			//model submenu
-			/*if (ImGui::BeginMenu("Scene Models"))
-			{
-				std::vector<std::shared_ptr<MeshModel>> models = scene.getModels(); 
-				std::vector<std::shared_ptr<MeshModel>>::iterator it;
-				const char *name;
 
-				for (it = models.begin(); it != models.end(); it++)
-				{
-					name = (*it)->GetModelName().c_str(); 
-					(*it)->setIsCurrentModel(false); 
-
-					if (ImGui::MenuItem(name))
-					{	
-						(*it)->setIsCurrentModel(true);
-						std::cout << name << std::endl;
-					}
-				}
-				ImGui::EndMenu();
-			}*/
 
 			//lighting submenu
 			if (ImGui::BeginMenu("Lights"))
