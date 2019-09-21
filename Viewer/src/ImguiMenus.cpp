@@ -38,29 +38,30 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 	if (showDemoWindow)
 	{
 		ImGui::ShowDemoWindow(&showDemoWindow);
+
 	}
 
 	ImVec2 size = ImGui::GetWindowSize();
 
-	if (ImGui::IsMouseDown(0)) {
-		ImVec2 c = ImGui::GetMousePos();
-		std::cout << "x= " << c.x << " y=" << c.y << std::endl;
-		//renderer.getCurrentModel()->setRotationTransform(c.x, c.y, 1);
-		if (renderer.getCurrentModel() != NULL)
-		{
-			renderer.rotateWorldX(c.y - size.y / 2);
-			renderer.rotateWorldY(c.x - size.x / 2);
-		}
-	}
-	//right mouse 
-	if (ImGui::IsMouseDown(1) && renderer.isHasModel()) {
-		//IMPLEMENT HERE WHAT HAPPENS WHEN ------RIGHT MOUSE BUTTON ------- IS DOWN
-		//FOR INSTANCE ROTATE CAMERA TO THE DIRECTION OF MOUSE
-	}
-	if (ImGui::IsMouseDown(2) && renderer.isHasModel()) {
-		//IMPLEMENT HERE WHAT HAPPENS WHEN ------MIDDLE MOUSE BUTTON ------- IS DOWN
-		//FOR INSTANCE ROTATE CAMERA TO THE DIRECTION OF MOUSE
-	}
+	//if (ImGui::IsMouseDown(0)) {
+	//	ImVec2 c = ImGui::GetMousePos();
+	//	std::cout << "x= " << c.x << " y=" << c.y << std::endl;
+	//	//renderer.getCurrentModel()->setRotationTransform(c.x, c.y, 1);
+	//	if (renderer.getCurrentModel() != NULL)
+	//	{
+	//		renderer.rotateWorldX(c.y - size.y / 2);
+	//		renderer.rotateWorldY(c.x - size.x / 2);
+	//	}
+	//}
+	////right mouse 
+	//if (ImGui::IsMouseDown(1) && renderer.isHasModel()) {
+	//	//IMPLEMENT HERE WHAT HAPPENS WHEN ------RIGHT MOUSE BUTTON ------- IS DOWN
+	//	//FOR INSTANCE ROTATE CAMERA TO THE DIRECTION OF MOUSE
+	//}
+	//if (ImGui::IsMouseDown(2) && renderer.isHasModel()) {
+	//	//IMPLEMENT HERE WHAT HAPPENS WHEN ------MIDDLE MOUSE BUTTON ------- IS DOWN
+	//	//FOR INSTANCE ROTATE CAMERA TO THE DIRECTION OF MOUSE
+	//}
 
 	//ImGui::Text("CAM:%s", scene.getCurrentCamera().);
 
@@ -90,15 +91,17 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 		static float rotateWorldY = 0.0f;
 		static float rotateWorldZ = 0.0f;
 		//static float width = scene.get
-		ImGui::Begin("Controls");                         
+		ImGui::BeginChild("Controls");                         
 		
 		/*ImGui::Text("This is some useful text.");*/               // Display some text (you can use a format strings too)
 		//ImGui::Checkbox("Demo Window", &showDemoWindow);      // Edit bools storing our window open/close state
 		//ImGui::Checkbox("Another Window", &showControlWindow);
 		//ImGui::Text("Current Camera:");
-		ImVec4 clear_color = ImVec4(0.99f, 0.55f, 0.10f, 1.00f);
+		
 		ImVec2 size = ImGui::GetWindowSize();
-		ImGui::TextColored(clear_color, "%04d: Some text");
+		ImVec2 pos = ImGui::GetWindowPos();
+
+		//ImGui::TextColored()
 		
 		if (ImGui::SliderFloat("turn left or right", &turnUpDown, 0.0f, 360.0f) && renderer.isHasModel()) {
 			renderer.setEyeX(turnUpDown);
@@ -154,12 +157,18 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 		//left mouse down
 		if (ImGui::IsMouseDown(0) ) {
 			ImVec2 c = ImGui::GetMousePos();
-			std::cout << "x= " << c.x << " y=" << c.y << std::endl; 
-			//renderer.getCurrentModel()->setRotationTransform(c.x, c.y, 1);
+			//ImVec2 max_size = ImGui::GetWindowContentRegionMax();
+	
 			if (renderer.getCurrentModel() != NULL)
 			{
-				renderer.rotateWorldX(c.y - size.y/2);
-				renderer.rotateWorldY(c.x - size.x/2);
+				//exclude control wwindow
+				if(!ImGui::IsWindowHovered())
+				{
+					std::cout << "x= " << c.x << " y=" << c.y << std::endl;
+					renderer.rotateWorldX(c.y - size.y / 2);
+					renderer.rotateWorldY(c.x - size.x / 2);
+				}
+				
 			}		
 		}
 		//right mouse 
@@ -172,7 +181,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 			//FOR INSTANCE ROTATE CAMERA TO THE DIRECTION OF MOUSE
 		}
 
-		ImGui::End();
+		ImGui::EndChild();
 	}
 
 	// 3. Show features window.
@@ -301,7 +310,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 		renderer.setIsProjOrthographic(true);
 	}
 
-	// 4. Demonstrate creating a fullscreen menu bar and populating it.
+	// 4. A fullscreen menu bar and populating it.
 	{
 		ImGuiWindowFlags flags = ImGuiWindowFlags_NoFocusOnAppearing;
 		if (ImGui::BeginMainMenuBar())
@@ -424,5 +433,13 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 
 			ImGui::EndMainMenuBar();
 		}
+		/*ImVec4 clear_color = ImVec4(0.99f, 0.55f, 0.10f, 1.00f);
+		ImGui::TextColored(clear_color, "Some text");*/
+		/*ImGui::Begin("label", true, ImVec2(20, 30), 0,);
+		ImGui::LabelText("%s", "hello"); */
+		//ImGui::GetWindowDrawList()->AddText(ImVec2(20, 40), ImColor(255, 255, 0, 255), "hello!", 0, 0.0f, 0);
+		//ImGui::GetWindowDrawList()->AddText(ImGui::GetWindowFont(), ImGui::GetWindowFontSize(), ImVec2(100.f, 100.f), ImColor(255, 255, 0, 255), "Hello World", 0, 0.0f, 0);
 	}
+
+	
 }
