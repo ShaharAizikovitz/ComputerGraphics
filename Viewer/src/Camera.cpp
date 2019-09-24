@@ -17,11 +17,11 @@ Camera::Camera(const glm::vec3& eye, const glm::vec3& at, const glm::vec3& up) :
 	oldat = at;
 	FOV = 45.0f;
 	aspectRatio = 0.5f;
-	_near = 100;
-	_far = 500;
+	near = 100;
+	far = 500;
 	setCameraLookAt(eye, at, up);
-	setPerspectiveProjection(FOV , aspectRatio , _near, _far);
-	setOrthographicProjection(2 * _near*_CMATH_::tanf(0.5*FOV), aspectRatio, _near, _far);
+	setPerspectiveProjection(FOV , aspectRatio , near, far);
+	setOrthographicProjection(2 * near*_CMATH_::tanf(0.5*FOV), aspectRatio, near, far);
 	setCameraViewWorldTransform(glm::vec4(0, 0, 0, 1)); 
 	setCameraScale();
 }
@@ -79,18 +79,17 @@ void Camera::setCameraLookAt(const glm::vec3& eye, const glm::vec3& at, const gl
 //1. T = translate the center of the volume to the origin
 //2. S = Scale to the volume of unit cube
 void Camera::setOrthographicProjection(
-	const float height,
-	const float aspectRatio,
-	const float near,
-	const float far)
+	const int left,
+	const int right,
+	const int bottom,
+	const int top,
+	const int near,
+	const int far)
 {
 	glm::vec4 v1, v2, v3, v4;
-	float right, left, bottom, top, width = height * aspectRatio;
+	int width = right - left;
+	int height = top - bottom;
 
-	right = 0.5 * width;
-	left = -0.5 * width;
-	top = 0.5 * height;
-	bottom = -0.5 * height;
 
 	v1 = glm::vec4(2 / (right - left), 0, 0, 0);
 	v2 = glm::vec4(0, 2 / (top - bottom), 0, 0);
@@ -100,7 +99,7 @@ void Camera::setOrthographicProjection(
 	this->orthographicTransformation = glm::mat4(v1, v2, v3, v4);
 }
 
-void Camera::setPerspectiveProjection(float &fovy, float &aspectRatio, float &near, float &far)
+void Camera::setPerspectiveProjection(float &fovy, float &aspectRatio, int &near, int &far)
 {
 	float nearHeight = 2 * near * tan(0.5*fovy * PI / 180);
 	float nearWidth = aspectRatio * nearHeight;
@@ -117,15 +116,15 @@ void Camera::setPerspectiveProjection(float &fovy, float &aspectRatio, float &ne
 		std::cout << std::endl;
 	}
 	std::cout << std::endl;
-	glm::vec4 v1(2 * near / (r - l), 0, (r + l) / (r - l), 0);
-	glm::vec4 v2(0, 2 * near / (t - b), (t + b) / (t - b), 0);
-	glm::vec4 v3(0, 0, -1 * (far + near) / (far - near), -2 * (far * near) / (far - near)); 
+	glm::vec4 v1(2 * near / (r - l), 0, 0, 0);
+	glm::vec4 v2(0, 2 * near / (t - b), 0, 0);
+	glm::vec4 v3((r + l) / (r - l), (t + b) / (t - b), -1 * (far + near) / (far - near), -1);
 	glm::vec4 v4(0, 0, -2 *( far * near )/ (far - near), 0);
 	this->projectionTransformation = glm::mat4(v1, v2, v3, v4);
-	this->projectionTransformation = glm::mat4(glm::vec4(2 * near / (r - l), 0, (r + l) / (r - l), 0),
+	/*this->projectionTransformation = glm::mat4(glm::vec4(2 * near / (r - l), 0, (r + l) / (r - l), 0),
 											   glm::vec4(0, 2 * near / (t - b), (t + b) / (t - b), 0),
 		                                       glm::vec4(0, 0, -1 * (far + near) / (far - near), -2 * (far * near) / (far - near)),
-		                                       glm::vec4(0, 0, -1, 0));
+		                                       glm::vec4(0, 0, -1, 0));*/
 	for (size_t i = 0; i < 4; i++)
 	{
 		for (size_t j = 0; j < 4; j++)

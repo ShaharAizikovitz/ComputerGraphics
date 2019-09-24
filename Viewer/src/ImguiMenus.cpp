@@ -324,13 +324,13 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 					nfdresult_t result = NFD_OpenDialog("obj;png,jpg", NULL, &outPath);
 					if (result == NFD_OKAY) {
 						scene.AddModel(std::make_shared<MeshModel>(Utils::LoadMeshModel(outPath)));
-						//set renderer current model to the first model in the scene model list
+						//set renderer current model to the last model in the scene model list
 						renderer.setCurrentModel(scene.getModels().at(scene.GetModelCount() - 1));
 
 						renderer.setHasModel();
 						renderer.setEyeX(0);
 						//renderer.translate(640, 360, 0);
-						renderer.setPerspective(50,1,1,10);
+						//renderer.setPerspective(50,1,1,10);
 
 						free(outPath);
 					}
@@ -342,6 +342,33 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 				}
 				ImGui::EndMenu();
 			}
+
+			//camera menu
+			if (ImGui::BeginMenu("Camera"))
+			{
+				if (ImGui::MenuItem("Add camera"))
+				{
+					Camera c;
+					scene.addCamera(c);
+				}
+				if (ImGui::MenuItem("Cameras"))
+				{
+					int count;
+					std::vector<Camera> cameras = scene.getCameras();
+					std::vector<Camera>::iterator it;
+					for (it = cameras.begin(), count = 0; it != cameras.end();  count++, it++)
+					{
+						string name("camera %d", count);
+						if (ImGui::MenuItem(name.c_str())); 
+						{
+
+						}
+					}
+				}
+
+				ImGui::EndMenu();
+			}
+
 			//projection menu
 			if (ImGui::BeginMenu("Projection"))
 			{

@@ -22,8 +22,8 @@ private:
 	glm::vec3 oldeye;
 	glm::vec3 oldat;
 	float zoom;
-	float _near;
-	float _far;
+	int near;
+	int far;
 	float aspectRatio;
 	float FOV;
 	bool isCurrent;
@@ -36,8 +36,8 @@ public:
 	Camera();
 	void setCameraLookAt(const glm::vec3& eye, const glm::vec3& at, const glm::vec3& up);
 	void scaleTransform(glm::vec3& vect);
-	void setOrthographicProjection(float height, float aspectRatio, float _near, float _far);
-	void setPerspectiveProjection(float &fovy, float &aspect, float &_near, float &_far);
+	void setOrthographicProjection(const int left, const int right, const int bottom, const int top, const int near, const int far);
+	void setPerspectiveProjection(float &fovy, float &aspect, int &_near, int &_far);
 	void setCameraScale();
 
 	//getters/setters
@@ -46,15 +46,15 @@ public:
 	const glm::mat4 getProjectionTransformation();
 	const glm::mat4 getOrthographicTransformation();
 	const glm::mat4x4 getViewWorldTransform() const { return this->viewWorldTransform; }
-	const float getNear() const { return this->_near; }
-	const float getFar() const { return this->_far; }
+	const int getNear() const { return this->near; }
+	const int getFar() const { return this->far; }
 	const float getAspectRatio() const { return this->aspectRatio; }
 	const float getFOV() const { return this->FOV; }
 	const bool getCurrent() const { return this->isCurrent; }
 
 	//setters
-	void setNear(const float &n) { this->_near = n; }
-	void setFar(const float &f) { this->_far = f; }
+	void setNear(const int &n) { this->near = n; }
+	void setFar(const int &f) { this->far = f; }
 	void setAspectRatio(const float &ar) { this->aspectRatio = ar; }
 	void setFOV(const float &f) { this->FOV = f; }
 	void SetZoom(const float zoom);
