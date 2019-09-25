@@ -17,11 +17,15 @@ Camera::Camera(const glm::vec3& eye, const glm::vec3& at, const glm::vec3& up) :
 	oldat = at;
 	FOV = 45.0f;
 	aspectRatio = 0.5f;
-	near = 100;
-	far = 500;
+	left = -200;
+	right = 200;
+	top = 200;
+	bottom = -200;
+	_near = 100;
+	_far = 500;
 	setCameraLookAt(eye, at, up);
-	setPerspectiveProjection(FOV , aspectRatio , near, far);
-	setOrthographicProjection(2 * near*_CMATH_::tanf(0.5*FOV), aspectRatio, near, far);
+	setPerspectiveProjection(FOV , aspectRatio , _near, _far);
+	setOrthographicProjection(left, right, bottom, top, _near, _far);
 	setCameraViewWorldTransform(glm::vec4(0, 0, 0, 1)); 
 	setCameraScale();
 }

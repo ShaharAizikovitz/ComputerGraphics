@@ -102,7 +102,7 @@ void Renderer::translate(float xt, float yt, float zt) {
 	if (this->currentModel != NULL)
 		this->currentModel->setTranslationTransform(xt, yt, zt);
 }
-void Renderer::setPerspective(float f, float ar, float n, float fa) {
+void Renderer::setPerspective(float f, float ar, int n, int fa) {
 	this->currentCamera.setPerspectiveProjection(f, ar, n, fa);
 }
 void Renderer::setProjection(bool p)
@@ -225,7 +225,7 @@ void Renderer::ClearColorBuffer(const glm::vec3& color)
 	}
 }
 
-void Renderer::setProj(float & fovy,  float & aspectRatio,  float & _near,  float & _far)
+void Renderer::setProj(float & fovy,  float & aspectRatio,  int & _near,  int & _far)
 {
 	float angle = _CMATH_::tanf(0.5*fovy * PI / 180);
 	float nearHeight =  angle*2*_near; 

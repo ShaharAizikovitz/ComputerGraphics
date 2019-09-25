@@ -122,7 +122,7 @@ public:
 	std::vector<std::shared_ptr<MeshModel>> getModels() const { return this->models; }
 
 	//setters
-	void Renderer::setProj( float & fovy,  float & aspectRatio,  float & near,  float & far); 
+	void setProj( float & fovy,  float & aspectRatio,  int & _near,  int & _far); 
 	void setdrawLines(const bool &b) { this->drawLines = b; }
 	void setFillTriangles(const bool &b) { this->fillTriangles = b; }
 	void setToDrawVertexNormals(const bool &b) { this->toDrawVertexNormals = b; }
@@ -132,7 +132,7 @@ public:
 	void setEyeX(float eyex);
 	void setFov(float f);
 	void setProjection(bool p);
-	void setPerspective(float f, float ar, float n, float fa);
+	void setPerspective(float f, float ar, int n, int fa);
 	void setWorldTranslation(float x, float y, float z);
 	void setToDrawaCube(const bool b) { this->tooDrawaCube = b; }
 	void setToDrawFaceNormals(bool b) { this->toDrawFaceNormals = b; }
