@@ -25,7 +25,7 @@ Renderer::Renderer(int viewportWidth, int viewportHeight, int viewportX, int vie
 	this->toDrawVertexNormals = false;
 	this->tooDrawaCube = false;
 	this->fillTriangles = false;
-	this->drawLines = false;
+	this->drawLines = true;
 	this->diffusive = 0.5;
 	this->ambient = 0.5f;
 	this->ambientColor = PURPLE;
@@ -162,7 +162,7 @@ void Renderer::createBuffers(int viewportWidth, int viewportHeight)
 		for (int y = 0; y < viewportHeight; y++)
 		{
 			putPixel(x, y, glm::vec3(0.0f, 0.0f, 0.0f));
-			zBuffer[Z_INDEX(viewportWidth, x, y)] = INT32_MAX; 
+			zBuffer[Z_INDEX(viewportWidth, x, y)] = (float)INT32_MAX; 
 		}
 	}
 }
@@ -220,22 +220,23 @@ void Renderer::ClearColorBuffer(const glm::vec3& color)
 		for (int j = 0; j < viewportHeight; j++)
 		{
 			putPixel(i, j, glm::vec3(1,1,1));
-			zBuffer[Z_INDEX(viewportWidth, i, j)] = INT32_MAX;
+			zBuffer[Z_INDEX(viewportWidth, i, j)] = (float)INT32_MAX;
 		}
 	}
 }
 
 void Renderer::setProj(float & fovy,  float & aspectRatio,  int & _near,  int & _far)
 {
-	float angle = _CMATH_::tanf(0.5*fovy * PI / 180);
-	float nearHeight =  angle*2*_near; 
+	float angle = (float)0.5*fovy * (float)(PI / 180);
+	float vert = (float)_CMATH_::tanf(angle);
+	float nearHeight =  vert*2*_near; 
 	//float nearHeight = 2 * near * cmath::tan(0.5*fovy * PI / 180);
 	//float nearHeight = 2*near * tan(0.5*fovy * PI / 180);
 	float nearWidth = aspectRatio * nearHeight;
-	float t = 0.5 * nearHeight;
-	float b = -0.5 * nearHeight;
-	float l = -0.5 * nearWidth;
-	float r = 0.5 * nearWidth;
+	float t = (float)0.5 * nearHeight;
+	float b = (float)-0.5 * nearHeight;
+	float l = (float)-0.5 * nearWidth;
+	float r = (float)0.5 * nearWidth;
 	glm::vec4 v1(_near / r, 0, 0, 0);
 	glm::vec4 v2(0, _near / t, 0, 0);
 	glm::vec4 v3(0, 0, -1 * (_far + _near) / (_far - _near), -1);
@@ -271,8 +272,8 @@ void Renderer::DrawLine(Vertex p1, Vertex p2, glm::vec3 color, bool scale)
 {
 	float x1, x2, y1, y2, z = 0;
 	float dx = 0, dy = 0;
-	double x_theta = (glm::dot(glm::normalize(p2.getPoint() - p1.getPoint()), glm::vec3(1, 0, 0)));	//cosine between p1-p2 and x axis
-	double y_theta = (glm::dot(glm::normalize(p2.getPoint() - p1.getPoint()), glm::vec3(0, 1, 0)));	//cosine between p1-p2 and y axis
+	float x_theta = (glm::dot(glm::normalize(p2.getPoint() - p1.getPoint()), glm::vec3(1, 0, 0)));	//cosine between p1-p2 and x axis
+	float y_theta = (glm::dot(glm::normalize(p2.getPoint() - p1.getPoint()), glm::vec3(0, 1, 0)));	//cosine between p1-p2 and y axis
 	glm::vec3 normal1 = p1.getNormal(); 
 	glm::vec3 normal2 = p2.getNormal();
 	
@@ -394,8 +395,8 @@ void Renderer::DrawLine(glm::vec3 p1, glm::vec3 p2, glm::vec3 color, bool scale)
 {
 	float x1, x2, y1, y2, z = 0;
 	float dx = 0, dy = 0;
-	double x_theta = (glm::dot(glm::normalize(p2 - p1), glm::vec3(1, 0, 0)));	//cosine between p1-p2 and x axis
-	double y_theta = (glm::dot(glm::normalize(p2 - p1), glm::vec3(0, 1, 0)));	//cosine between p1-p2 and y axis
+	float x_theta = (glm::dot(glm::normalize(p2 - p1), glm::vec3(1, 0, 0)));	//cosine between p1-p2 and x axis
+	float y_theta = (glm::dot(glm::normalize(p2 - p1), glm::vec3(0, 1, 0)));	//cosine between p1-p2 and y axis
 
 	// order the points so one is left and one is right depending on x1 and x2 values.
 	if (scale) {
@@ -520,20 +521,20 @@ void Renderer::DrawLine1(glm::vec3 p1, glm::vec3 p2, glm::vec3 color, bool scale
 	// Bresenham's line algorithm
 	// order the points so one is left and one is right depending on x1 and x2 values.
 	if (scale) {
-		x1 = viewportWidth / 2 + (p1.x);
-		x2 = viewportWidth / 2 + (p2.x);
-		y1 = viewportHeight / 2 + (p1.y);
-		y2 = viewportHeight / 2 + (p2.y);
-		z1 = p1.z;
-		z2 = p2.z;
+		x1 = (int)(viewportWidth*0.5) + (int)(p1.x);
+		x2 = (int)(viewportWidth*0.5) + (int)(p2.x);
+		y1 = (int)(viewportHeight*0.5) + (int)(p1.y);
+		y2 = (int)(viewportHeight*0.5) + (int)(p2.y);
+		z1 = (int)p1.z;
+		z2 = (int)p2.z;
 	}
 	else {
-		x1 = p1.x;
-		x2 = p2.x;
-		y1 = p1.y;
-		y2 = p2.y;
-		z1 = p1.z;
-		z2 = p2.z;
+		x1 = (int)p1.x;
+		x2 = (int)p2.x;
+		y1 = (int)p1.y;
+		y2 = (int)p2.y;
+		z1 = (int)p1.z;
+		z2 = (int)p2.z;
 	}
 
 	const bool steep = (fabs(y2 - y1) > fabs(x2 - x1));
@@ -550,10 +551,10 @@ void Renderer::DrawLine1(glm::vec3 p1, glm::vec3 p2, glm::vec3 color, bool scale
 		std::swap(z1, z2);
 	}
 
-	const float dx = x2 - x1;
-	const float dy = fabs(y2 - y1);
+	const float dx = (float)x2 - x1;
+	const float dy = (float)fabs(y2 - y1);
 	const float dz = (z1 - z2) / dx;
-	float z = z1;
+	float z = (float)z1;
 
 	float error = dx / 2.0f;
 	const int ystep = (y1 < y2) ? 1 : -1;
@@ -619,7 +620,7 @@ void Renderer::drawCube()
 
 void Renderer::drawBetween2Edges(std::vector<Vertex> &points, Edge & e1, Edge & e2, const glm::vec3 &color)
 {
-	int  dy;
+	//int  dy;
 	float ratio = 0.0f;
 	float longEdgeSlope = e1.getP2().y - e1.getP2().y / (e1.getP1().x - e1.getP2().x);
 	float edge1ydiff = (float)((e1.getP2().y - e1.getP1().y));
@@ -636,11 +637,11 @@ void Renderer::drawBetween2Edges(std::vector<Vertex> &points, Edge & e1, Edge & 
 	float alpha_2 = 0;
 	float factorStep1 = 1.0f / edge1ydiff;
 	float factorStep2 = 1.0f / edge2ydiff;
-	for (int y = e2.getP1().y, dy = 0; y < e2.getP2().y; y++, dy++)
+	for (int y = (int)e2.getP1().y, dy = 0; y < (int)e2.getP2().y; y++, dy++)
 	{
 		ratio = (float)(edge2xdiff / edge2ydiff);
-		int ex1 = e1.getP1().x - (int)(edge1xdiff * alpha_1);
-		int ex2 = e2.getP1().x - (int)((ratio)* dy);
+		int ex1 = (int)e1.getP1().x - (int)(edge1xdiff * alpha_1);
+		int ex2 = (int)e2.getP1().x - (int)((ratio)* dy);
 
 		scanLine(points, ex1, ex2, y, color);
 
@@ -690,7 +691,7 @@ void Renderer::scanLine(std::vector<Vertex> &points, int &e1, int &e2, int &y, c
 			if (scene.getLights().size() != 0)
 			{
 				float combinedColor = 0.0f;
-				for (int i = 0; i < scene.getLights().size(); i++)
+				for (size_t i = 0; i < scene.getLights().size(); i++)
 				{
 					//combinedColor += scene.getLights().at(i).
 				}
@@ -731,19 +732,20 @@ void Renderer::scanLine1(std::vector<Vertex>&points, int & e1, int & e2, int & y
 	_points.push_back(points.at(1).getPoint());
 	_points.push_back(points.at(2).getPoint());
 
+	if (e1 == e2) return;
 	if (e1 > e2)
 	{
 		x1 = e2;
 		x2 = e1;
 	}
-
+	
 	if ((xdiff = abs(x2 - x1)) == 0) return;
 
-	factorStep = 1.0f / (float)xdiff;
+	factorStep = 1.0f / xdiff;
 	light = this->ambient + this->diffusive;
 
 	//	for (int x = x1 + 2; x < x2 - delta; x++)
-	for (int x = x1 ; x <= x2; x++)
+	for (int x = x1+1 ; x <= x2; x++)
 	{
 		z = zDepth(glm::vec3(x, y, z), points);
 		putPixel((x + this->viewportWidth / 2), (y + this->viewportHeight / 2), light * color, z);
@@ -785,10 +787,10 @@ void Renderer::scanLine1(std::vector<Vertex>&points, int & e1, int & e2, int & y
 
 void Renderer::fillTriangle2(std::vector<Vertex> points, const glm::vec3 & color)
 {
-	int dy = 0, y;
-	int ex1, ex2;
+	int dy = 0, y = 0;
+	int ex1 = 0, ex2 = 0;
 	int delta1 = 0, delta2 = 0, delta3 = 0;
-	float slope1, slope2, slope3;
+	float slope1 = 0.0, slope2 = 0.0, slope3 = 0.0;
 	glm::vec2 z, P, P1, P2, P3;
 
 	std::sort(points.begin(), points.end(), sort_dec_y);
@@ -805,18 +807,18 @@ void Renderer::fillTriangle2(std::vector<Vertex> points, const glm::vec3 & color
 	delta3 = (std::abs(slope3) < 0.5) ? 1 : 0;
 
 	//flat bottom trianlge
-	for (int y = P1.y - 1, dy = 1; y > P2.y; y--, dy++)
+	for (int y = (int)P1.y - 1, dy = 1; y > P2.y; y--, dy++)
 	{
-		ex1 = P1.x - (int)dy/slope2 + delta2;
-		ex2 = P1.x - (int)dy/slope1 + delta1;
+		ex1 = (int)P1.x - (int)(dy/slope2) + delta2;
+		ex2 = (int)P1.x - (int)(dy/slope1) + delta1;
 
 		scanLine1(points, ex1, ex2, y, color);
 	}
 	//flat top trianlge
-	for (int y = P3.y + 1, dy = 1; y <= P2.y; y++, dy++)
+	for (int y = (int)P3.y + 1, dy = 1; y <= P2.y; y++, dy++)
 	{
-		ex1 = P3.x + (int)dy / slope3 - delta3;
-		ex2 = P3.x + (int)dy / slope1 - delta1;
+		ex1 = (int)P3.x + (int)(dy / slope3) - delta3;
+		ex2 = (int)P3.x + (int)(dy / slope1) - delta1;
 
 		scanLine1(points, ex1, ex2, y, color);
 	}
@@ -844,7 +846,7 @@ void Renderer::fillTriangle1(std::vector<Vertex> points, const glm::vec3 & color
 	slope3 = (float)(shortEdge2.getP2().y - shortEdge2.getP1().y) / (shortEdge2.getP2().x - shortEdge2.getP1().x);
 
 
-	for (int dy = 1, y = P1.y - 1; y > P3.y; dy++, y--)
+	for (int dy = 1, y = (int)P1.y - 1; y > P3.y; dy++, y--)
 	{
 		if (P1.y == P2.y)
 		{
@@ -877,14 +879,14 @@ void Renderer::fillTriangle1(std::vector<Vertex> points, const glm::vec3 & color
 		else // slopes are "//"
 		if (slope1 > 0 && slope2 > 0 && (slope1 < slope2))
 		{
-			ex1 = ceil(P1.x - (dy) / slope1);
+			ex1 = (int)ceil(P1.x - (dy) / slope1);
 			ex2 = (int)(P1.x - (dy) / slope2);
 		}
 		else // slopes are "//"
 		if (slope1 > 0 && slope2 > 0 && (slope1 > slope2))
 		{
-			ex1 = ceil(P1.x - (dy) / slope2);
-			ex2 = floor(P1.x - (dy) / slope1);
+			ex1 = (int)ceil(P1.x - (dy) / slope2);
+			ex2 = (int)floor(P1.x - (dy) / slope1);
 		}
 		
 		scanLine1(points, ex1, ex2, y, color);
@@ -927,10 +929,10 @@ void Renderer::Render(const Scene& scene)
 	glm::mat4x4 projection;
 	glm::vec3 p1, p2, color;
 	p1.x = 0.0;
-	p1.y = (int)(viewportHeight/2);
+	p1.y = (float)(viewportHeight*0.5);
 	p1.z = 0.0;
-	p2.x = (int)viewportWidth;
-	p2.y = (int)(viewportHeight/2);
+	p2.x = (float)viewportWidth;
+	p2.y = (float)(viewportHeight*0.5);
 	p2.z = 0.0;
 	color.x = 0.0;
 	color.y = 0.0;
@@ -943,7 +945,7 @@ void Renderer::Render(const Scene& scene)
 	std::vector<std::shared_ptr<MeshModel>> models = scene.getModels();
 	std::shared_ptr<MeshModel> model; 
 	camera = scene.getCurrentCamera();
-	projection = (this->isProjOrthographic) ? camera.getOrthographicTransformation() : camera.getProjectionTransformation();
+	//projection = (this->isProjOrthographic) ? camera.getOrthographicTransformation() : camera.getperspectiveTransformation();
 	
 	//we iterate over models vector with an iterator
 	for (std::vector<std::shared_ptr<MeshModel>>::iterator it = models.begin(); it != models.end(); it++) {
@@ -997,7 +999,7 @@ void Renderer::Render(const Scene& scene)
 			c.cPoints[i] = currentCamera.getViewTransformation() * c.cPoints[i];
 			c.cPoints[i].w = 0;
 
-			c.cPoints[i] = currentCamera.getProjectionTransformation() * c.cPoints[i];
+			c.cPoints[i] = currentCamera.getperspectiveTransformation() * c.cPoints[i];
 			c.cPoints[i].w = 0; 
 		}
 		
@@ -1035,19 +1037,25 @@ void Renderer::Render(const Scene& scene)
 		{		
 			glm::vec3 normal = vertex->getNormal();
 			glm::vec4 newVertex = glm::vec4((*vertex).getPoint().x, (*vertex).getPoint().y, (*vertex).getPoint().z, 1);
-			newVertex = scaleTransform * newVertex;
+
+			//object scale -> roration -> translation
+			/*newVertex = scaleTransform * newVertex;
 			newVertex = rotationTransform * newVertex;
-			newVertex = translateTransform * newVertex;
+			newVertex = translateTransform * newVertex;*/
+			newVertex = localTransform * newVertex;
+
 			// new set WORLD transformations.
 			newVertex = worldRotate * newVertex;
 			newVertex = worldTranslate * newVertex;
 
+			//camera projection
+			//newVertex = camera.getViewTransformation() * newVertex;
 			/* right now the  problem is with this transformation !!*/
 			//newVertex = this->currentCamera.getViewTransformation() * newVertex;
-			newVertex = camera.getViewTransformation() * newVertex;
+			
 			//newVertex.w = 1 ;
 			//newVertex = this->currentCamera.getProjectionTransformation() * newVertex;
-			newVertex = projection * newVertex;
+			//newVertex = projection * newVertex;
 
 			//newVertex = this->proj * newVertex;
 
@@ -1135,54 +1143,72 @@ void Renderer::Render(const Scene& scene)
 			//}
 
 			
+
 			points.push_back(first);
 			points.push_back(second);
 			points.push_back(third);
-			drawTriangle(points, BLACK);
+			if (this->drawLines)
+			{
+				drawTriangle(points, BLACK);
+			}
+			
 			glm::vec3 finalColor = (this->fillTriangles) ? glm::vec3(0.8, 0.8, 0.8) : this->ambientColor;
 			if (this->fillTriangles)
 				fillTriangle2(points, GREEN);
 
 		}
-/*
-		Vertex first(glm::vec3(150, 120, 0), glm::vec3(0, 0, 0));
-		Vertex second(glm::vec3(250, 70, 0), glm::vec3(0, 0, 0));
-		Vertex third(glm::vec3(20, 20, 0), glm::vec3(0, 0, 0));
 
-		Vertex first1(glm::vec3(100, 20, 30), glm::vec3(1, 0, 0));
-		Vertex second1(glm::vec3(150, 100, 20), glm::vec3(1, 0, 0));
-		Vertex third1(glm::vec3(70, 70, -30), glm::vec3(1, 0, 0));
+		//Vertex first(glm::vec3(150, 120, 0), glm::vec3(0, 0, 0));
+		//Vertex second(glm::vec3(250, 70, 0), glm::vec3(0, 0, 0));
+		//Vertex third(glm::vec3(20, 20, 0), glm::vec3(0, 0, 0));
 
-		Vertex first2(glm::vec3(200, 20, 30), glm::vec3(1, 0, 0));
-		Vertex second2(glm::vec3(300, 20, 80), glm::vec3(1, 0, 0));
-		Vertex third2(glm::vec3(300, 120, -30), glm::vec3(1, 0, 0));
+		//Vertex first1(glm::vec3(100, 20, 30), glm::vec3(1, 0, 0));
+		//Vertex second1(glm::vec3(150, 100, 20), glm::vec3(1, 0, 0));
+		//Vertex third1(glm::vec3(70, 70, -30), glm::vec3(1, 0, 0));
 
-		std::vector<Vertex> points;
-		std::vector<Vertex> points1;
-		std::vector<Vertex> points2;
-		points.push_back(first);
-		points.push_back(second);
-		points.push_back(third);
-		points1.push_back(first1);
-		points1.push_back(second1);
-		points1.push_back(third1);
+		//Vertex first2(glm::vec3(200, 20, 30), glm::vec3(1, 0, 0));
+		//Vertex second2(glm::vec3(300, 20, 80), glm::vec3(1, 0, 0));
+		//Vertex third2(glm::vec3(300, 120, -30), glm::vec3(1, 0, 0));
 
-		points2.push_back(first2);
-		points2.push_back(second2);
-		points2.push_back(third2);
+		//*Vertex first(glm::vec3(150, 120, 0), glm::vec3(0, 0, 0));
+		//Vertex second(glm::vec3(250, 120, 0), glm::vec3(0, 0, 0));
+		//Vertex third(glm::vec3(220, 125, 0), glm::vec3(0, 0, 0));
 
-		if (this->drawLines)
-		{
-			drawTriangle(points, BLACK);
-			drawTriangle(points1, BLACK);
-			drawTriangle(points2, BLACK);
-		}
-		if (this->fillTriangles)
-		{
-			fillTriangle2(points, GREEN);
-			fillTriangle2(points1, RED);
-			fillTriangle2(points2, PURPLE);
-		}*/
+		//Vertex first1(glm::vec3(100, 20, 30), glm::vec3(1, 0, 0));
+		//Vertex second1(glm::vec3(100, 100, 20), glm::vec3(1, 0, 0));
+		//Vertex third1(glm::vec3(99, 170, -30), glm::vec3(1, 0, 0));
+
+		//Vertex first2(glm::vec3(200, 20, 30), glm::vec3(1, 0, 0));
+		//Vertex second2(glm::vec3(300, 20, 80), glm::vec3(1, 0, 0));
+		//Vertex third2(glm::vec3(300, 120, -30), glm::vec3(1, 0, 0));*/
+
+		//std::vector<Vertex> points;
+		//std::vector<Vertex> points1;
+		//std::vector<Vertex> points2;
+		//points.push_back(first);
+		//points.push_back(second);
+		//points.push_back(third);
+		//
+		//points1.push_back(first1);
+		//points1.push_back(second1);
+		//points1.push_back(third1);
+
+		//points2.push_back(first2);
+		//points2.push_back(second2);
+		//points2.push_back(third2);
+
+		//if (this->drawLines)
+		//{
+		//	drawTriangle(points, BLACK);
+		//	drawTriangle(points1, BLACK);
+		//	drawTriangle(points2, BLACK);
+		//}
+		//if (this->fillTriangles)
+		//{
+		//	fillTriangle2(points, GREEN);
+		//	fillTriangle2(points1, RED);
+		//	fillTriangle2(points2, PURPLE);
+		//}
 	}
 
 	

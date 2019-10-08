@@ -189,7 +189,7 @@ const glm::mat4& MeshModel::GetWorldTransformation() const
 
 const glm::mat4& MeshModel::GetLocalTransform() const
 {
-	return localTransform;
+	return this->localTransform;
 }
 void MeshModel::SetColor(const glm::vec4& color)
 {

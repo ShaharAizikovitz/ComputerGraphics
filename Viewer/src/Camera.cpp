@@ -45,11 +45,12 @@ void Camera::setCameraScale()
 }
 
 const glm::mat4 Camera::getViewTransformation() {
-	return viewTransformation;
+	//return viewTransformation;
+	return (this->isOrtho) ? this->viewTransformation * this->orthographicTransformation : this->viewTransformation * this->perspectiveTransformation;
 }
-const glm::mat4 Camera::getProjectionTransformation()
+const glm::mat4 Camera::getperspectiveTransformation()
 {
-	return this->projectionTransformation;
+	return this->perspectiveTransformation;
 }
 const glm::mat4 Camera::getOrthographicTransformation()
 {
@@ -87,18 +88,14 @@ void Camera::setOrthographicProjection(
 	const int right,
 	const int bottom,
 	const int top,
-	const int near,
-	const int far)
+	const int _near,
+	const int _far)
 {
-	glm::vec4 v1, v2, v3, v4;
-	int width = right - left;
-	int height = top - bottom;
-
-
-	v1 = glm::vec4(2 / (right - left), 0, 0, 0);
-	v2 = glm::vec4(0, 2 / (top - bottom), 0, 0);
-	v3 = glm::vec4(0, 0, 2 / (near - far), 0);
-	v4 = glm::vec4(-(right + left) / (right - left), -(top + bottom) /(top - bottom), -(far + near) / (far - near), 1);
+	
+	glm::vec4 v1 = glm::vec4( (float)2 / 400, 0, 0, 0);
+	glm::vec4 v2 = glm::vec4(0, (float)2 / (top - bottom), 0, 0);
+	glm::vec4 v3 = glm::vec4(0, 0, (float)2 / (_near - _far), 0);
+	glm::vec4 v4 = glm::vec4(-(float)(right + left) / (right - left), -(float)(top + bottom) /(top - bottom), -(float)(_far + _near) / (_far - _near), 1);
 
 	this->orthographicTransformation = glm::mat4(v1, v2, v3, v4);
 }
@@ -112,29 +109,29 @@ void Camera::setPerspectiveProjection(float &fovy, float &aspectRatio, int &near
 	float l = -0.5 * nearWidth;
 	float r = 0.5 * nearWidth;
 	if (near == far || t == b) return;
-	std::cout << "near " << near << std::endl;
+	/*std::cout << "near " << near << std::endl;
 	for (size_t i = 0; i < 4; i++)
 	{
 		for (size_t j = 0; j < 4; j++)
-			std::cout << this->projectionTransformation[i][j] << " ";
+			std::cout << this->perspectiveTransformation[i][j] << " ";
 		std::cout << std::endl;
-	}
+	}*/
 	std::cout << std::endl;
 	glm::vec4 v1(2 * near / (r - l), 0, 0, 0);
 	glm::vec4 v2(0, 2 * near / (t - b), 0, 0);
 	glm::vec4 v3((r + l) / (r - l), (t + b) / (t - b), -1 * (far + near) / (far - near), -1);
 	glm::vec4 v4(0, 0, -2 *( far * near )/ (far - near), 0);
-	this->projectionTransformation = glm::mat4(v1, v2, v3, v4);
-	/*this->projectionTransformation = glm::mat4(glm::vec4(2 * near / (r - l), 0, (r + l) / (r - l), 0),
+	this->perspectiveTransformation = glm::mat4(v1, v2, v3, v4);
+	/*this->perspectiveTransformation = glm::mat4(glm::vec4(2 * near / (r - l), 0, (r + l) / (r - l), 0),
 											   glm::vec4(0, 2 * near / (t - b), (t + b) / (t - b), 0),
 		                                       glm::vec4(0, 0, -1 * (far + near) / (far - near), -2 * (far * near) / (far - near)),
 		                                       glm::vec4(0, 0, -1, 0));*/
-	for (size_t i = 0; i < 4; i++)
+	/*for (size_t i = 0; i < 4; i++)
 	{
 		for (size_t j = 0; j < 4; j++)
-			std::cout << this->projectionTransformation[i][j] << " ";
+			std::cout << this->perspectiveTransformation[i][j] << " ";
 		std::cout << std::endl;
-	}
+	}*/
 }
 
 void Camera::SetZoom(const float zoom)

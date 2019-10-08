@@ -38,21 +38,26 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 	if (showDemoWindow)
 	{
 		ImGui::ShowDemoWindow(&showDemoWindow);
-
 	}
 
 	ImVec2 size = ImGui::GetWindowSize();
+	if (ImGui::IsMouseDown(0)) {
+		ImVec2 c = ImGui::GetMousePos();
+		ImVec2 s = ImGui::GetWindowSize();
+		/*if (ImGui::IsAnyItemActive)
+		{
+			std::cout << "x= " << c.x << " y=" << c.y << std::endl;
+		}*/
+		//renderer.getCurrentModel()->setRotationTransform(c.x, c.y, 1);
+		if (renderer.getCurrentModel() != NULL && ImGui::IsWindowHovered)
+		{
+			renderer.rotateWorldX((c.y - size.y / 2) );
+			renderer.rotateWorldY((c.x - size.x / 2) );
+		}
+	}
+	//if (ImGui::IsWindowFocused) std::cout << "on window" << std::endl; 
 
-	//if (ImGui::IsMouseDown(0)) {
-	//	ImVec2 c = ImGui::GetMousePos();
-	//	std::cout << "x= " << c.x << " y=" << c.y << std::endl;
-	//	//renderer.getCurrentModel()->setRotationTransform(c.x, c.y, 1);
-	//	if (renderer.getCurrentModel() != NULL)
-	//	{
-	//		renderer.rotateWorldX(c.y - size.y / 2);
-	//		renderer.rotateWorldY(c.x - size.x / 2);
-	//	}
-	//}
+	
 	////right mouse 
 	//if (ImGui::IsMouseDown(1) && renderer.isHasModel()) {
 	//	//IMPLEMENT HERE WHAT HAPPENS WHEN ------RIGHT MOUSE BUTTON ------- IS DOWN
@@ -131,7 +136,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 			renderer.rotateLocalZ(rotateLocalZ);
 		}
 		ImGui::Text("Scaling:");
-		if (ImGui::SliderFloat("scale", &f, 0.0f, 6000.0f) && renderer.isHasModel()) {
+		if (ImGui::SliderFloat("scale", &f, 0.0f, 16000.0f) && renderer.isHasModel()) {
 			renderer.setScaleNumber(f);
 		}
 		ImGui::Text("World Translations");
@@ -159,17 +164,17 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 			ImVec2 c = ImGui::GetMousePos();
 			//ImVec2 max_size = ImGui::GetWindowContentRegionMax();
 	
-			if (renderer.getCurrentModel() != NULL)
-			{
-				//exclude control wwindow
-				if(!ImGui::IsWindowHovered())
-				{
-					std::cout << "x= " << c.x << " y=" << c.y << std::endl;
-					renderer.rotateWorldX(c.y - size.y / 2);
-					renderer.rotateWorldY(c.x - size.x / 2);
-				}
-				
-			}		
+			//if (renderer.getCurrentModel() != NULL)
+			//{
+			//	//exclude control wwindow
+			//	if(!ImGui::IsWindowHovered())
+			//	{
+			//		std::cout << "x= " << c.x << " y=" << c.y << std::endl;
+			//		renderer.rotateWorldX(c.y - size.y / 2);
+			//		renderer.rotateWorldY(c.x - size.x / 2);
+			//	}
+			//	
+			//}		
 		}
 		//right mouse 
 		if (ImGui::IsMouseDown(1) && renderer.isHasModel()) {
@@ -182,6 +187,23 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 		}
 
 		ImGui::EndChild();
+	}
+
+	if (!showControlWindow)
+	{
+		if (ImGui::IsMouseDown(0)) {
+			ImVec2 c = ImGui::GetMousePos();
+			if (ImGui::IsAnyItemActive)
+			{
+				std::cout << "x= " << c.x << " y=" << c.y << std::endl;
+			}
+			//renderer.getCurrentModel()->setRotationTransform(c.x, c.y, 1);
+			/*if (renderer.getCurrentModel() != NULL && ImGui::IsWindowHovered)
+			{
+				renderer.rotateWorldX(c.y - size.y / 2);
+				renderer.rotateWorldY(c.x - size.x / 2);
+			}*/
+		}
 	}
 
 	// 3. Show features window.

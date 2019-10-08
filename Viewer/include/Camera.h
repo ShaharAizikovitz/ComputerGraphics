@@ -16,7 +16,7 @@ class Camera
 private:
 	glm::mat4x4 viewWorldTransform;
 	glm::mat4x4 viewTransformation;
-	glm::mat4x4 projectionTransformation;
+	glm::mat4x4 perspectiveTransformation;
 	glm::mat4x4 orthographicTransformation;
 	glm::mat4x4 scalingTransformation;
 	glm::vec3 oldeye;
@@ -31,6 +31,7 @@ private:
 	float aspectRatio;
 	float FOV;
 	bool isCurrent;
+	bool isOrtho;
 	int number;
 
 
@@ -47,7 +48,7 @@ public:
 	//getters/setters
 	//getters
 	const glm::mat4 getViewTransformation();
-	const glm::mat4 getProjectionTransformation();
+	const glm::mat4 getperspectiveTransformation();
 	const glm::mat4 getOrthographicTransformation();
 	const glm::mat4x4 getViewWorldTransform() const { return this->viewWorldTransform; }
 	const int getNear() const { return this->_near; }
@@ -65,4 +66,5 @@ public:
 	void setCurrent(const bool &b) { this->isCurrent = b; }
 	void setCameraViewWorldTransform(glm::vec4&);
 	void setCameraNum(const int& i) { this->number = i; }
+	void setIsortho(const bool& b) { this->isOrtho = b; }
 };
