@@ -266,7 +266,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 	if (showAddLightWindow)
 	{
 		int type = 0;
-		int diameterVal;
+		int diameterVal = 20;
 		bool showtextBox = false;
 		static int x_pos = 0;
 		static int y_pos = 0;
@@ -277,12 +277,24 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 		
 		//float clearColor;
 		Light light;
-		ImGui::Begin("Light", &showAddLightWindow);   // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
+		ImGui::Begin("Light", &showAddLightWindow);   
+		ImGui::Columns(2);
+
+		ImGui::BeginGroup();
 		ImGui::Text("Light position:");
-		if (ImGui::SliderInt("light x position", (int*)&x_pos, -5000, 5000) && renderer.isHasModel()) { }
-		if (ImGui::SliderInt("light y position", (int*)&y_pos, -5000, 5000) && renderer.isHasModel()) { }
-		if (ImGui::SliderInt("light z position", (int*)&z_pos, -5000, 5000) && renderer.isHasModel()) { }
+		if (ImGui::SliderInt(" x position", (int*)&x_pos, -5000, 5000) && renderer.isHasModel()) { }
+		if (ImGui::SliderInt(" y position", (int*)&y_pos, -5000, 5000) && renderer.isHasModel()) { }
+		if (ImGui::SliderInt(" z position", (int*)&z_pos, -5000, 5000) && renderer.isHasModel()) { }
+		ImGui::NextColumn();
+		ImGui::BeginGroup();
+		ImGui::Text("Light direction:");
+		if (ImGui::SliderInt(" x direction", (int*)&x_pos, -1, 1) && renderer.isHasModel()) {}
+		if (ImGui::SliderInt(" y direction", (int*)&y_pos, -1, 1) && renderer.isHasModel()) {}
+		if (ImGui::SliderInt(" z direction", (int*)&z_pos, -1, 1) && renderer.isHasModel()) {}
+		ImGui::EndGroup();
 		ImGui::Separator();
+		
+		ImGui::Columns(1);
 		ImGui::RadioButton("diffusive", &diffusive, 1);
 		if (diffusive)
 		{
@@ -298,6 +310,9 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 		if (ImGui::RadioButton("specular", &specular, 2)) { type = 2; diffusive = 0; }
 		ImGui::Separator();
 		ImGui::ColorEdit3("clear color", (float*)&lightColor);
+		ImGui::EndGroup();
+
+
 
 		ImGui::Separator();
 		if (ImGui::Button("add"))
