@@ -80,6 +80,9 @@ private:		//members
 	void fillTriangle2(std::vector<Vertex> points, const glm::vec3 & color);
 	void fillTriangle1(std::vector<Vertex> points, const glm::vec3 &color);
 	void fillTriangle(std::vector<Vertex> points, const glm::vec3 &color);
+	void Barycentric(glm::vec3 p, glm::vec3 a, glm::vec3 b, glm::vec3 c, float &u, float &v, float &w);
+	glm::vec3 Barycentric1(glm::vec3 point, glm::vec3 a, glm::vec3 b, glm::vec3 c);
+	glm::vec3 Barycentric2(glm::vec3 point, glm::vec3 a, glm::vec3 b, glm::vec3 c);
 
 
 	std::vector<std::string> ExcludeModels;
@@ -91,7 +94,7 @@ public:
 	~Renderer();
 	bool isHasModel();
 	void setHasModel();
-	void Render(const Scene& scene);
+	void render(const Scene& scene);
 	void SwapBuffers();
 	void ClearColorBuffer(const glm::vec3& color);	
 	void rotateLocalX(float x);

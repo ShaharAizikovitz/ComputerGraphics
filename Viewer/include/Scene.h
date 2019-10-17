@@ -32,8 +32,8 @@ public:
 	void addCamera(const Camera& camera);
 	
 	//setters
-	void SetActiveCameraIndex(int index);
-	void SetActiveModelIndex(int index);
+	void SetActiveCameraIndex(size_t index);
+	void SetActiveModelIndex(size_t index);
 
 	//getters
 	const int getHeight() const { return this->height; }
@@ -44,6 +44,6 @@ public:
 	const int GetActiveModelIndex() const;
 	const std::vector<std::shared_ptr<MeshModel>> getModels() const;
 	const std::vector<Camera> getCameras() const;
-	const std::vector<Light> getLights() const { return this->Lights; }
+	 std::vector<Light> getLights() const { return this->Lights; }
 	const Camera getCurrentCamera() const { return this->currentCamera; }
 };

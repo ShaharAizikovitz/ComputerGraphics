@@ -167,34 +167,105 @@ void Renderer::createBuffers(int viewportWidth, int viewportHeight)
 	}
 }
 
-float Renderer::zDepth(glm::vec3 p, std::vector<Vertex> points)
+float Renderer::zDepth(glm::vec3 point, std::vector<Vertex> polygon)
 {
-	float result = 0;
-	float z1, z2, z3;
+	float result = 0.0f;
+	glm::vec3 z1, z2, z3, v0, v1, v2;
 	float d1 = 1.0f, d2 = 1.0f, d3 = 1.0f;
-	glm::vec3 baryZ = glm::vec3(0);
-	std::vector<glm::vec3> pointsb;
+	float d00 = 0.0f, d01 = 0.0f, d11 = 0.0f, d20 = 0.0f, d21 = 0.0f;
+	float denom = 0.0f;
+	float bary_x = 0.0f, bary_y = 0.0f, bary_z = 0.0f;
+	glm::vec3 baryZ = glm::vec3(0.0f);
+	z1 = polygon.at(0).getPoint();
+	z2 = polygon.at(1).getPoint();
+	z3 = polygon.at(2).getPoint();
 
-	z1 = points.at(0).getPoint().z;
+
+	//######## trial #########
+	//########################
+	v0 = z2 - z1; 
+	v1 = z3 - z1;
+	v2 = point - z1;
+	d00 = glm::dot(v0, v0);
+	d01 = glm::dot(v0, v1);
+	d11 = glm::dot(v1, v1);
+	d20 = glm::dot(v2, v0);
+	d21 = glm::dot(v2, v1);
+	denom = d00 * d11 - d01 * d01;
+	bary_y = (d11 * d20 - d01 * d21) / denom;
+	bary_z = (d00 * d21 - d01 * d20) / denom;
+	bary_x = 1.0f - (bary_y + bary_z);
+	//std::vector<glm::vec3> pointsb;
+
+	/*z1 = points.at(0).getPoint().z;
 	z2 = points.at(1).getPoint().z;
-	z3 = points.at(2).getPoint().z;
+	z3 = points.at(2).getPoint().z;*/
 
-	pointsb.push_back(points.at(0).getPoint());
+	/*pointsb.push_back(points.at(0).getPoint());
 	pointsb.push_back(points.at(1).getPoint());
-	pointsb.push_back(points.at(2).getPoint());
+	pointsb.push_back(points.at(2).getPoint());*/
 	
-	if (glm::all(glm::equal(p, points.at(0).getPoint())) ) result = points.at(0).getPoint().z;
+	/*if (glm::all(glm::equal(p, points.at(0).getPoint())) ) result = points.at(0).getPoint().z;
 	else if (glm::all(glm::equal(p, points.at(0).getPoint()))) result = points.at(1).getPoint().z;
 	else if (glm::all(glm::equal(p, points.at(0).getPoint()))) result = points.at(2).getPoint().z;
 
 	else
 	{
 		baryZ = baryCentric(pointsb, p); 
-	}
+	}*/
+	//Barycentric(point, z1, z2, z3, bary_x, bary_y, bary_z);
+	//result = z1*baryZ.x + z2*baryZ.y + z3*baryZ.z;
+	return bary_z;
 
-	result = z1*baryZ.x + z2*baryZ.y + z3*baryZ.z;
-	return result;
+}
 
+// Compute barycentric coordinates (u, v, w) for
+// point p with respect to triangle (a, b, c)
+void Renderer::Barycentric(glm::vec3 p, glm::vec3 a, glm::vec3 b, glm::vec3 c, float &u, float &v, float &w)
+{
+	glm::vec3 v0 = b - a, v1 = c - a, v2 = p - a;
+	float d00 = glm::dot(v0, v0);
+	float d01 = glm::dot(v0, v1);
+	float d11 = glm::dot(v1, v1);
+	float d20 = glm::dot(v2, v0);
+	float d21 = glm::dot(v2, v1);
+	float denom = d00 * d11 - d01 * d01;
+	v = (d11 * d20 - d01 * d21) / denom;
+	w = (d00 * d21 - d01 * d20) / denom;
+	u = 1.0f - v - w;
+}
+glm::vec3 Renderer::Barycentric1(glm::vec3 p, glm::vec3 a, glm::vec3 b, glm::vec3 c)
+{
+	glm::vec3 v0 = b - a, v1 = c - a, v2 = p - a;
+	float u = 0.0f, v = 0.0f, w = 0.0f;
+	float d00 = glm::dot(v0, v0);
+	float d01 = glm::dot(v0, v1);
+	float d11 = glm::dot(v1, v1);
+	float d20 = glm::dot(v2, v0);
+	float d21 = glm::dot(v2, v1);
+	float denom = d00 * d11 - d01 * d01;
+	v = (d11 * d20 - d01 * d21) / denom;
+	w = (d00 * d21 - d01 * d20) / denom;
+	u = 1.0f - v - w;
+
+	return glm::vec3(u,v,w);
+}
+glm::vec3 Renderer::Barycentric2(glm::vec3 p, glm::vec3 a, glm::vec3 b, glm::vec3 c)
+{
+	//glm::vec3 v0 = b - a, v1 = c - a, v2 = p - a;
+	float u = 0.0f, v = 0.0f, w = 0.0f;
+	glm::vec3 t0, t1, t2, t3;
+	t0 = glm::vec3(p.x, p.y, 1.0f);
+	t1 = glm::vec3(a.x, a.y, 1.0f);
+	t2 = glm::vec3(b.x, b.y, 1.0f);
+	t3 = glm::vec3(c.x, c.y, 1.0f);
+	float denom = glm::determinant(glm::mat3(t1, t2, t3));
+
+	u = (p.x * (b.y - c.y) - b.x * (p.y - c.y) + c.x * (p.y - b.y)) / denom;
+	v = (-p.x * (a.y - c.y) + a.x * (p.y - c.y) - c.x * (p.y - a.y)) / denom;
+	w = 1.0f - u - v; 
+
+	return glm::vec3(u, v, w);
 }
 
 glm::vec3 Renderer::baryCentric(std::vector<glm::vec3> &polygon, glm::vec3 &point)
@@ -650,7 +721,7 @@ void Renderer::drawBetween2Edges(std::vector<Vertex> &points, Edge & e1, Edge & 
 
 }
 
-void Renderer::scanLine(std::vector<Vertex> &points, int &e1, int &e2, int &y, const glm::vec3 &color)
+void Renderer::scanLine(std::vector<Vertex> &polygon, int &e1, int &e2, int &y, const glm::vec3 &color)
 {
 	int dx = 0;
 	int delta = 0;
@@ -661,10 +732,10 @@ void Renderer::scanLine(std::vector<Vertex> &points, int &e1, int &e2, int &y, c
 	float z = 1.0f, oldz = 0.0f;
 	float light = 0.0f;
 	glm::vec3 baryCoor, normal;
-	std::vector<glm::vec3> _points;
-	_points.push_back(points.at(0).getPoint());
-	_points.push_back(points.at(1).getPoint());
-	_points.push_back(points.at(2).getPoint());
+	std::vector<glm::vec3> _polygon;
+	_polygon.push_back(polygon.at(0).getPoint());
+	_polygon.push_back(polygon.at(1).getPoint());
+	_polygon.push_back(polygon.at(2).getPoint());
 
 	if (e1 > e2)
 	{
@@ -681,12 +752,12 @@ void Renderer::scanLine(std::vector<Vertex> &points, int &e1, int &e2, int &y, c
 	for (int x = x1; x < x2 ; x++)
 	{
 		{
-			z = zDepth(glm::vec3(x, y, z), points);
-			baryCoor = baryCentric(_points, glm::vec3(x, y, z)); 
+			z = zDepth(glm::vec3(x, y, z), polygon);
+			baryCoor = baryCentric(_polygon, glm::vec3(x, y, z)); 
 
-			normal.x = (points.at(0).getNormal().x * baryCoor.x + points.at(1).getNormal().x * baryCoor.y + points.at(2).getNormal().x * baryCoor.z);
-			normal.y = (points.at(0).getNormal().y * baryCoor.x + points.at(1).getNormal().y * baryCoor.y + points.at(2).getNormal().y * baryCoor.z);
-			normal.z = (points.at(0).getNormal().z * baryCoor.x + points.at(1).getNormal().z * baryCoor.y + points.at(2).getNormal().z * baryCoor.z);
+			normal.x = (polygon.at(0).getNormal().x * baryCoor.x + polygon.at(1).getNormal().x * baryCoor.y + polygon.at(2).getNormal().x * baryCoor.z);
+			normal.y = (polygon.at(0).getNormal().y * baryCoor.x + polygon.at(1).getNormal().y * baryCoor.y + polygon.at(2).getNormal().y * baryCoor.z);
+			normal.z = (polygon.at(0).getNormal().z * baryCoor.x + polygon.at(1).getNormal().z * baryCoor.y + polygon.at(2).getNormal().z * baryCoor.z);
 			//color
 			if (scene.getLights().size() != 0)
 			{
@@ -716,7 +787,7 @@ void Renderer::scanLine(std::vector<Vertex> &points, int &e1, int &e2, int &y, c
 	}
 }
 
-void Renderer::scanLine1(std::vector<Vertex>&points, int & e1, int & e2, int & y, const glm::vec3 & color)
+void Renderer::scanLine1(std::vector<Vertex>&polygon, int & e1, int & e2, int & y, const glm::vec3 & color)
 {
 	int dx = 0;
 	int delta = 0;
@@ -724,13 +795,13 @@ void Renderer::scanLine1(std::vector<Vertex>&points, int & e1, int & e2, int & y
 	int newx = 0, newy = 0;
 	float factor = 0.0f;
 	float factorStep = 0.0f;
-	float z = 1.0f, oldz = 0.0f;
+	float z = 0.0f, oldz = 0.0f;
 	float light = 0.0f;
 	glm::vec3 baryCoor, normal;
-	std::vector<glm::vec3> _points;
-	_points.push_back(points.at(0).getPoint());
-	_points.push_back(points.at(1).getPoint());
-	_points.push_back(points.at(2).getPoint());
+	std::vector<glm::vec3> _polygon;
+	_polygon.push_back(polygon.at(0).getPoint());
+	_polygon.push_back(polygon.at(1).getPoint());
+	_polygon.push_back(polygon.at(2).getPoint());
 
 	if (e1 == e2) return;
 	if (e1 > e2)
@@ -739,23 +810,61 @@ void Renderer::scanLine1(std::vector<Vertex>&points, int & e1, int & e2, int & y
 		x2 = e1;
 	}
 	
-	if ((xdiff = abs(x2 - x1)) == 0) return;
-
-	factorStep = 1.0f / xdiff;
 	light = this->ambient + this->diffusive;
 
 	//	for (int x = x1 + 2; x < x2 - delta; x++)
 	for (int x = x1+1 ; x <= x2; x++)
 	{
-		z = zDepth(glm::vec3(x, y, z), points);
-		putPixel((x + this->viewportWidth / 2), (y + this->viewportHeight / 2), light * color, z);
-		//{
-		//	z = zDepth(glm::vec3(x, y, z), points);
-		//	baryCoor = baryCentric(_points, glm::vec3(x, y, z));
+		baryCoor = Barycentric1(glm::vec3(x, y, 1.0f), polygon.at(0).getPoint(), polygon.at(1).getPoint(), polygon.at(2).getPoint());
+		//normal at point p(x,y)
+		normal = polygon.at(0).getNormal() * baryCoor.x + polygon.at(1).getNormal() * baryCoor.y + polygon.at(2).getNormal() * baryCoor.z;
+		z = (polygon.at(0).getPoint().z * baryCoor.z + polygon.at(1).getPoint().z * baryCoor.z + polygon.at(2).getPoint().z * baryCoor.z);
+		//calc color and lighting
+		light = this->ambient;
 
-		//	normal.x = (points.at(0).getNormal().x * baryCoor.x + points.at(1).getNormal().x * baryCoor.y + points.at(2).getNormal().x * baryCoor.z);
-		//	normal.y = (points.at(0).getNormal().y * baryCoor.x + points.at(1).getNormal().y * baryCoor.y + points.at(2).getNormal().y * baryCoor.z);
-		//	normal.z = (points.at(0).getNormal().z * baryCoor.x + points.at(1).getNormal().z * baryCoor.y + points.at(2).getNormal().z * baryCoor.z);
+		if (scene.getLights().size() != 0)
+		{
+			float combinedColor = 0.0f;
+			std::vector<Light>::iterator it;
+			for (it = scene.getLights().begin(); it != scene.getLights().end(); it++)
+			{
+				//diffusive
+				if ((*it).getType() == 1 )
+				{
+					light += this->diffusive * glm::dot(glm::normalize(this->diffusivePos), normal);
+				}
+				//specular
+				else if ((*it).getType() == 2)
+				{
+					light += this->diffusive * glm::dot(glm::normalize(this->diffusivePos), normal);
+				}
+			}
+			
+		}
+		/*if (this->fillTriangles)
+		{
+			dx = 1;
+			light = 1.0f;
+		}*/
+		else
+		{
+			light = this->ambient;
+			dx = 0;
+		}
+		putPixel((x + this->viewportWidth / 2), (y + this->viewportHeight / 2), light * color, z);
+
+
+		/*z = zDepth(glm::vec3(x, y, z), polygon);
+		putPixel((x + this->viewportWidth / 2), (y + this->viewportHeight / 2), light * color, z);*/
+		
+		//{
+		//	z = zDepth(glm::vec3(x, y, z), polygon);
+		//	baryCoor = baryCentric(_polygon, glm::vec3(x, y, z));
+
+		
+			/*normal.x = (polygon.at(0).getNormal().x * baryCoor.x + polygon.at(1).getNormal().x * baryCoor.y + polygon.at(2).getNormal().x * baryCoor.z);
+			normal.y = (polygon.at(0).getNormal().y * baryCoor.x + polygon.at(1).getNormal().y * baryCoor.y + polygon.at(2).getNormal().y * baryCoor.z);
+			normal.z = (polygon.at(0).getNormal().z * baryCoor.x + polygon.at(1).getNormal().z * baryCoor.y + polygon.at(2).getNormal().z * baryCoor.z);*/
 		//	//color
 		//	if (scene.getLights().size() != 0)
 		//	{
@@ -785,7 +894,7 @@ void Renderer::scanLine1(std::vector<Vertex>&points, int & e1, int & e2, int & y
 	}
 }
 
-void Renderer::fillTriangle2(std::vector<Vertex> points, const glm::vec3 & color)
+void Renderer::fillTriangle2(std::vector<Vertex> polygon, const glm::vec3 & color)
 {
 	int dy = 0, y = 0;
 	int ex1 = 0, ex2 = 0;
@@ -793,10 +902,10 @@ void Renderer::fillTriangle2(std::vector<Vertex> points, const glm::vec3 & color
 	float slope1 = 0.0, slope2 = 0.0, slope3 = 0.0;
 	glm::vec2 z, P, P1, P2, P3;
 
-	std::sort(points.begin(), points.end(), sort_dec_y);
-	P1 = glm::vec2(points.at(0).getPoint().x, points.at(0).getPoint().y);
-	P2 = glm::vec2(points.at(1).getPoint().x, points.at(1).getPoint().y);
-	P3 = glm::vec2(points.at(2).getPoint().x, points.at(2).getPoint().y);
+	std::sort(polygon.begin(), polygon.end(), sort_dec_y);
+	P1 = glm::vec2(polygon.at(0).getPoint().x, polygon.at(0).getPoint().y);
+	P2 = glm::vec2(polygon.at(1).getPoint().x, polygon.at(1).getPoint().y);
+	P3 = glm::vec2(polygon.at(2).getPoint().x, polygon.at(2).getPoint().y);
 
 	slope1 = (float)(P1.y - P3.y) / (P1.x - P3.x);
 	slope2 = (float)(P1.y - P2.y) / (P1.x - P2.x);
@@ -812,7 +921,7 @@ void Renderer::fillTriangle2(std::vector<Vertex> points, const glm::vec3 & color
 		ex1 = (int)P1.x - (int)(dy/slope2) + delta2;
 		ex2 = (int)P1.x - (int)(dy/slope1) + delta1;
 
-		scanLine1(points, ex1, ex2, y, color);
+		scanLine1(polygon, ex1, ex2, y, color);
 	}
 	//flat top trianlge
 	for (int y = (int)P3.y + 1, dy = 1; y <= P2.y; y++, dy++)
@@ -820,7 +929,7 @@ void Renderer::fillTriangle2(std::vector<Vertex> points, const glm::vec3 & color
 		ex1 = (int)P3.x + (int)(dy / slope3) - delta3;
 		ex2 = (int)P3.x + (int)(dy / slope1) - delta1;
 
-		scanLine1(points, ex1, ex2, y, color);
+		scanLine1(polygon, ex1, ex2, y, color);
 	}
 
 }
@@ -924,7 +1033,7 @@ void Renderer::drawTriangle(std::vector<Vertex>&points, glm::vec3 &color)
 }
 
 
-void Renderer::Render(const Scene& scene)
+void Renderer::render(const Scene& scene)
 {
 	glm::mat4x4 projection;
 	glm::vec3 p1, p2, color;
@@ -1097,7 +1206,7 @@ void Renderer::Render(const Scene& scene)
 		{
 			//face vertices for fill triangles purpose
 			Vertex first, second, third;
-			std::vector<Vertex> points;
+			std::vector<Vertex> polygon;
 			first = vertexs.at((*face).GetVertexIndex(0) - 1);
 			second = vertexs.at((*face).GetVertexIndex(1) - 1);
 			third = vertexs.at((*face).GetVertexIndex(2) - 1);
@@ -1144,17 +1253,17 @@ void Renderer::Render(const Scene& scene)
 
 			
 
-			points.push_back(first);
-			points.push_back(second);
-			points.push_back(third);
+			polygon.push_back(first);
+			polygon.push_back(second);
+			polygon.push_back(third);
 			if (this->drawLines)
 			{
-				drawTriangle(points, BLACK);
+				drawTriangle(polygon, BLACK);
 			}
 			
 			glm::vec3 finalColor = (this->fillTriangles) ? glm::vec3(0.8, 0.8, 0.8) : this->ambientColor;
 			if (this->fillTriangles)
-				fillTriangle2(points, GREEN);
+				fillTriangle2(polygon, GREEN);
 
 		}
 

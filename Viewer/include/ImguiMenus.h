@@ -4,4 +4,4 @@
 #include "Renderer.h"
 
 void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer);
-const glm::vec4& GetClearColor();
+const glm::vec4 GetClearColor();

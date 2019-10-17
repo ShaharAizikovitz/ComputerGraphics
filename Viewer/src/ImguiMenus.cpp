@@ -16,6 +16,7 @@
 #include "Renderer.h"
 #include <iostream>
 
+
 bool showDemoWindow = false;
 bool showFeaturesWindow = false;
 bool showLightWindow = false;
@@ -23,39 +24,45 @@ bool showAddLightWindow = false;
 bool showOrthoProjection = true;
 bool showPerspProjection = false;
 bool showControlWindow = false;
+static char buf[256];
 
 glm::vec3 objectColor;
 glm::vec3 lightColor;
 
-const glm::vec4& GetClearColor()
+const glm::vec4 GetClearColor()
 {
-	return BACKGROUND;
+	return glm::vec4(1.0f, 1.f, 1.0f, 1.00f);
 }
 
 void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 {
 	// 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
-	if (showDemoWindow)
+	/*if (showDemoWindow)
 	{
 		ImGui::ShowDemoWindow(&showDemoWindow);
+	}*/
+	if (ImGui::IsWindowHovered(ImGuiFocusedFlags_ChildWindows))
+	{
+		std::cout << " child window" << std::endl;
 	}
 
 	ImVec2 size = ImGui::GetWindowSize();
-	if (ImGui::IsMouseDown(0)) {
+	if (ImGui::IsMouseDown(0) && !ImGui::IsItemHovered(ImGuiFocusedFlags_ChildWindows)) {
 		ImVec2 c = ImGui::GetMousePos();
-		ImVec2 s = ImGui::GetWindowSize();
+		//ImVec2 s = ImGui::GetWindowSize();
 		/*if (ImGui::IsAnyItemActive)
 		{
-			std::cout << "x= " << c.x << " y=" << c.y << std::endl;
+			
 		}*/
 		//renderer.getCurrentModel()->setRotationTransform(c.x, c.y, 1);
-		if (renderer.getCurrentModel() != NULL && ImGui::IsWindowHovered)
+		if (renderer.getCurrentModel() != NULL /*&& ImGui::IsItemActive() && ImGui::IsWindowHovered(ImGuiHoveredFlags(0))*/  )
 		{
+			std::cout << "x= " << c.x << " y=" << c.y << std::endl;
 			renderer.rotateWorldX((c.y - size.y / 2) );
 			renderer.rotateWorldY((c.x - size.x / 2) );
 		}
 	}
-	//if (ImGui::IsWindowFocused) std::cout << "on window" << std::endl; 
+	//if (ImGui::IsWindowFocused(0)) std::cout << "on window" << std::endl; 
 
 	
 	////right mouse 
@@ -95,8 +102,8 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 		static float rotateWorldX = 0.0f;
 		static float rotateWorldY = 0.0f;
 		static float rotateWorldZ = 0.0f;
-		//static float width = scene.get
-		ImGui::BeginChild("Controls");                         
+		ImGui::Begin("Model control", &showControlWindow);
+		//ImGui::BeginChild("Controls", ImVec2(200,200), ImGuiWindowFlags_AlwaysVerticalScrollbar);
 		
 		/*ImGui::Text("This is some useful text.");*/               // Display some text (you can use a format strings too)
 		//ImGui::Checkbox("Demo Window", &showDemoWindow);      // Edit bools storing our window open/close state
@@ -106,23 +113,26 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 		ImVec2 size = ImGui::GetWindowSize();
 		ImVec2 pos = ImGui::GetWindowPos();
 
-		//ImGui::TextColored()
+		//if (ImGui::IsWindowHovered(ImGuiFocusedFlags_ChildWindows))
+		//{
+		//	std::cout << "child window" << std::endl;
+		//}
 		
 		if (ImGui::SliderFloat("turn left or right", &turnUpDown, 0.0f, 360.0f) && renderer.isHasModel()) {
 			renderer.setEyeX(turnUpDown);
 		}// Edit 1 float using a slider from 0.0f to 2000.0f
 		if (ImGui::SliderFloat("FOV", &fov, 0.0f, 90.0f) && renderer.isHasModel()) {
-			renderer.setPerspective(fov,ar,n,fa);
+			renderer.setPerspective(fov,ar,(int)n,(int)fa);
 		}
 		if (ImGui::SliderFloat("ASPECT RATIO", &ar, 1.0f, 90.0f) && renderer.isHasModel()) {
-			renderer.setPerspective(fov, ar, n, fa);
+			renderer.setPerspective(fov, ar, (int)n, (int)fa);
 		}
 		if (ImGui::SliderFloat("NEAR", &n, 1.0f, 90.0f) && renderer.isHasModel()) {
-			renderer.setPerspective(fov, ar, n, fa);
+			renderer.setPerspective(fov, ar, (int)n, (int)fa);
 			//renderer.setProj(fov, ar, n, fa); 
 		}
 		if (ImGui::SliderFloat("FAR", &fa, 10.0f, 150.0f) && renderer.isHasModel()) {
-			renderer.setPerspective(fov, ar, n, fa);
+			renderer.setPerspective(fov, ar, (int)n, (int)fa);
 		}
 		ImGui::Text("Current Object:");
 		ImGui::Text("Local Rotations");
@@ -185,25 +195,9 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 			//IMPLEMENT HERE WHAT HAPPENS WHEN ------MIDDLE MOUSE BUTTON ------- IS DOWN
 			//FOR INSTANCE ROTATE CAMERA TO THE DIRECTION OF MOUSE
 		}
-
-		ImGui::EndChild();
-	}
-
-	if (!showControlWindow)
-	{
-		if (ImGui::IsMouseDown(0)) {
-			ImVec2 c = ImGui::GetMousePos();
-			if (ImGui::IsAnyItemActive)
-			{
-				std::cout << "x= " << c.x << " y=" << c.y << std::endl;
-			}
-			//renderer.getCurrentModel()->setRotationTransform(c.x, c.y, 1);
-			/*if (renderer.getCurrentModel() != NULL && ImGui::IsWindowHovered)
-			{
-				renderer.rotateWorldX(c.y - size.y / 2);
-				renderer.rotateWorldY(c.x - size.x / 2);
-			}*/
-		}
+		
+		//ImGui::EndChild();
+		ImGui::End();
 	}
 
 	// 3. Show features window.
@@ -211,8 +205,8 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 	{
 		static int counter = 0;
 		ImGui::Begin("Features", &showFeaturesWindow);   // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
-		ImGui::BeginChild("window", ImVec2(200, 200));
-		ImGui::Text("Hello from another window!");
+		//ImGui::BeginChild("window", ImVec2(200, 200));
+		//ImGui::Text("Hello from another window!");
 		//showboundering cube (toggle)
 		if (ImGui::Button("cube"))
 		{
@@ -253,10 +247,10 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 			renderer.setProjection(!renderer.getProjection());
 			std::cout << "projection=" << renderer.getProjection() << std::endl;
 		}*/
-		if (ImGui::Button("Close Me"))
+		/*if (ImGui::Button("Close Me"))
 		{
 			showFeaturesWindow = false;
-		}
+		}*/
 		ImGui::SameLine();
 		ImGui::Text("counter = %d", counter);
 
@@ -264,7 +258,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 		if (ImGui::ColorEdit3("object color", (float*)&objectColor)) {
 			renderer.setAmbientColor(objectColor);
 		}
-		ImGui::EndChild();
+		//ImGui::EndChild();
 		ImGui::End();
 	}
 
@@ -272,43 +266,59 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 	if (showAddLightWindow)
 	{
 		int type = 0;
+		int diameterVal;
+		bool showtextBox = false;
 		static int x_pos = 0;
 		static int y_pos = 0;
 		static int z_pos = 0;
 		static int diffusive;
 		static int specular;
-		float clearColor;
+
+		
+		//float clearColor;
 		Light light;
 		ImGui::Begin("Light", &showAddLightWindow);   // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
-		ImGui::BeginChild("light_win", ImVec2(200, 200));
+		ImGui::Text("Light position:");
 		if (ImGui::SliderInt("light x position", (int*)&x_pos, -5000, 5000) && renderer.isHasModel()) { }
 		if (ImGui::SliderInt("light y position", (int*)&y_pos, -5000, 5000) && renderer.isHasModel()) { }
 		if (ImGui::SliderInt("light z position", (int*)&z_pos, -5000, 5000) && renderer.isHasModel()) { }
-		ImGui::BeginGroup();
-		if (ImGui::RadioButton("diffusive", &diffusive, 1)) { type = 1; specular = 0; }
+		ImGui::Separator();
+		ImGui::RadioButton("diffusive", &diffusive, 1);
+		if (diffusive)
+		{
+			type = 1; specular = 0; showtextBox = !showtextBox;
+		} 
+		if (showtextBox ) 
+		{
+			/*ImGui::SameLine();
+			ImGui::Text("Diameter:");*/
+			ImGui::SameLine();
+			ImGui::InputText("Diameter", buf, 5, ImGuiInputTextFlags_EnterReturnsTrue); 
+		}
 		if (ImGui::RadioButton("specular", &specular, 2)) { type = 2; diffusive = 0; }
-		
+		ImGui::Separator();
 		ImGui::ColorEdit3("clear color", (float*)&lightColor);
 
-
+		ImGui::Separator();
 		if (ImGui::Button("add"))
 		{
 			light.setPosition(glm::vec3(x_pos, y_pos, z_pos));
 			light.setColor(lightColor);
 			light.setActive(true);
 			light.setType(type);
+			if (diffusive && (diameterVal = atoi(buf)) <= 1000) light.setDiameter(diameterVal);
 			renderer.addLight(light);
 			showAddLightWindow = false;
 		}
-		ImGui::EndGroup();
-		ImGui::EndChild();
+		
+		
 		ImGui::End();
 	}
 	// 3.2 Show lights window.
 	if (showLightWindow)
 	{
 		static float Intensity = 0.5f, factor = 0.5f;
-		float clearColor;
+		//float clearColor;
 		Light light;
 		ImGui::Begin("Lights", &showLightWindow);   // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
 		ImGui::BeginChild("light_win", ImVec2(220, 150));
@@ -381,7 +391,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 					for (it = cameras.begin(), count = 0; it != cameras.end();  count++, it++)
 					{
 						string name("camera %d", count);
-						if (ImGui::MenuItem(name.c_str())); 
+						if (ImGui::MenuItem(name.c_str()))
 						{
 
 						}
