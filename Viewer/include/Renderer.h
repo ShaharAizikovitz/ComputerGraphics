@@ -34,6 +34,7 @@ private:		//members
 	int viewportX;
 	int viewportY;
 	float scaleNumber;
+	float reflection;
 	float diffusive;
 	float ambient;
 	float ambientIntensity;
@@ -149,4 +150,5 @@ public:
 	void setAmbientColor(const glm::vec3 &color) { this->ambientColor = color; }
 	void setIsProjPerspective(const bool &t) { this->isProjPerspective = t; }
 	void setIsProjOrthographic(const bool &t) { this->isProjOrthographic = t; }
+	void setReflection(const float &r) { this->reflection = r; }
 };

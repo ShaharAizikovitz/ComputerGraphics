@@ -204,6 +204,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 	if (showFeaturesWindow)
 	{
 		static int counter = 0;
+		static float reflection = 1.0f;
 		ImGui::Begin("Features", &showFeaturesWindow);   // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
 		//ImGui::BeginChild("window", ImVec2(200, 200));
 		//ImGui::Text("Hello from another window!");
@@ -251,11 +252,12 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 		{
 			showFeaturesWindow = false;
 		}*/
-		ImGui::SameLine();
+		/*ImGui::SameLine();
 		ImGui::Text("counter = %d", counter);
 
-		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-		if (ImGui::ColorEdit3("object color", (float*)&objectColor)) {
+		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);*/
+		if (ImGui::SliderFloat("object reflection:", (float *)&reflection, -1, 1)) { renderer.setReflection(reflection);  }
+		if (ImGui::ColorEdit3("object color:", (float*)&objectColor)) {
 			renderer.setAmbientColor(objectColor);
 		}
 		//ImGui::EndChild();
@@ -311,7 +313,6 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 		ImGui::Separator();
 		ImGui::ColorEdit3("clear color", (float*)&lightColor);
 		ImGui::EndGroup();
-
 
 
 		ImGui::Separator();

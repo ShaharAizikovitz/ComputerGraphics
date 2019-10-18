@@ -252,7 +252,6 @@ glm::vec3 Renderer::Barycentric1(glm::vec3 p, glm::vec3 a, glm::vec3 b, glm::vec
 }
 glm::vec3 Renderer::Barycentric2(glm::vec3 p, glm::vec3 a, glm::vec3 b, glm::vec3 c)
 {
-	//glm::vec3 v0 = b - a, v1 = c - a, v2 = p - a;
 	float u = 0.0f, v = 0.0f, w = 0.0f;
 	glm::vec3 t0, t1, t2, t3;
 	t0 = glm::vec3(p.x, p.y, 1.0f);
@@ -815,10 +814,14 @@ void Renderer::scanLine1(std::vector<Vertex>&polygon, int & e1, int & e2, int & 
 	//	for (int x = x1 + 2; x < x2 - delta; x++)
 	for (int x = x1+1 ; x <= x2; x++)
 	{
-		baryCoor = Barycentric1(glm::vec3(x, y, 1.0f), polygon.at(0).getPoint(), polygon.at(1).getPoint(), polygon.at(2).getPoint());
-		//normal at point p(x,y)
+		float theta = 0.0f;
+		//calc barycentric coordinates
+		baryCoor = Barycentric2(glm::vec3(x, y, 1.0f), polygon.at(0).getPoint(), polygon.at(1).getPoint(), polygon.at(2).getPoint());
+		
+		//normal at point p(x,y), and the z-coordinates
 		normal = polygon.at(0).getNormal() * baryCoor.x + polygon.at(1).getNormal() * baryCoor.y + polygon.at(2).getNormal() * baryCoor.z;
 		z = (polygon.at(0).getPoint().z * baryCoor.z + polygon.at(1).getPoint().z * baryCoor.z + polygon.at(2).getPoint().z * baryCoor.z);
+		
 		//calc color and lighting
 		light = this->ambient;
 
@@ -831,7 +834,10 @@ void Renderer::scanLine1(std::vector<Vertex>&polygon, int & e1, int & e2, int & 
 				//diffusive
 				if ((*it).getType() == 1 )
 				{
-					light += this->diffusive * glm::dot(glm::normalize(this->diffusivePos), normal);
+					for each (glm::vec3 v in (*it).getAreaPoints())
+					{
+						light += glm::dot(glm::normalize(it->getLightPos()), normal);
+					}
 				}
 				//specular
 				else if ((*it).getType() == 2)
@@ -846,11 +852,11 @@ void Renderer::scanLine1(std::vector<Vertex>&polygon, int & e1, int & e2, int & 
 			dx = 1;
 			light = 1.0f;
 		}*/
-		else
+		/*else
 		{
 			light = this->ambient;
 			dx = 0;
-		}
+		}*/
 		putPixel((x + this->viewportWidth / 2), (y + this->viewportHeight / 2), light * color, z);
 
 
