@@ -163,16 +163,16 @@ void RenderFrame(GLFWwindow* window, Scene& scene, Renderer& renderer, ImGuiIO& 
 	glfwGetFramebufferSize(window, &frameBufferWidth, &frameBufferHeight);
 
 	//adjust viewport upon resize window
-	renderer.SetViewport(frameBufferWidth, frameBufferHeight, 0, 0); 
+	renderer.setViewport(frameBufferWidth, frameBufferHeight, 0, 0); 
 
 	// Clear the frame buffer0
-	renderer.ClearColorBuffer(GetClearColor());
+	renderer.clearColorBuffer(GetClearColor());
 
 	// Render the scene
 	renderer.render(scene); 
 
 	// Swap buffers
-	renderer.SwapBuffers();
+	renderer.swapBuffers();
 
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 	glfwSwapBuffers(window);

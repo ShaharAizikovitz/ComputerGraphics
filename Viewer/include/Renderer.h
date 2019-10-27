@@ -69,10 +69,10 @@ private:		//members
 	void initOpenGLRendering();
 
 	//drawing routings
-	float CalculateColor(glm::vec3 &n1, glm::vec3 &n2, glm::vec3 &n);
-	void DrawLine(glm::vec3 p1, glm::vec3 p2, glm::vec3 color, bool scale);
-	void DrawLine1(glm::vec3 p1, glm::vec3 p2, glm::vec3 color, bool scale);
-	void DrawLine(Vertex p1, Vertex p2, glm::vec3 color, bool scale);
+	float calculateColor(glm::vec3 &n1, glm::vec3 &n2, glm::vec3 &n);
+	void drawLine(glm::vec3 p1, glm::vec3 p2, glm::vec3 color, bool scale);
+	void drawLine1(glm::vec3 p1, glm::vec3 p2, glm::vec3 color, bool scale);
+	void drawLine(Vertex p1, Vertex p2, glm::vec3 color, bool scale);
 	void drawCube(); 
 	void drawTriangle(std::vector<Vertex>&points, glm::vec3 &color);
 	void drawBetween2Edges(std::vector<Vertex> &points, Edge &e1, Edge &e2, const glm::vec3 &color);
@@ -81,9 +81,9 @@ private:		//members
 	void fillTriangle2(std::vector<Vertex> points, const glm::vec3 & color);
 	void fillTriangle1(std::vector<Vertex> points, const glm::vec3 &color);
 	void fillTriangle(std::vector<Vertex> points, const glm::vec3 &color);
-	void Barycentric(glm::vec3 p, glm::vec3 a, glm::vec3 b, glm::vec3 c, float &u, float &v, float &w);
-	glm::vec3 Barycentric1(glm::vec3 point, glm::vec3 a, glm::vec3 b, glm::vec3 c);
-	glm::vec3 Barycentric2(glm::vec3 point, glm::vec3 a, glm::vec3 b, glm::vec3 c);
+	void barycentric(glm::vec3 p, glm::vec3 a, glm::vec3 b, glm::vec3 c, float &u, float &v, float &w);
+	glm::vec3 barycentric1(glm::vec3 point, glm::vec3 a, glm::vec3 b, glm::vec3 c);
+	glm::vec3 barycentric2(glm::vec3 point, glm::vec3 a, glm::vec3 b, glm::vec3 c);
 
 
 	std::vector<std::string> ExcludeModels;
@@ -96,8 +96,8 @@ public:
 	bool isHasModel();
 	void setHasModel();
 	void render(const Scene& scene);
-	void SwapBuffers();
-	void ClearColorBuffer(const glm::vec3& color);	
+	void swapBuffers();
+	void clearColorBuffer(const glm::vec3& color);	
 	void rotateLocalX(float x);
 	void rotateLocalY(float y);
 	void rotateLocalZ(float z);
@@ -130,7 +130,7 @@ public:
 	void setdrawLines(const bool &b) { this->drawLines = b; }
 	void setFillTriangles(const bool &b) { this->fillTriangles = b; }
 	void setToDrawVertexNormals(const bool &b) { this->toDrawVertexNormals = b; }
-	void SetViewport(int viewportWidth, int viewportHeight, int viewportX = 0, int viewportY = 0);
+	void setViewport(int viewportWidth, int viewportHeight, int viewportX = 0, int viewportY = 0);
 	void setExcludeModels(std::vector<std::string> v) { this->ExcludeModels = v; }
 	void setScaleNumber(float f);
 	void setEyeX(float eyex);
