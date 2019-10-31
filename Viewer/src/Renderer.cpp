@@ -623,7 +623,7 @@ void Renderer::drawLine1(glm::vec3 p1, glm::vec3 p2, glm::vec3 color, bool scale
 
 	const float dx = (float)x2 - x1;
 	const float dy = (float)fabs(y2 - y1);
-	const float dz = (z1 - z2) / dx;
+	const float dz = (z2 - z1) / dx;
 	float z = (float)z1;
 
 	float error = dx / 2.0f;
@@ -1303,8 +1303,8 @@ void Renderer::render(const Scene& scene)
 		Vertex third1(glm::vec3(100, 170, -30), glm::vec3(1, 0, 0));
 
 		Vertex first2(glm::vec3(200, 20, 30), glm::vec3(1, 0, 0));
-		Vertex second2(glm::vec3(300, 20, 80), glm::vec3(1, 0, 0));
-		Vertex third2(glm::vec3(300, 120, -30), glm::vec3(1, 0, 0));
+		Vertex second2(glm::vec3(270, 40, 80), glm::vec3(1, 0, 0));
+		Vertex third2(glm::vec3(250, 120, 30), glm::vec3(1, 0, 0));
 
 		Vertex first3(glm::vec3(200, 20, 30), glm::vec3(1, 0, 0));
 		Vertex second3(glm::vec3(310, 40, 90), glm::vec3(1, 0, 0));
