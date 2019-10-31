@@ -162,7 +162,7 @@ void Renderer::createBuffers(int viewportWidth, int viewportHeight)
 		for (int y = 0; y < viewportHeight; y++)
 		{
 			putPixel(x, y, glm::vec3(0.0f, 0.0f, 0.0f));
-			zBuffer[Z_INDEX(viewportWidth, x, y)] = (float)INT32_MAX; 
+			zBuffer[Z_INDEX(viewportWidth, x, y)] = FLT_MAX; 
 		}
 	}
 }
@@ -289,8 +289,8 @@ void Renderer::clearColorBuffer(const glm::vec3& color)
 	{
 		for (int j = 0; j < viewportHeight; j++)
 		{
-			putPixel(i, j, glm::vec3(1,1,1));
-			zBuffer[Z_INDEX(viewportWidth, i, j)] = (float)INT32_MAX;
+			putPixel(i, j, color); 
+			//zBuffer[Z_INDEX(viewportWidth, i, j)] = FLT_MAX;
 		}
 	}
 }
@@ -817,10 +817,13 @@ void Renderer::scanLine1(std::vector<Vertex>&polygon, int & e1, int & e2, int & 
 		float theta = 0.0f;
 		//calc barycentric coordinates
 		baryCoor = barycentric2(glm::vec3(x, y, 1.0f), polygon.at(0).getPoint(), polygon.at(1).getPoint(), polygon.at(2).getPoint());
+
+		//check that all baycentric coordinates <= 1, else break loop
+		if (glm::abs(baryCoor.x) > 1 || glm::abs(baryCoor.y) > 1 || glm::abs(baryCoor.z) > 1) break;
 		
 		//normal at point p(x,y), and the z-coordinates
 		normal = polygon.at(0).getNormal() * baryCoor.x + polygon.at(1).getNormal() * baryCoor.y + polygon.at(2).getNormal() * baryCoor.z;
-		z = (polygon.at(0).getPoint().z * baryCoor.z + polygon.at(1).getPoint().z * baryCoor.z + polygon.at(2).getPoint().z * baryCoor.z);
+		z = (polygon.at(0).getPoint().z * baryCoor.x + polygon.at(1).getPoint().z * baryCoor.y + polygon.at(2).getPoint().z * baryCoor.z);
 		
 		//calc color and lighting
 		light = this->ambient;
@@ -932,8 +935,8 @@ void Renderer::fillTriangle2(std::vector<Vertex> polygon, const glm::vec3 & colo
 	//flat top trianlge
 	for (int y = (int)P3.y, dy = 1; y <= P2.y; y++, dy++)
 	{
-		ex1 = (int)P3.x + (int)(dy / slope3) - delta3;
-		ex2 = (int)P3.x + (int)(dy / slope1) - delta1;
+		ex1 = (int)P3.x + (int)(dy / slope3) + delta3;
+		ex2 = (int)P3.x + (int)(dy / slope1) + delta1;
 
 		scanLine1(polygon, ex1, ex2, y, color);
 	}
@@ -1033,13 +1036,13 @@ void Renderer::fillTriangle(std::vector<Vertex> points, const glm::vec3 &color)
 
 void Renderer::drawTriangle(std::vector<Vertex>&points, glm::vec3 &color)
 {
-	/*drawLine1(points.at(0).getPoint(), points.at(1).getPoint(), color, true);
+	drawLine1(points.at(0).getPoint(), points.at(1).getPoint(), color, true);
 	drawLine1(points.at(1).getPoint(), points.at(2).getPoint(), color, true);
-	drawLine1(points.at(2).getPoint(), points.at(0).getPoint(), color, true);*/
+	drawLine1(points.at(2).getPoint(), points.at(0).getPoint(), color, true);
 
-	drawLine1(points.at(0).getPoint(), points.at(1).getPoint(), color, false);
+	/*drawLine1(points.at(0).getPoint(), points.at(1).getPoint(), color, false);
 	drawLine1(points.at(1).getPoint(), points.at(2).getPoint(), color, false);
-	drawLine1(points.at(2).getPoint(), points.at(0).getPoint(), color, false);
+	drawLine1(points.at(2).getPoint(), points.at(0).getPoint(), color, false);*/
 }
 
 

@@ -46,22 +46,22 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 		std::cout << " child window" << std::endl;
 	}
 
-	ImVec2 size = ImGui::GetWindowSize();
-	if (ImGui::IsMouseDown(0) && !ImGui::IsItemHovered(ImGuiFocusedFlags_ChildWindows)) {
-		ImVec2 c = ImGui::GetMousePos();
-		//ImVec2 s = ImGui::GetWindowSize();
-		/*if (ImGui::IsAnyItemActive)
-		{
-			
-		}*/
-		//renderer.getCurrentModel()->setRotationTransform(c.x, c.y, 1);
-		if (renderer.getCurrentModel() != NULL /*&& ImGui::IsItemActive() && ImGui::IsWindowHovered(ImGuiHoveredFlags(0))*/  )
-		{
-			std::cout << "x= " << c.x << " y=" << c.y << std::endl;
-			renderer.rotateWorldX((c.y - size.y / 2) );
-			renderer.rotateWorldY((c.x - size.x / 2) );
-		}
-	}
+	//ImVec2 size = ImGui::GetWindowSize();
+	//if (ImGui::IsMouseDown(0) && !ImGui::IsItemHovered(ImGuiFocusedFlags_ChildWindows)) {
+	//	ImVec2 c = ImGui::GetMousePos();
+	//	//ImVec2 s = ImGui::GetWindowSize();
+	//	/*if (ImGui::IsAnyItemActive)
+	//	{
+	//		
+	//	}*/
+	//	//renderer.getCurrentModel()->setRotationTransform(c.x, c.y, 1);
+	//	if (renderer.getCurrentModel() != NULL /*&& ImGui::IsItemActive() && ImGui::IsWindowHovered(ImGuiHoveredFlags(0))*/  )
+	//	{
+	//		std::cout << "x= " << c.x << " y=" << c.y << std::endl;
+	//		renderer.rotateWorldX((c.y - size.y / 2) );
+	//		renderer.rotateWorldY((c.x - size.x / 2) );
+	//	}
+	//}
 	//if (ImGui::IsWindowFocused(0)) std::cout << "on window" << std::endl; 
 
 	
@@ -113,10 +113,16 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 		ImVec2 size = ImGui::GetWindowSize();
 		ImVec2 pos = ImGui::GetWindowPos();
 
-		//if (ImGui::IsWindowHovered(ImGuiFocusedFlags_ChildWindows))
-		//{
-		//	std::cout << "child window" << std::endl;
-		//}
+		if (ImGui::IsMouseDown(0) && renderer.getCurrentModel() != NULL)
+		{
+			ImVec2 c = ImGui::GetMousePos();
+			if (!ImGui::IsMouseHoveringWindow())
+			{
+				renderer.rotateLocalX((c.y - size.y / 2));
+				renderer.rotateLocalY((c.x - size.x / 2));
+			}
+		}
+	
 		
 		if (ImGui::SliderFloat("turn left or right", &turnUpDown, 0.0f, 360.0f) && renderer.isHasModel()) {
 			renderer.setEyeX(turnUpDown);
@@ -169,34 +175,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 		if (ImGui::SliderFloat("Rotate world z", &rotateWorldZ, 0.0, 360.0f) && renderer.isHasModel()) {
 			renderer.rotateWorldZ(rotateLocalZ);
 		}
-		//left mouse down
-		if (ImGui::IsMouseDown(0) ) {
-			ImVec2 c = ImGui::GetMousePos();
-			//ImVec2 max_size = ImGui::GetWindowContentRegionMax();
-	
-			//if (renderer.getCurrentModel() != NULL)
-			//{
-			//	//exclude control wwindow
-			//	if(!ImGui::IsWindowHovered())
-			//	{
-			//		std::cout << "x= " << c.x << " y=" << c.y << std::endl;
-			//		renderer.rotateWorldX(c.y - size.y / 2);
-			//		renderer.rotateWorldY(c.x - size.x / 2);
-			//	}
-			//	
-			//}		
-		}
-		//right mouse 
-		if (ImGui::IsMouseDown(1) && renderer.isHasModel()) {
-			//IMPLEMENT HERE WHAT HAPPENS WHEN ------RIGHT MOUSE BUTTON ------- IS DOWN
-			//FOR INSTANCE ROTATE CAMERA TO THE DIRECTION OF MOUSE
-		}
-		if (ImGui::IsMouseDown(2) && renderer.isHasModel()) {
-			//IMPLEMENT HERE WHAT HAPPENS WHEN ------MIDDLE MOUSE BUTTON ------- IS DOWN
-			//FOR INSTANCE ROTATE CAMERA TO THE DIRECTION OF MOUSE
-		}
 		
-		//ImGui::EndChild();
 		ImGui::End();
 	}
 
