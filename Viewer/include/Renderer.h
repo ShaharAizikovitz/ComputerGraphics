@@ -78,6 +78,7 @@ private:		//members
 	void drawBetween2Edges(std::vector<Vertex> &points, Edge &e1, Edge &e2, const glm::vec3 &color);
 	void scanLine(std::vector<Vertex>&, int &e1, int &e2, int &y, const glm::vec3 &color);
 	void scanLine1(std::vector<Vertex>&, int &e1, int &e2, int &y, const glm::vec3 &color);
+	void fillTriangle3(std::vector<Vertex> points, const glm::vec3 & color);
 	void fillTriangle2(std::vector<Vertex> points, const glm::vec3 & color);
 	void fillTriangle1(std::vector<Vertex> points, const glm::vec3 &color);
 	void fillTriangle(std::vector<Vertex> points, const glm::vec3 &color);
@@ -88,6 +89,7 @@ private:		//members
 
 	std::vector<std::string> ExcludeModels;
 	static bool sort_dec_y(const Vertex &x, const Vertex &y) { return x.getPoint().y > y.getPoint().y; }
+	static bool sort_acs_x(const Vertex &x, const Vertex &y) { return x.getPoint().x < y.getPoint().x; }
 
 public:
 	Renderer();

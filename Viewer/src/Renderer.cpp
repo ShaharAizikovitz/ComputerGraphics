@@ -816,10 +816,11 @@ void Renderer::scanLine1(std::vector<Vertex>&polygon, int & e1, int & e2, int & 
 	{
 		float theta = 0.0f;
 		//calc barycentric coordinates
+		//baryCoor = barycentric2(_polygon, glm::vec3(x, y, 1.0f));
 		baryCoor = barycentric2(glm::vec3(x, y, 1.0f), polygon.at(0).getPoint(), polygon.at(1).getPoint(), polygon.at(2).getPoint());
 
-		//check that all baycentric coordinates <= 1, else break loop
-		if (glm::abs(baryCoor.x) > 1 || glm::abs(baryCoor.y) > 1 || glm::abs(baryCoor.z) > 1) break;
+		//check that all baycentric coordinates < 1 AND not negative, else go to next point
+		if ((baryCoor.x) > 1 || (baryCoor.x) < 0 || (baryCoor.y) > 1 || (baryCoor.y) < 0 || (baryCoor.z) > 1 || (baryCoor.z) < 0) continue;
 		
 		//normal at point p(x,y), and the z-coordinates
 		normal = polygon.at(0).getNormal() * baryCoor.x + polygon.at(1).getNormal() * baryCoor.y + polygon.at(2).getNormal() * baryCoor.z;
@@ -900,6 +901,33 @@ void Renderer::scanLine1(std::vector<Vertex>&polygon, int & e1, int & e2, int & 
 
 		//}
 		//factor += factorStep;
+	}
+}
+
+void Renderer::fillTriangle3(std::vector<Vertex> polygon, const glm::vec3 & color)
+{
+	glm::vec2 z, P, P1, P2, P3;
+	glm::vec2 ul, ur, ll, lr;
+	int ex1 = 0, ex2 = 0;
+	
+	//compute bounding box of the triangle
+	std::sort(polygon.begin(), polygon.end(), sort_dec_y);
+	P1 = glm::vec2(polygon.at(0).getPoint().x, polygon.at(0).getPoint().y);
+	P2 = glm::vec2(polygon.at(1).getPoint().x, polygon.at(1).getPoint().y);
+	P3 = glm::vec2(polygon.at(2).getPoint().x, polygon.at(2).getPoint().y);
+	ul.y = ur.y = P1.y; 
+	ll.y = lr.y = P3.y;
+
+	std::sort(polygon.begin(), polygon.end(), sort_acs_x);
+	P1 = glm::vec2(polygon.at(0).getPoint().x, polygon.at(0).getPoint().y);
+	P2 = glm::vec2(polygon.at(1).getPoint().x, polygon.at(1).getPoint().y);
+	P3 = glm::vec2(polygon.at(2).getPoint().x, polygon.at(2).getPoint().y);
+	ex1 = ul.x = ll.x = P1.x;
+	ex2 = ur.x = lr.x = P3.x;
+
+	for (int y = (int)ul.y; y >= (int)ll.y; y--)
+	{
+		scanLine1(polygon, ex1, ex2, y, color); 
 	}
 }
 
@@ -1278,7 +1306,7 @@ void Renderer::render(const Scene& scene)
 			
 			glm::vec3 finalColor = (this->fillTriangles) ? glm::vec3(0.8, 0.8, 0.8) : this->ambientColor;
 			if (this->fillTriangles)
-				fillTriangle2(polygon, GREEN);
+				fillTriangle3(polygon, GREEN);
 
 		}
 
@@ -1339,10 +1367,10 @@ void Renderer::render(const Scene& scene)
 		}
 		if (this->fillTriangles)
 		{
-			fillTriangle2(points, GREEN);
-			fillTriangle2(points1, RED);
-			fillTriangle2(points2, PURPLE);
-			fillTriangle2(points3, BLUE);
+			fillTriangle3(points, GREEN);
+			fillTriangle3(points1, RED);
+			fillTriangle3(points2, PURPLE);
+			fillTriangle3(points3, BLUE);
 
 		}*/
 	}
