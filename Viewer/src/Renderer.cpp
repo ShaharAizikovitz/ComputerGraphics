@@ -20,16 +20,16 @@ Renderer::Renderer(int viewportWidth, int viewportHeight, int viewportX, int vie
 	initOpenGLRendering();
 	setViewport(viewportWidth, viewportHeight, viewportX, viewportY);
 	//initViewport();
+	this->diffusiveIntensity = 0.2f;
+	this->ambientIntensity = 0.2f;
+	this->specularIntensity = 0.2f;
 	this->toDrawFaceNormals = false;
 	this->toDrawLineNormals = false;
 	this->toDrawVertexNormals = false;
 	this->tooDrawaCube = false;
 	this->fillTriangles = false;
 	this->drawLines = true;
-	this->diffusive = 0.5;
-	this->ambient = 0.5f;
 	this->ambientColor = PURPLE;
-	this->ambientIntensity = 1;
 	this->worldToCameraTransformation = glm::mat4x4(glm::vec4(1, 0, 0, 0), glm::vec4(0, 1, 0, 0), glm::vec4(0, 0, 1, 0), glm::vec4(viewportWidth / 2, viewportHeight / 2, 0, 1));
 	this->proj = glm::mat4x4(glm::vec4(1, 0, 0, 0), glm::vec4(0, 1, 0, 0), glm::vec4(0, 0, 1, 0), glm::vec4(0, 0, 0, 1));
 }
@@ -635,7 +635,7 @@ void Renderer::drawLine1(glm::vec3 p1, glm::vec3 p2, glm::vec3 color, bool scale
 	//start from left x-coordinate to the right x-coordinate
 	for (int x = (int)x1; x < maxX; x++)
 	{
-		z += x * dz;
+		z = z1 + x * dz;
 		if (steep)
 		{
 			putPixel(y, x, color, z);
@@ -745,7 +745,6 @@ void Renderer::scanLine(std::vector<Vertex> &polygon, int &e1, int &e2, int &y, 
 	if ((xdiff = abs(x2 - x1)) == 0) return;
 
 	factorStep = 1.0f / (float)xdiff;
-	light = this->ambient + this->diffusive;
 
 //	for (int x = x1 + 2; x < x2 - delta; x++)
 	for (int x = x1; x < x2 ; x++)
@@ -765,7 +764,7 @@ void Renderer::scanLine(std::vector<Vertex> &polygon, int &e1, int &e2, int &y, 
 				{
 					//combinedColor += scene.getLights().at(i).
 				}
-				light = this->ambient * this->diffusive * glm::dot(glm::normalize(this->diffusivePos), normal);
+				
 			}
 			if (this->fillTriangles)
 			{
@@ -774,7 +773,7 @@ void Renderer::scanLine(std::vector<Vertex> &polygon, int &e1, int &e2, int &y, 
 			}
 			else
 			{
-				light = this->ambient;
+				
 				dx = 0;
 			}
 
@@ -796,6 +795,7 @@ void Renderer::scanLine1(std::vector<Vertex>&polygon, int & e1, int & e2, int & 
 	float factorStep = 0.0f;
 	float z = 0.0f, oldz = 0.0f;
 	float light = 0.0f;
+	float I = 0.0f;
 	glm::vec3 baryCoor, normal;
 	std::vector<glm::vec3> _polygon;
 	_polygon.push_back(polygon.at(0).getPoint());
@@ -808,13 +808,13 @@ void Renderer::scanLine1(std::vector<Vertex>&polygon, int & e1, int & e2, int & 
 		x1 = e2;
 		x2 = e1;
 	}
-	
-	light = this->ambient + this->diffusive;
 
-	//	for (int x = x1 + 2; x < x2 - delta; x++)
+	//calc lighting
+	I = this->ambientIntensity * this->scene.getCurrentModel()->getModelAIntensity();
+
+
 	for (int x = x1 ; x <= x2; x++)
 	{
-		float theta = 0.0f;
 		//calc barycentric coordinates
 		//baryCoor = barycentric2(_polygon, glm::vec3(x, y, 1.0f));
 		baryCoor = barycentric2(glm::vec3(x, y, 1.0f), polygon.at(0).getPoint(), polygon.at(1).getPoint(), polygon.at(2).getPoint());
@@ -826,81 +826,35 @@ void Renderer::scanLine1(std::vector<Vertex>&polygon, int & e1, int & e2, int & 
 		normal = polygon.at(0).getNormal() * baryCoor.x + polygon.at(1).getNormal() * baryCoor.y + polygon.at(2).getNormal() * baryCoor.z;
 		z = (polygon.at(0).getPoint().z * baryCoor.x + polygon.at(1).getPoint().z * baryCoor.y + polygon.at(2).getPoint().z * baryCoor.z);
 		
-		//calc color and lighting
-		light = this->ambient;
-
-		if (scene.getLights().size() != 0)
+		//for light in the scene add lighting
+		if (scene.getLights().size())
 		{
-			float combinedColor = 0.0f;
-			std::vector<Light>::iterator it;
-			for (it = scene.getLights().begin(); it != scene.getLights().end(); it++)
+			for (size_t i = 0; i < scene.getLights().size(); i++)
 			{
+				Light l = scene.getLights().at(i);
+				glm::vec3 lightdir = l.getLightDir();
 				//diffusive
-				if ((*it).getType() == 1 )
+				if ((l).getType() == 1)
 				{
-					for each (glm::vec3 v in (*it).getAreaPoints())
-					{
-						light += glm::dot(glm::normalize(it->getLightPos()), normal);
-					}
+
+					float nl = glm::abs(glm::dot(lightdir, normal));
+					I = I + this->diffusiveIntensity * this->scene.getCurrentModel()->getModelDIntensity() * nl;
+
 				}
 				//specular
-				else if ((*it).getType() == 2)
+				else if ((l).getType() == 2)
 				{
-					light += this->diffusive * glm::dot(glm::normalize(this->diffusivePos), normal);
+					int alpha = 2;
+					float rv = glm::dot(lightdir, normal);
+					I += this->specularIntensity * _CMATH_::pow(rv,alpha) * this->scene.getCurrentModel()->getModelSIntensity();
 				}
 			}
-			
 		}
-		/*if (this->fillTriangles)
-		{
-			dx = 1;
-			light = 1.0f;
-		}*/
-		/*else
-		{
-			light = this->ambient;
-			dx = 0;
-		}*/
-		putPixel((x + this->viewportWidth / 2), (y + this->viewportHeight / 2), light * color, z);
+			
+		//finally paint the pixel with calculated color
+		//std::cout << "light: x:" << this->ambientColor.x * I << " y:" << this->ambientColor.y * I << std::endl;
+		putPixel((x + this->viewportWidth / 2), (y + this->viewportHeight / 2), this->ambientColor * I, z);
 
-
-		/*z = zDepth(glm::vec3(x, y, z), polygon);
-		putPixel((x + this->viewportWidth / 2), (y + this->viewportHeight / 2), light * color, z);*/
-		
-		//{
-		//	z = zDepth(glm::vec3(x, y, z), polygon);
-		//	baryCoor = baryCentric(_polygon, glm::vec3(x, y, z));
-
-		
-			/*normal.x = (polygon.at(0).getNormal().x * baryCoor.x + polygon.at(1).getNormal().x * baryCoor.y + polygon.at(2).getNormal().x * baryCoor.z);
-			normal.y = (polygon.at(0).getNormal().y * baryCoor.x + polygon.at(1).getNormal().y * baryCoor.y + polygon.at(2).getNormal().y * baryCoor.z);
-			normal.z = (polygon.at(0).getNormal().z * baryCoor.x + polygon.at(1).getNormal().z * baryCoor.y + polygon.at(2).getNormal().z * baryCoor.z);*/
-		//	//color
-		//	if (scene.getLights().size() != 0)
-		//	{
-		//		float combinedColor = 0.0f;
-		//		for (int i = 0; i < scene.getLights().size(); i++)
-		//		{
-		//			//combinedColor += scene.getLights().at(i).
-		//		}
-		//		light = this->ambient * this->diffusive * glm::dot(glm::normalize(this->diffusivePos), normal);
-		//	}
-		//	if (this->fillTriangles)
-		//	{
-		//		dx = 1;
-		//		light = 1.0f;
-		//	}
-		//	else
-		//	{
-		//		light = this->ambient;
-		//		dx = 0;
-		//	}
-
-		//	//putting the pixel with the adjusted light
-		//	putPixel((x + this->viewportWidth / 2), (y + this->viewportHeight / 2), light * color, z);
-
-		//}
-		//factor += factorStep;
 	}
 }
 

@@ -13,6 +13,8 @@ Scene::Scene() :
 
 void Scene::AddModel(const std::shared_ptr<MeshModel>& model)
 {
+	//last model to enter is the current one
+	this->currentModel = model;
 	models.push_back(model);
 }
 

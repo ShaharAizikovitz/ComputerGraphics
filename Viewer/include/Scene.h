@@ -16,6 +16,7 @@
 class Scene {
 private:
 	std::vector<std::shared_ptr<MeshModel>> models;
+	std::shared_ptr<MeshModel> currentModel;
 	std::vector<Light> Lights;
 	std::vector<Camera> cameras;
 	Camera currentCamera;
@@ -28,7 +29,7 @@ public:
 	Scene();
 	~Scene(){}
 	void AddModel(const std::shared_ptr<MeshModel>& model);
-	void addLight(const Light &l) { this->Lights.push_back(l); }
+	void addLight(const Light l) { this->Lights.push_back(l); }
 	void addCamera(const Camera& camera);
 	
 	//setters
@@ -36,6 +37,7 @@ public:
 	void SetActiveModelIndex(size_t index);
 
 	//getters
+	const std::shared_ptr<MeshModel> getCurrentModel() const { return this->currentModel; }
 	const int getHeight() const { return this->height; }
 	const int getWidth() const { return this->width; }
 	const int GetModelCount() const;
@@ -44,6 +46,6 @@ public:
 	const int GetActiveModelIndex() const;
 	const std::vector<std::shared_ptr<MeshModel>> getModels() const;
 	const std::vector<Camera> getCameras() const;
-	 std::vector<Light> getLights() const { return this->Lights; }
+	std::vector<Light> getLights() const { return this->Lights; }
 	const Camera getCurrentCamera() const { return this->currentCamera; }
 };

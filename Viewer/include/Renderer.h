@@ -35,8 +35,9 @@ private:		//members
 	int viewportY;
 	float scaleNumber;
 	float reflection;
-	float diffusive;
-	float ambient;
+
+	float diffusiveIntensity;
+	float specularIntensity;
 	float ambientIntensity;
 	float ambientK;
 	float fov;
@@ -107,7 +108,7 @@ public:
 	void rotateWorldY(float y);
 	void rotateWorldZ(float z);
 	void translate(float x, float y, float z);
-	void addLight(const Light &l) { this->lights.push_back(l); }
+	void addLight(const Light &l) { this->scene.addLight(l); }
 	void init();
 	
 	//getters\setters
@@ -147,8 +148,11 @@ public:
 	void setViewPortHeight(const int& h) { this->viewportHeight = h; }
 	void setViewPortWidth( int w) { this->viewportWidth = w; }
 	void setViewPortHeight( int h) { this->viewportHeight = h; }
-	void setAmbientIntensity(const float &c) { this->ambient = this->ambientK  * c; }
-	void setAmbientCoefficient(const float &c) { this->ambient = this->ambientIntensity * c; }
+	void setAmbientIntensity(const float &c) { this->ambientIntensity = c; }
+	void setDiffusiveIntensity(const float &f) { this->diffusiveIntensity = f; }
+	void setSpecularIntensity(const float &f) { this->specularIntensity = f; }
+
+	//void setAmbientCoefficient(const float &c) { this->ambient = this->ambientIntensity * c; }
 	void setAmbientColor(const glm::vec3 &color) { this->ambientColor = color; }
 	void setIsProjPerspective(const bool &t) { this->isProjPerspective = t; }
 	void setIsProjOrthographic(const bool &t) { this->isProjOrthographic = t; }

@@ -45,6 +45,9 @@ private:
 	void createNormals();
 	void createCenterLines();
 	bool isCurrentModel;
+	float modelAIntensity;
+	float modelDIntensity;
+	float modelSIntensity;
 	Cube cube; 
 
 public:
@@ -79,6 +82,9 @@ public:
 	void setDrawCube(const bool b) { this->drawCube = b; }
 	void setCenteLines(const std::vector<glm::vec4> c) { this->centerLine = c; }
 	void setIsCurrentModel(const bool& b) { this->isCurrentModel = b; }
+	void setModelAIntensity(const float &f) { this->modelAIntensity = f; }
+	void setModelDIntensity(const float &f) { this->modelDIntensity = f; }
+	void setModelSIntensity(const float &f) { this->modelSIntensity = f; }
 
 	const bool& getDraw() { return this->draw; }
 	const std::string& GetModelName();
@@ -92,6 +98,8 @@ public:
 	bool getIsCurrentModel() const { return this->isCurrentModel; }
 	std::vector<Vertex> getVertexs() const { return this->vertexs; }
 	const void setVertexs(const std::vector<Vertex> &v) { this->vertexs = v; } 
-	
+	const float getModelAIntensity() const { return this->modelAIntensity; }
+	const float getModelDIntensity() const { return this->modelDIntensity; }
+	const float getModelSIntensity() const { return this->modelSIntensity; }
 	
 };

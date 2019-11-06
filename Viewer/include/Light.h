@@ -18,7 +18,7 @@ private:
 	float SpecularIntensity;
 	std::vector<glm::vec3> lightArea;
 
-	glm::vec3 pos;
+	glm::vec3 pos, direction;
 	glm::vec3 color;
 
 public:
@@ -26,12 +26,14 @@ public:
 	~Light();
 
 	//getters-setters
+	void setDirection(glm::vec3& d) { this->direction = d; }
 	void setPosition(const glm::vec3 &p) { this->pos = p; }
 	void setColor(const glm::vec3 &c) { this->color = c; }
 	void setActive(const bool &b) { this->isActive = b; }
 	void setType(const int &i) { this->type = i; }
 	void setDiameter(const int &s);
-
+	
+	glm::vec3 getLightDir() const { return glm::normalize(this->pos - this->direction); }
 	glm::vec3 getLightPos() const { return this->pos; }
 	std::vector<glm::vec3> getAreaPoints() const { return this->lightArea; }
 	int getType() const { return this->type; }

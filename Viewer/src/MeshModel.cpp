@@ -54,10 +54,14 @@ MeshModel::MeshModel(const std::vector<Face>& faces, const std::vector<Vertex>& 
 	normals(normals),
 	isCurrentModel(isCurrent)
 {
+	this->modelAIntensity = 0.2f;
+	this->modelDIntensity = 0.2f;
+	this->modelSIntensity = 0.2f;
 	this->drawCube = false;
 	this->isCurrentModel = false;
 	this->createCube();
 	this->createCenterLines();
+
 	setScaleTransform(1500, 1500, 1500);
 }
 //ctor

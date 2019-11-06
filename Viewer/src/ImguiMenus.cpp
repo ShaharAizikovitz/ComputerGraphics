@@ -18,6 +18,7 @@
 
 
 bool showDemoWindow = false;
+bool showSurfaceReflection = false;
 bool showFeaturesWindow = false;
 bool showLightWindow = false;
 bool showAddLightWindow = false;
@@ -41,39 +42,6 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 	{
 		ImGui::ShowDemoWindow(&showDemoWindow);
 	}*/
-	if (ImGui::IsWindowHovered(ImGuiFocusedFlags_ChildWindows))
-	{
-		std::cout << " child window" << std::endl;
-	}
-
-	//ImVec2 size = ImGui::GetWindowSize();
-	//if (ImGui::IsMouseDown(0) && !ImGui::IsItemHovered(ImGuiFocusedFlags_ChildWindows)) {
-	//	ImVec2 c = ImGui::GetMousePos();
-	//	//ImVec2 s = ImGui::GetWindowSize();
-	//	/*if (ImGui::IsAnyItemActive)
-	//	{
-	//		
-	//	}*/
-	//	//renderer.getCurrentModel()->setRotationTransform(c.x, c.y, 1);
-	//	if (renderer.getCurrentModel() != NULL /*&& ImGui::IsItemActive() && ImGui::IsWindowHovered(ImGuiHoveredFlags(0))*/  )
-	//	{
-	//		std::cout << "x= " << c.x << " y=" << c.y << std::endl;
-	//		renderer.rotateWorldX((c.y - size.y / 2) );
-	//		renderer.rotateWorldY((c.x - size.x / 2) );
-	//	}
-	//}
-	//if (ImGui::IsWindowFocused(0)) std::cout << "on window" << std::endl; 
-
-	
-	////right mouse 
-	//if (ImGui::IsMouseDown(1) && renderer.isHasModel()) {
-	//	//IMPLEMENT HERE WHAT HAPPENS WHEN ------RIGHT MOUSE BUTTON ------- IS DOWN
-	//	//FOR INSTANCE ROTATE CAMERA TO THE DIRECTION OF MOUSE
-	//}
-	//if (ImGui::IsMouseDown(2) && renderer.isHasModel()) {
-	//	//IMPLEMENT HERE WHAT HAPPENS WHEN ------MIDDLE MOUSE BUTTON ------- IS DOWN
-	//	//FOR INSTANCE ROTATE CAMERA TO THE DIRECTION OF MOUSE
-	//}
 
 	//ImGui::Text("CAM:%s", scene.getCurrentCamera().);
 
@@ -81,6 +49,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 	if ( showControlWindow )
 	{
 		//static float objectColor;
+		static float modelAIntensity = 0.2f, modelDIntensity = 0.2f, modelSIntensity = 0.2f;
 		static float f = 1500.0f;
 		static float turnUpDown = 0.0f;
 		static float fov = 50.0f;
@@ -123,23 +92,30 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 			}
 		}
 	
-		
-		if (ImGui::SliderFloat("turn left or right", &turnUpDown, 0.0f, 360.0f) && renderer.isHasModel()) {
-			renderer.setEyeX(turnUpDown);
-		}// Edit 1 float using a slider from 0.0f to 2000.0f
-		if (ImGui::SliderFloat("FOV", &fov, 0.0f, 90.0f) && renderer.isHasModel()) {
-			renderer.setPerspective(fov,ar,(int)n,(int)fa);
-		}
-		if (ImGui::SliderFloat("ASPECT RATIO", &ar, 1.0f, 90.0f) && renderer.isHasModel()) {
-			renderer.setPerspective(fov, ar, (int)n, (int)fa);
-		}
-		if (ImGui::SliderFloat("NEAR", &n, 1.0f, 90.0f) && renderer.isHasModel()) {
-			renderer.setPerspective(fov, ar, (int)n, (int)fa);
-			//renderer.setProj(fov, ar, n, fa); 
-		}
-		if (ImGui::SliderFloat("FAR", &fa, 10.0f, 150.0f) && renderer.isHasModel()) {
-			renderer.setPerspective(fov, ar, (int)n, (int)fa);
-		}
+		if (ImGui::SliderFloat("model ambient intensity:", &modelAIntensity, 0.0f, 1.0f) && renderer.isHasModel()) {
+			renderer.getCurrentModel()->setModelAIntensity(modelAIntensity);}
+		if (ImGui::SliderFloat("model Diffusive intensity:", &modelDIntensity, 0.0f, 1.0f) && renderer.isHasModel()) {
+			renderer.getCurrentModel()->setModelDIntensity(modelDIntensity);}
+		if (ImGui::SliderFloat("model Specular intensity:", &modelSIntensity, 0.0f, 1.0f) && renderer.isHasModel()) {
+			renderer.getCurrentModel()->setModelSIntensity(modelSIntensity);}
+		ImGui::Separator();
+
+		//if (ImGui::SliderFloat("turn left or right", &turnUpDown, 0.0f, 360.0f) && renderer.isHasModel()) {
+		//	renderer.setEyeX(turnUpDown);
+		//}// Edit 1 float using a slider from 0.0f to 2000.0f
+		//if (ImGui::SliderFloat("FOV", &fov, 0.0f, 90.0f) && renderer.isHasModel()) {
+		//	renderer.setPerspective(fov,ar,(int)n,(int)fa);
+		//}
+		//if (ImGui::SliderFloat("ASPECT RATIO", &ar, 1.0f, 90.0f) && renderer.isHasModel()) {
+		//	renderer.setPerspective(fov, ar, (int)n, (int)fa);
+		//}
+		//if (ImGui::SliderFloat("NEAR", &n, 1.0f, 90.0f) && renderer.isHasModel()) {
+		//	renderer.setPerspective(fov, ar, (int)n, (int)fa);
+		//	//renderer.setProj(fov, ar, n, fa); 
+		//}
+		//if (ImGui::SliderFloat("FAR", &fa, 10.0f, 150.0f) && renderer.isHasModel()) {
+		//	renderer.setPerspective(fov, ar, (int)n, (int)fa);
+		//}
 		ImGui::Text("Current Object:");
 		ImGui::Text("Local Rotations");
 		if (ImGui::SliderFloat("Rotate local x", &rotateLocalX, 0.0, 360.0f) && renderer.isHasModel()) {
@@ -252,6 +228,9 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 		static int x_pos = 0;
 		static int y_pos = 0;
 		static int z_pos = 0;
+		static float x_dir = 0.0f;
+		static float y_dir = 0.0f;
+		static float z_dir = 0.0f;
 		static int diffusive;
 		static int specular;
 
@@ -269,9 +248,9 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 		ImGui::NextColumn();
 		ImGui::BeginGroup();
 		ImGui::Text("Light direction:");
-		if (ImGui::SliderInt(" x direction", (int*)&x_pos, -1, 1) && renderer.isHasModel()) {}
-		if (ImGui::SliderInt(" y direction", (int*)&y_pos, -1, 1) && renderer.isHasModel()) {}
-		if (ImGui::SliderInt(" z direction", (int*)&z_pos, -1, 1) && renderer.isHasModel()) {}
+		if (ImGui::SliderFloat(" x direction", (float*)&x_dir, -1, 1) && renderer.isHasModel()) {}
+		if (ImGui::SliderFloat(" y direction", (float*)&y_dir, -1, 1) && renderer.isHasModel()) {}
+		if (ImGui::SliderFloat(" z direction", (float*)&z_dir, -1, 1) && renderer.isHasModel()) {}
 		ImGui::EndGroup();
 		ImGui::Separator();
 		
@@ -298,6 +277,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 		if (ImGui::Button("add"))
 		{
 			light.setPosition(glm::vec3(x_pos, y_pos, z_pos));
+			light.setDirection(glm::vec3(x_dir, y_dir, z_dir));
 			light.setColor(lightColor);
 			light.setActive(true);
 			light.setType(type);
@@ -309,10 +289,14 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 		
 		ImGui::End();
 	}
+	
 	// 3.2 Show lights window.
 	if (showLightWindow)
 	{
+		//TODO: add controls to translate existing light
+
 		static float Intensity = 0.5f, factor = 0.5f;
+		
 		//float clearColor;
 		Light light;
 		ImGui::Begin("Lights", &showLightWindow);   // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
@@ -320,7 +304,16 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 		ImGui::Text("Ambient light");
 		//if (ImGui::SliderFloat("factor", (float*)&factor, 0.0f, 1.0f) && renderer.isHasModel()) { renderer.setAmbientCoefficient(factor); }
 		if (ImGui::ColorEdit3("ambient color", (float*)&lightColor)) { renderer.setAmbientColor(lightColor); }
-
+		if (ImGui::SliderFloat("ambient intensity", (float*)&Intensity, 0.0f, 1.0f)) { renderer.setAmbientIntensity(Intensity); }
+		ImGui::Separator();
+		
+	
+		for (size_t i = 0; i < renderer.getLights().size(); i++)
+		{
+			ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.0f, 1.0f), "Light #%d", i);
+			ImGui::Separator();
+		}
+		
 		
 		ImGui::End();
 	}
@@ -337,7 +330,19 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 		renderer.setIsProjOrthographic(true);
 	}
 
-	// 4. A fullscreen menu bar and populating it.
+	// 3.4 show the surface reflection coefficients of the model
+	if (showSurfaceReflection)
+	{
+		ImGui::Begin("Surface coefficients", &showSurfaceReflection);
+		static float Ka = 0.2f, Kd = 0.2f, Ks = 0.2f;
+		ImGui::Text("set models and ambient reflection parameters");
+		if (ImGui::SliderFloat("Ambient:", (float*)&Ka, 0.0f, 1.0f)) { renderer.setAmbientIntensity(Ka); }
+		if (ImGui::SliderFloat("Diffusive:", (float*)&Kd, 0.0f, 1.0f)) { renderer.setDiffusiveIntensity(Kd); }
+		if (ImGui::SliderFloat("Specular:", (float*)&Ks, 0.0f, 1.0f)) { renderer.setSpecularIntensity(Ks); }
+		ImGui::End();
+	}
+
+	// 4. Menu bar 
 	{
 		ImGuiWindowFlags flags = ImGuiWindowFlags_NoFocusOnAppearing;
 		if (ImGui::BeginMainMenuBar())
@@ -493,7 +498,5 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 		ImGui::LabelText("%s", "hello"); */
 		//ImGui::GetWindowDrawList()->AddText(ImVec2(20, 40), ImColor(255, 255, 0, 255), "hello!", 0, 0.0f, 0);
 		//ImGui::GetWindowDrawList()->AddText(ImGui::GetWindowFont(), ImGui::GetWindowFontSize(), ImVec2(100.f, 100.f), ImColor(255, 255, 0, 255), "Hello World", 0, 0.0f, 0);
-	}
-
-	
+	}	
 }
