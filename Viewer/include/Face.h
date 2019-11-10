@@ -10,15 +10,20 @@ private:
 	std::vector<int> vertexIndices;
 	std::vector<int> normalIndices;
 	std::vector<int> textureIndices;
-	glm::vec3 centeroid; 
+	glm::vec3 centeroid, normal; 
 
 public:
 	Face(std::istream& issLine);
 	virtual ~Face();
-	const int Face::GetVertexIndex(int index);
-	const int Face::GetNormalIndex(int index);
-	const int Face::GetTextureIndex(int index);
+
+	//getters
+	const int Face::getVertexIndex(int index);
+	const int Face::getNormalIndex(int index);
+	const int Face::getTextureIndex(int index);
 	const std::vector<int> Face::GetVertices();
-	const glm::vec3 GetCenter() const { return this->centeroid; }
-	void SetCenter(const glm::vec3 v) { this->centeroid = v; }
+	const glm::vec3 getCenter() const { return this->centeroid; }
+	const glm::vec3 getNormal() const { return this->normal; }
+	//setters
+	void setCenter(const glm::vec3 &v) { this->centeroid = v; }
+	void setNormal(const glm::vec3 &n) { this->normal = n; }
 };

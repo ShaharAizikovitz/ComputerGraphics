@@ -167,57 +167,7 @@ void Renderer::createBuffers(int viewportWidth, int viewportHeight)
 	}
 }
 
-float Renderer::zDepth(glm::vec3 point, std::vector<Vertex> polygon)
-{
-	float result = 0.0f;
-	glm::vec3 z1, z2, z3, v0, v1, v2;
-	float d1 = 1.0f, d2 = 1.0f, d3 = 1.0f;
-	float d00 = 0.0f, d01 = 0.0f, d11 = 0.0f, d20 = 0.0f, d21 = 0.0f;
-	float denom = 0.0f;
-	float bary_x = 0.0f, bary_y = 0.0f, bary_z = 0.0f;
-	glm::vec3 baryZ = glm::vec3(0.0f);
-	z1 = polygon.at(0).getPoint();
-	z2 = polygon.at(1).getPoint();
-	z3 = polygon.at(2).getPoint();
 
-
-	//######## trial #########
-	//########################
-	v0 = z2 - z1; 
-	v1 = z3 - z1;
-	v2 = point - z1;
-	d00 = glm::dot(v0, v0);
-	d01 = glm::dot(v0, v1);
-	d11 = glm::dot(v1, v1);
-	d20 = glm::dot(v2, v0);
-	d21 = glm::dot(v2, v1);
-	denom = d00 * d11 - d01 * d01;
-	bary_y = (d11 * d20 - d01 * d21) / denom;
-	bary_z = (d00 * d21 - d01 * d20) / denom;
-	bary_x = 1.0f - (bary_y + bary_z);
-	//std::vector<glm::vec3> pointsb;
-
-	/*z1 = points.at(0).getPoint().z;
-	z2 = points.at(1).getPoint().z;
-	z3 = points.at(2).getPoint().z;*/
-
-	/*pointsb.push_back(points.at(0).getPoint());
-	pointsb.push_back(points.at(1).getPoint());
-	pointsb.push_back(points.at(2).getPoint());*/
-	
-	/*if (glm::all(glm::equal(p, points.at(0).getPoint())) ) result = points.at(0).getPoint().z;
-	else if (glm::all(glm::equal(p, points.at(0).getPoint()))) result = points.at(1).getPoint().z;
-	else if (glm::all(glm::equal(p, points.at(0).getPoint()))) result = points.at(2).getPoint().z;
-
-	else
-	{
-		baryZ = baryCentric(pointsb, p); 
-	}*/
-	//Barycentric(point, z1, z2, z3, bary_x, bary_y, bary_z);
-	//result = z1*baryZ.x + z2*baryZ.y + z3*baryZ.z;
-	return bary_z;
-
-}
 
 // Compute barycentric coordinates (u, v, w) for
 // point p with respect to triangle (a, b, c)
@@ -750,7 +700,6 @@ void Renderer::scanLine(std::vector<Vertex> &polygon, int &e1, int &e2, int &y, 
 	for (int x = x1; x < x2 ; x++)
 	{
 		{
-			z = zDepth(glm::vec3(x, y, z), polygon);
 			baryCoor = baryCentric(_polygon, glm::vec3(x, y, z)); 
 
 			normal.x = (polygon.at(0).getNormal().x * baryCoor.x + polygon.at(1).getNormal().x * baryCoor.y + polygon.at(2).getNormal().x * baryCoor.z);
@@ -823,7 +772,8 @@ void Renderer::scanLine1(std::vector<Vertex>&polygon, int & e1, int & e2, int & 
 		if ((baryCoor.x) > 1 || (baryCoor.x) < 0 || (baryCoor.y) > 1 || (baryCoor.y) < 0 || (baryCoor.z) > 1 || (baryCoor.z) < 0) continue;
 		
 		//normal at point p(x,y), and the z-coordinates
-		normal = polygon.at(0).getNormal() * baryCoor.x + polygon.at(1).getNormal() * baryCoor.y + polygon.at(2).getNormal() * baryCoor.z;
+		//normal = polygon.at(0).getNormal() * baryCoor.x + polygon.at(1).getNormal() * baryCoor.y + polygon.at(2).getNormal() * baryCoor.z;
+		normal = polygon.at(0).getNormal() + polygon.at(1).getNormal() + polygon.at(2).getNormal();
 		z = (polygon.at(0).getPoint().z * baryCoor.x + polygon.at(1).getPoint().z * baryCoor.y + polygon.at(2).getPoint().z * baryCoor.z);
 		
 		//for light in the scene add lighting
@@ -832,12 +782,12 @@ void Renderer::scanLine1(std::vector<Vertex>&polygon, int & e1, int & e2, int & 
 			for (size_t i = 0; i < scene.getLights().size(); i++)
 			{
 				Light l = scene.getLights().at(i);
-				glm::vec3 lightdir = l.getLightDir();
+				glm::vec3 lightnor = l.getNormal();
 				//diffusive
 				if ((l).getType() == 1)
 				{
 
-					float nl = glm::abs(glm::dot(lightdir, normal));
+					float nl = glm::abs(glm::dot(lightnor, normal));
 					I = I + this->diffusiveIntensity * this->scene.getCurrentModel()->getModelDIntensity() * nl;
 
 				}
@@ -845,7 +795,7 @@ void Renderer::scanLine1(std::vector<Vertex>&polygon, int & e1, int & e2, int & 
 				else if ((l).getType() == 2)
 				{
 					int alpha = 2;
-					float rv = glm::dot(lightdir, normal);
+					float rv = glm::dot(lightnor, normal);
 					I += this->specularIntensity * _CMATH_::pow(rv,alpha) * this->scene.getCurrentModel()->getModelSIntensity();
 				}
 			}
@@ -1197,16 +1147,36 @@ void Renderer::render(const Scene& scene)
 			}
 
 		}
+
+		//iterate over the faces vector of the model
+		for (std::vector<Face>::iterator face = faces.begin(); face != faces.end(); face++)
+		{
+			//face vertices for fill triangles purpose
+			Vertex first, second, third;
+			std::vector<Vertex> polygon;
+			//calc face normal
+			first = vertexs.at((*face).getVertexIndex(0) - 1);
+			second = vertexs.at((*face).getVertexIndex(1) - 1);
+			third = vertexs.at((*face).getVertexIndex(2) - 1);
+			glm::vec3 normal = glm::normalize(glm::cross(first.getPoint() - second.getPoint(), first.getPoint() - third.getPoint()));
+			//add normal to face
+			(*face).setNormal(normal);
+			// for each point in the face add the face normal
+			vertexs.at((*face).getVertexIndex(0) - 1).addNormal(normal);
+			vertexs.at((*face).getVertexIndex(1) - 1).addNormal(normal);
+			vertexs.at((*face).getVertexIndex(2) - 1).addNormal(normal);
+		}
 		
 		//iterate over the faces vector of the model
 		for (std::vector<Face>::iterator face = faces.begin(); face != faces.end(); face++) 
 		{
 			//face vertices for fill triangles purpose
+			glm::vec3 normal = (*face).getNormal();
 			Vertex first, second, third;
 			std::vector<Vertex> polygon;
-			first = vertexs.at((*face).GetVertexIndex(0) - 1) ;
-			second = vertexs.at((*face).GetVertexIndex(1) - 1);
-			third = vertexs.at((*face).GetVertexIndex(2) - 1);
+			first = vertexs.at((*face).getVertexIndex(0) - 1) ;
+			second = vertexs.at((*face).getVertexIndex(1) - 1);
+			third = vertexs.at((*face).getVertexIndex(2) - 1);
 
 			////get the indices of the vertices for each face
 			//std::vector<int> indices = (*face).GetVertices();
@@ -1224,28 +1194,20 @@ void Renderer::render(const Scene& scene)
 			//		DrawLine1(vertexs.at(*(vindex)-1).getPoint(), vertexs.at(*(vindex + 1) - 1).getPoint(), BLACK, true);
 
 
-			//	//calculate face normal and centeroid
-			//	first = vertexs.at((*face).GetVertexIndex(0) - 1);
-			//	second = vertexs.at((*face).GetVertexIndex(1) - 1);
-			//	third = vertexs.at((*face).GetVertexIndex(2) - 1);
-			//	glm::vec3 centerv = glm::vec3((first.getPoint().x + second.getPoint().x + third.getPoint().x) / 3,(first.getPoint().y + second.getPoint().y + third.getPoint().y) / 3, (first.getPoint().z + second.getPoint().z + third.getPoint().z) / 3);
+				//calculate centeroid of the face
+				glm::vec3 centerv = glm::vec3((first.getPoint().x + second.getPoint().x + third.getPoint().x) / 3,(first.getPoint().y + second.getPoint().y + third.getPoint().y) / 3, (first.getPoint().z + second.getPoint().z + third.getPoint().z) / 3);
 
-			//	//normals
-			//	glm::vec3 normal = glm::normalize(glm::cross(first.getPoint() - second.getPoint(), first.getPoint() - third.getPoint()));
-			//	first.addNormal(normal);
-			//	second.addNormal(normal);
-			//	third.addNormal(normal);
-			//	normal.x *= -F_NORMAL_SCALE; normal.y *= -F_NORMAL_SCALE; normal.z *= -F_NORMAL_SCALE;
-			//	//draw face normals
-			//	if (this->toDrawFaceNormals && (*model).getIsCurrentModel())
-			//	{
-			//		putPixel(viewportWidth / 2 + centerv.x, viewportHeight / 2 + centerv.y, RED);
-			//		putPixel(viewportWidth / 2 + centerv.x + 1, viewportHeight / 2 + centerv.y, RED);
-			//		putPixel(viewportWidth / 2 + centerv.x - 1, viewportHeight / 2 + centerv.y, RED);
-			//		putPixel(viewportWidth / 2 + centerv.x, viewportHeight / 2 + centerv.y + 1, RED);
-			//		putPixel(viewportWidth / 2 + centerv.x, viewportHeight / 2 + centerv.y - 1, RED);
-			//		DrawLine( centerv, glm::vec3(centerv.x + normal.x, centerv.y + normal.y, -(centerv.z + normal.z)), RED, true);
-			//	}
+				//calculate face normal, and add that normal to EACH face vertex
+				/*glm::vec3 normal = glm::normalize(glm::cross(first.getPoint() - second.getPoint(), first.getPoint() - third.getPoint()));
+				first.addNormal(normal);
+				second.addNormal(normal);
+				third.addNormal(normal);*/
+				//normal.x *= -F_NORMAL_SCALE; normal.y *= -F_NORMAL_SCALE; normal.z *= -F_NORMAL_SCALE;
+				//draw face normals
+				if (this->toDrawFaceNormals && (*model).getIsCurrentModel())
+				{
+					drawLine( centerv, glm::vec3(centerv.x + normal.x, centerv.y + normal.y, -(centerv.z + normal.z)), RED, true);
+				}
 			//}
 
 			

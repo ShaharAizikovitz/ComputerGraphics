@@ -127,12 +127,12 @@ void MeshModel::createCenterLines()
 {
 	for (std::vector<Face>::iterator f = this->faces.begin(); f != this->faces.end(); f++)
 	{ 
-		glm::vec3 point1 = this->vertexs.at((*f).GetVertexIndex(0) - 1).getPoint(); 
-		glm::vec3 point2 = this->vertexs.at((*f).GetVertexIndex(1) - 1).getPoint();
-		glm::vec3 point3 = this->vertexs.at((*f).GetVertexIndex(2) - 1).getPoint();
+		glm::vec3 point1 = this->vertexs.at((*f).getVertexIndex(0) - 1).getPoint(); 
+		glm::vec3 point2 = this->vertexs.at((*f).getVertexIndex(1) - 1).getPoint();
+		glm::vec3 point3 = this->vertexs.at((*f).getVertexIndex(2) - 1).getPoint();
 		glm::vec3 center = glm::vec3((point1.x + point2.x + point3.x)/3, (point1.y + point2.y + point3.y)/3, (point1.z + point2.z + point3.z)/3); 
 			
-		f->SetCenter(center);
+		f->setCenter(center);
 	}
 }
 

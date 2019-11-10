@@ -91,15 +91,15 @@ MeshModel Utils::LoadMeshModel(const std::string& filePath)
 		//iterate over the indices
 		for (std::vector<int>::iterator vindex = indices.begin(); vindex != indices.end(); vindex++)
 		{
-			first = vertices.at((*face).GetVertexIndex(0) - 1);
-			second = vertices.at((*face).GetVertexIndex(1) - 1);
-			third = vertices.at((*face).GetVertexIndex(2) - 1);
+			first = vertices.at((*face).getVertexIndex(0) - 1);
+			second = vertices.at((*face).getVertexIndex(1) - 1);
+			third = vertices.at((*face).getVertexIndex(2) - 1);
 			normal = glm::normalize(glm::cross(first.getPoint() - second.getPoint(), first.getPoint() - third.getPoint()));
 
 			//add newly created normal to each face vertex
-			vertices.at((*face).GetVertexIndex(0) - 1).addNormal(normal);
-			vertices.at((*face).GetVertexIndex(1) - 1).addNormal(normal);
-			vertices.at((*face).GetVertexIndex(2) - 1).addNormal(normal);
+			vertices.at((*face).getVertexIndex(0) - 1).addNormal(normal);
+			vertices.at((*face).getVertexIndex(1) - 1).addNormal(normal);
+			vertices.at((*face).getVertexIndex(2) - 1).addNormal(normal);
 		}		
 		//add normal to normal vector
 		normals.push_back(normal);

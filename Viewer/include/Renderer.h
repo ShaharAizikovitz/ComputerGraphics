@@ -63,7 +63,6 @@ private:		//members
 	void putPixel(int i, int j, const glm::vec3 & color);
 	void putPixel(int x, int y, const glm::vec3& color, const float &z);
 	void createBuffers(int viewportWidth, int viewportHeight);
-	float zDepth(glm::vec3, std::vector<Vertex>);
 	glm::vec3 baryCentric(std::vector<glm::vec3> &polygon, glm::vec3 &point);
 	float Fab(glm::vec3 &a, glm::vec3 &b, glm::vec3 &point);
 	void createOpenGLBuffer();
@@ -127,6 +126,7 @@ public:
 	const bool& getdrawLines() const { return this->drawLines; }
 	std::shared_ptr<MeshModel> getCurrentModel() const { return this->currentModel; }
 	std::vector<std::shared_ptr<MeshModel>> getModels() const { return this->models; }
+	const Scene getScene() const { return this->scene; }
 
 	//setters
 	void setProj( float & fovy,  float & aspectRatio,  int & _near,  int & _far); 

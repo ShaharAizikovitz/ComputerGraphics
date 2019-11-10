@@ -1,9 +1,14 @@
 #include "Light.h"
 
+//cotr
 Light::Light()
 {
+	this->direction = glm::vec3(0, 0, 0);
+	//pos - direction
+	this->normal = glm::normalize(glm::vec3(0, 0, -400) - this->direction);
 }
 
+//dtor
 Light::~Light()
 {
 }

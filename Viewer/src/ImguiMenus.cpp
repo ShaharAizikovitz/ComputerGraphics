@@ -212,9 +212,9 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);*/
 		if (ImGui::SliderFloat("object reflection:", (float *)&reflection, -1, 1)) { renderer.setReflection(reflection);  }
-		if (ImGui::ColorEdit3("object color:", (float*)&objectColor)) {
-			renderer.setAmbientColor(objectColor);
-		}
+		/*if (ImGui::ColorEdit3("object color:", (float*)&objectColor)) {
+			renderer.getScene().getCurrentModel()->SetColor(objectColor);
+		}*/
 		//ImGui::EndChild();
 		ImGui::End();
 	}
@@ -278,6 +278,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 		{
 			light.setPosition(glm::vec3(x_pos, y_pos, z_pos));
 			light.setDirection(glm::vec3(x_dir, y_dir, z_dir));
+			light.setNormal(glm::normalize(glm::vec3(x_pos, y_pos, z_pos) - glm::vec3(x_dir, y_dir, z_dir)));
 			light.setColor(lightColor);
 			light.setActive(true);
 			light.setType(type);
@@ -296,6 +297,9 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 		//TODO: add controls to translate existing light
 
 		static float Intensity = 0.5f, factor = 0.5f;
+		static int light_x, light_y, light_z;
+		std::vector <Light> lights = renderer.getScene().getLights();
+		std::vector <Light>::iterator l;
 		
 		//float clearColor;
 		Light light;
@@ -308,10 +312,28 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 		ImGui::Separator();
 		
 	
-		for (size_t i = 0; i < renderer.getLights().size(); i++)
+		if ((l = lights.begin()) != NULL)
 		{
-			ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.0f, 1.0f), "Light #%d", i);
-			ImGui::Separator();
+			int count = 1;
+			for ( l = renderer.getScene().getLights().begin(); l != renderer.getScene().getLights().end(); l++, count++)
+			{
+				glm::vec3 pos = (*l).getLightPos();
+				ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.0f, 1.0f), "Light #%d", count);
+				if (ImGui::SliderInt("light x pos", (int*)&light_x, -3000, 3000)) { (*l).setPosition(glm::vec3(pos.x + light_x, pos.y, pos.z)); }
+				if (ImGui::SliderInt("light y pos", (int*)&light_y, -3000, 3000)) { (*l).setPosition(glm::vec3(pos.x, pos.y + light_y, pos.z)); }
+				if (ImGui::SliderInt("light z pos", (int*)&light_z, -3000, 3000)) { (*l).setPosition(glm::vec3(pos.x, pos.y, pos.z + light_z)); }
+				ImGui::Separator();
+			}
+			/*for (size_t i = 0; i < renderer.getScene().getLights().size(); i++)
+			{
+				Light *l = &(renderer.getScene().getLights().at(i));
+				glm::vec3 pos = (*l).getLightPos();
+				ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.0f, 1.0f), "Light #%d", i);
+				if (ImGui::SliderInt("light x pos", (int*)&light_x, -3000, 3000)) { (*l).setPosition(glm::vec3(pos.x + light_x, pos.y, pos.z)); }
+				if (ImGui::SliderInt("light y pos", (int*)&light_y, -3000, 3000)) { (*l).setPosition(glm::vec3(pos.x, pos.y + light_y, pos.z)); }
+				if (ImGui::SliderInt("light z pos", (int*)&light_z, -3000, 3000)) { (*l).setPosition(glm::vec3(pos.x, pos.y, pos.z + light_z)); }
+				ImGui::Separator();
+			}*/
 		}
 		
 		
