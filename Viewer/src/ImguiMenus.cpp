@@ -299,7 +299,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 		static float Intensity = 0.5f, factor = 0.5f;
 		static int light_x, light_y, light_z;
 		std::vector <Light> lights = renderer.getScene().getLights();
-		std::vector <Light>::iterator l;
+		std::vector <Light>::iterator l = lights.begin();
 		
 		//float clearColor;
 		Light light;
@@ -312,10 +312,10 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 		ImGui::Separator();
 		
 	
-		if ((l = lights.begin()) != NULL)
+		if (lights.size() > 0)
 		{
 			int count = 1;
-			for ( l = renderer.getScene().getLights().begin(); l != renderer.getScene().getLights().end(); l++, count++)
+			for ( /*l = lights.begin()*/; l != lights.end(); l++/*, count++*/)
 			{
 				glm::vec3 pos = (*l).getLightPos();
 				ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.0f, 1.0f), "Light #%d", count);
