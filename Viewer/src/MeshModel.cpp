@@ -34,6 +34,7 @@ MeshModel::MeshModel(const std::vector<Face>& faces, const std::vector<Vertex>& 
 	this->createCenterLines();
 	setScaleTransform(1500, 1500, 1500);
 }
+// ctor being used right now 12.11.2019
 MeshModel::MeshModel(const std::vector<Face>& faces, const std::vector<Vertex>& vertices, const std::vector<glm::vec3>& normals, const std::string & modelName, const bool & isCurrent) : 
 	modelName(modelName),
 	localTransform(glm::mat4(1)),
@@ -88,7 +89,7 @@ MeshModel::MeshModel(const std::vector<Face>& faces, const std::vector<glm::vec3
 	this->isCurrentModel = false;
 	this->createCube();
 	this->createCenterLines();
-	setScaleTransform(1500, 1500, 1500);
+	setScaleTransform(500, 500, 500);
 }
 
 //MeshModel::MeshModel(const std::vector<Face>& faces, const std::vector<glm::vec3>& vertices, const std::vector<glm::vec3>& normals, const std::string& modelName, const bool &isCurrent) :
@@ -143,16 +144,16 @@ void MeshModel::createCube()
 	this->cube.color = glm::vec4(1, 0, 0, 1); 
 
 	//find minimums and maximums of the cube faces
-	for (std::vector<glm::vec3>::iterator it = this->vertices.begin(); it != this->vertices.end(); it++)
+	for (std::vector<Vertex>::iterator it = this->vertexs.begin(); it != this->vertexs.end(); it++)
 	{
-		if (this->cube.back >= (*it).z)  this->cube.back = (*it).z; 
-		if (this->cube.front < (*it).z)  this->cube.front = (*it).z;
+		if (this->cube.back >= (*it).getPoint().z)  this->cube.back = (*it).getPoint().z;
+		if (this->cube.front < (*it).getPoint().z)  this->cube.front = (*it).getPoint().z;
 
-		if (this->cube.right <= (*it).x) this->cube.right = (*it).x;
-		if (this->cube.left > (*it).x) this->cube.left = (*it).x;
+		if (this->cube.right <= (*it).getPoint().x) this->cube.right = (*it).getPoint().x;
+		if (this->cube.left > (*it).getPoint().x) this->cube.left = (*it).getPoint().x;
 
-		if (this->cube.bottom >= (*it).y) this->cube.bottom = (*it).y;
-		if (this->cube.top < (*it).y) this->cube.top = (*it).y;
+		if (this->cube.bottom >= (*it).getPoint().y) this->cube.bottom = (*it).getPoint().y;
+		if (this->cube.top < (*it).getPoint().y) this->cube.top = (*it).getPoint().y;
 	}
 
 	//calculate the cube corners verices

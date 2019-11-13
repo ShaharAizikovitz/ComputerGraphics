@@ -27,7 +27,7 @@ public:
 	int getDepth() const { return this->depth; }
 	void setPoint(const int &d) { this->depth = d; }
 
-	void addNormal(glm::vec3 &v) { this->normal += v; this->normals.push_back(v); }
+	void addNormal(glm::vec3 &v) { this->normal = glm::normalize( this->normal + v); this->normals.push_back(v); }
 	glm::vec3 getNormal() const { return this->normal; }
 	void setNormal(const glm::vec3 &v) {  this->normal = v; }
 

@@ -772,8 +772,9 @@ void Renderer::scanLine1(std::vector<Vertex>&polygon, int & e1, int & e2, int & 
 		if ((baryCoor.x) > 1 || (baryCoor.x) < 0 || (baryCoor.y) > 1 || (baryCoor.y) < 0 || (baryCoor.z) > 1 || (baryCoor.z) < 0) continue;
 		
 		//normal at point p(x,y), and the z-coordinates
-		//normal = polygon.at(0).getNormal() * baryCoor.x + polygon.at(1).getNormal() * baryCoor.y + polygon.at(2).getNormal() * baryCoor.z;
-		normal = polygon.at(0).getNormal() + polygon.at(1).getNormal() + polygon.at(2).getNormal();
+		//normal = polygon.at(0).getNormal() * baryCoor.z + polygon.at(1).getNormal() * baryCoor.x + polygon.at(2).getNormal() * baryCoor.y;
+		normal = polygon.at(0).getNormal() * baryCoor.x + polygon.at(1).getNormal() * baryCoor.y + polygon.at(2).getNormal() * baryCoor.z;
+		//normal = polygon.at(0).getNormal() + polygon.at(1).getNormal() + polygon.at(2).getNormal();
 		z = (polygon.at(0).getPoint().z * baryCoor.x + polygon.at(1).getPoint().z * baryCoor.y + polygon.at(2).getPoint().z * baryCoor.z);
 		
 		//for light in the scene add lighting
@@ -992,6 +993,7 @@ void Renderer::render(const Scene& scene)
 	color.y = 0.0;
 	color.z = 0.0;
 	Camera camera;
+	float scale = 1.0f;
 	
 	
 	//we get the model list from the scene object that was passed to Render function
@@ -1001,6 +1003,9 @@ void Renderer::render(const Scene& scene)
 	camera = scene.getCurrentCamera();
 	//projection = (this->isProjOrthographic) ? camera.getOrthographicTransformation() : camera.getperspectiveTransformation();
 	
+	//if no models exist exit renser method
+	if (!(this->isHasModel())) return;
+	
 	//we iterate over models vector with an iterator
 	for (std::vector<std::shared_ptr<MeshModel>>::iterator it = models.begin(); it != models.end(); it++) {
 		//the iterator is pointing to a shared_ptr that points to our MeshModel. 
@@ -1008,6 +1013,10 @@ void Renderer::render(const Scene& scene)
 
 		//this->currentModel = &(*model);
 		Cube c = model->getCube();
+		//calculate scaling: bounding box hieght is a third of the hieght of the viewport hieght
+		scale = this->viewportHeight / (3 * (c.top - c.bottom));
+		//set the model scale transform
+		model->setScaleTransform(scale, scale, scale);
 		glm::mat4 localTransform = model->GetLocalTransform();
 		glm::mat4 scaleTransform = model->GetScaleTransform();
 		glm::mat4 translateTransform = model->getTranslationTransform();
@@ -1029,8 +1038,7 @@ void Renderer::render(const Scene& scene)
 		typedef std::vector<glm::vec4>::iterator center_it;
 		//glm::mat4 t = this->currentCamera.getViewWorldTransform();
 
-		//for debug use earse afterwards
-		int count = 0;
+		
 
 
 		//adjust cube coordinates
@@ -1094,10 +1102,10 @@ void Renderer::render(const Scene& scene)
 			glm::vec4 newVertex = glm::vec4((*vertex).getPoint().x, (*vertex).getPoint().y, (*vertex).getPoint().z, 1);
 
 			//object scale -> roration -> translation
-			/*newVertex = scaleTransform * newVertex;
+			newVertex = scaleTransform * newVertex;
 			newVertex = rotationTransform * newVertex;
-			newVertex = translateTransform * newVertex;*/
-			newVertex = localTransform * newVertex;
+			newVertex = translateTransform * newVertex;
+			//newVertex = localTransform * newVertex;
 			
 
 			// new set WORLD transformations.

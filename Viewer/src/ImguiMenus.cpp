@@ -128,7 +128,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 			renderer.rotateLocalZ(rotateLocalZ);
 		}
 		ImGui::Text("Scaling:");
-		if (ImGui::SliderFloat("scale", &f, 0.0f, 16000.0f) && renderer.isHasModel()) {
+		if (ImGui::SliderFloat("scale", &f, 0.0f, 1600.0f) && renderer.isHasModel()) {
 			renderer.setScaleNumber(f);
 		}
 		ImGui::Text("World Translations");
