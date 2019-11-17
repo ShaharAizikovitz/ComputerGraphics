@@ -55,6 +55,7 @@ public:
 	MeshModel(const std::vector<Face>& faces, const std::vector<glm::vec3>& vertices, const std::vector<glm::vec3>& normals, const std::string& modelName = "");
 	MeshModel(const std::vector<Face>& faces, const std::vector<Vertex>& vertices, const std::vector<glm::vec3>& normals, const std::string& modelName);
 	MeshModel(const std::vector<Face>& faces, const std::vector<Vertex>& vertices, const std::vector<glm::vec3>& normals, const std::string& modelName, const bool &isCurrent);
+	MeshModel(const int type); 
 	virtual ~MeshModel();
 	MeshModel();
 
@@ -101,5 +102,5 @@ public:
 	const float getModelAIntensity() const { return this->modelAIntensity; }
 	const float getModelDIntensity() const { return this->modelDIntensity; }
 	const float getModelSIntensity() const { return this->modelSIntensity; }
-	
+	void createPol();
 };

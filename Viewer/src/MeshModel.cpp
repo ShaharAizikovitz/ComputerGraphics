@@ -92,6 +92,52 @@ MeshModel::MeshModel(const std::vector<Face>& faces, const std::vector<glm::vec3
 	setScaleTransform(500, 500, 500);
 }
 
+// constractor for primitives 
+MeshModel::MeshModel(const int type)
+{
+	this->localTransform = glm::mat4(1);
+	this->worldTransform=glm::mat4(1);
+	this->worldTranslation=glm::mat4(1);
+	this->worldRotation=glm::mat4(1);
+	this->scaleTransform=glm::mat4(1);
+	this->rotationTransform=glm::mat4();
+	this->xRotation=glm::mat4(1);
+	this->yRotation=glm::mat4(1);
+	this->zRotation=glm::mat4(1);
+	this->xRotationWorld=glm::mat4(1);
+	this->yRotationWorld=glm::mat4(1);
+	this->zRotationWorld=glm::mat4(1);
+	this->translationTransform=glm::mat4(1);
+	this->drawCube = false;
+	this->isCurrentModel = false;
+	this->modelAIntensity = 0.2f;
+	this->modelDIntensity = 0.2f;
+	this->modelSIntensity = 0.2f;
+	setScaleTransform(500, 500, 500);
+	switch (type)
+	{
+	case 0: {
+		this->modelName = "poligon.obj";
+		glm::vec3 v0 = { 123.0f,122.0f,-30.0f };
+		glm::vec3 v1 = { 61.0f,0.0f,-5.0f };
+		glm::vec3 v2 = { 1.0f,122.0f,-10.0f };
+		this->vertices.push_back(v0);
+		this->vertices.push_back(v1);
+		this->vertices.push_back(v2);
+		glm::vec3 color(0, 0, 0);
+		this->vertexs.push_back(Vertex(v0, color, INT32_MAX));
+		this->vertexs.push_back(Vertex(v1, color, INT32_MAX));
+		this->vertexs.push_back(Vertex(v2, color, INT32_MAX));
+		Face f = Face({ 1, 2, 3 });
+		this->faces.push_back(f);
+	}
+	default:
+		break;
+	}
+	this->createCube();
+	this->createCenterLines();
+}
+
 //MeshModel::MeshModel(const std::vector<Face>& faces, const std::vector<glm::vec3>& vertices, const std::vector<glm::vec3>& normals, const std::string& modelName, const bool &isCurrent) :
 //	modelName(modelName),
 //	localTransform(glm::mat4(1)),
