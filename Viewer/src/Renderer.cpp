@@ -1105,7 +1105,7 @@ void Renderer::render(const Scene& scene)
 			newVertex = scaleTransform * newVertex;
 			newVertex = rotationTransform * newVertex;
 			newVertex = translateTransform * newVertex;
-			//newVertex = localTransform * newVertex;
+			newVertex = localTransform * newVertex;
 			
 
 			// new set WORLD transformations.

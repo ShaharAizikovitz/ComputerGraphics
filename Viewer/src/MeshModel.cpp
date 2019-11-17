@@ -32,6 +32,7 @@ MeshModel::MeshModel(const std::vector<Face>& faces, const std::vector<Vertex>& 
 	this->isCurrentModel = false;
 	this->createCube();
 	this->createCenterLines();
+	this->createCenteroGravity();
 	setScaleTransform(1500, 1500, 1500);
 }
 // ctor being used right now 12.11.2019
@@ -62,7 +63,7 @@ MeshModel::MeshModel(const std::vector<Face>& faces, const std::vector<Vertex>& 
 	this->isCurrentModel = false;
 	this->createCube();
 	this->createCenterLines();
-
+	this->createCenteroGravity();
 	setScaleTransform(1500, 1500, 1500);
 }
 //ctor
@@ -89,6 +90,7 @@ MeshModel::MeshModel(const std::vector<Face>& faces, const std::vector<glm::vec3
 	this->isCurrentModel = false;
 	this->createCube();
 	this->createCenterLines();
+	this->createCenteroGravity();
 	setScaleTransform(500, 500, 500);
 }
 
@@ -134,6 +136,7 @@ MeshModel::MeshModel(const int type)
 	default:
 		break;
 	}
+	this->createCenteroGravity();
 	this->createCube();
 	this->createCenterLines();
 }
@@ -232,7 +235,6 @@ const glm::mat4& MeshModel::getTranslationTransform() const {
 	return this->translationTransform;
 }
 
-
 const glm::mat4& MeshModel::GetWorldTransformation() const
 {
 	return worldTransform;
@@ -305,6 +307,7 @@ void MeshModel::setWorldTranslation(float x, float y, float z) {
 	glm::vec4 yVec = worldTranslation[1];
 	glm::vec4 zVec = worldTranslation[2];
 	glm::vec4 lVec(x, y, z, 1);
+	this->translate = lVec;
 	if (z == 0) z = 1;
 	worldTranslation = glm::mat4(xVec / z, yVec / z, zVec, lVec);
 	worldTransform = this->worldTranslation * this->worldRotation;
@@ -317,21 +320,22 @@ void MeshModel::setRotationTransform(float xDegree, float yDegree, float zDegree
 		glm::vec4 yVec(0, cos(rad), sin(rad), 0);
 		glm::vec4 zVec(0, -sin(rad), cos(rad), 0);
 		glm::vec4 lastVec(0, 0, 0, 1);
-		xRotation = glm::mat4(xVec, yVec, zVec, lastVec);
-		this->rotationTransform = this->yRotation*xRotation;
-		this->rotationTransform = this->zRotation*rotationTransform;
-		localTransform = this->translationTransform * (this->rotationTransform * this->scaleTransform);
+		this->xRotation = glm::mat4(1, 0, 0, 0, 
+									0, cosf(xDegree), -sinf(xDegree), 0,
+									0, sinf(xDegree), cosf(xDegree),0, 
+									0, 0, 0, 1);
+		this->rotationTransform = this->zRotation * this->yRotation * this->xRotation;
+		localTransform =  this->rotationTransform * this->translationTransform * this->scaleTransform;
 	}
 	else if (xDegree == 1 && zDegree == 1) {
 		auto rad = yDegree * PI / 180;
-		glm::vec4 xVec(cos(rad), 0, sin(rad), 0);
-		glm::vec4 yVec(0, 1, 0, 0);
-		glm::vec4 zVec(-sin(rad), 0, cos(rad), 0);
-		glm::vec4 lastVec(0, 0, 0, 1);
-		yRotation = glm::mat4(xVec, yVec, zVec, lastVec);
-		this->rotationTransform = this->yRotation*xRotation;
-		this->rotationTransform = this->zRotation*rotationTransform;
-		localTransform = this->translationTransform*(this->rotationTransform * this->scaleTransform);
+
+		this->yRotation = glm::mat4(cos(rad), 0, sin(rad), 0,
+									0, 1, 0, 0,
+									-sin(rad), 0, cos(rad), 0,
+									0, 0, 0, 1);
+		this->rotationTransform = this->zRotation * this->yRotation * this->xRotation;
+		localTransform = this->translationTransform * (this->rotationTransform * this->scaleTransform);
 	}
 	else if (xDegree ==1 && yDegree == 1) {
 		auto rad = zDegree * PI / 180;
@@ -340,9 +344,9 @@ void MeshModel::setRotationTransform(float xDegree, float yDegree, float zDegree
 		glm::vec4 zVec(0, 0, 1, 0);
 		glm::vec4 lastVec(0, 0, 0, 1);
 		zRotation = glm::mat4(xVec, yVec, zVec, lastVec);
-		this->rotationTransform = this->yRotation*xRotation;
-		this->rotationTransform = this->zRotation*rotationTransform;
-		localTransform = this->translationTransform*(this->rotationTransform * this->scaleTransform);
+
+		this->rotationTransform = this->zRotation * this->yRotation * this->xRotation;;
+		localTransform = this->translationTransform * (this->rotationTransform * this->scaleTransform);
 	}
 }
 
@@ -353,10 +357,10 @@ void MeshModel::setWorldRotation(float xDegree, float yDegree, float zDegree) {
 		glm::vec4 yVec(0, cos(rad), sin(rad), 0);
 		glm::vec4 zVec(0, -sin(rad), cos(rad), 0);
 		glm::vec4 lastVec(0, 0, 0, 1);
-		xRotationWorld = glm::mat4(xVec, yVec, zVec, lastVec);
-		this->worldRotation = this->yRotationWorld*xRotationWorld;
-		this->worldRotation = this->zRotationWorld*worldRotation;
-		worldTransform = this->worldTranslation * this->worldRotation;
+		this->xRotationWorld = glm::mat4(xVec, yVec, zVec, lastVec);
+		
+		this->worldRotation = this->zRotationWorld * this->yRotationWorld * this->xRotationWorld;
+		worldTransform =   this->worldRotation /* this->worldTranslation*/;
 	}
 	else if (xDegree == 1 && zDegree == 1) {
 		auto rad = yDegree * PI / 180;
@@ -385,4 +389,29 @@ const glm::mat4& MeshModel::GetScaleTransform() const {
 	return this->scaleTransform;
 }
 MeshModel::MeshModel() {
+}
+
+void MeshModel::createCenteroGravity()
+{
+	float x = 0.0f;
+	float y = 0.0f;
+	float z = 0.0f;
+
+	size_t size = vertexs.size();
+	for (size_t i = 0; i < size; i++)
+	{
+		x += vertexs[i].getPoint().x;
+		y += vertexs[i].getPoint().y;
+		z += vertexs[i].getPoint().z;
+	}
+
+	this->cg = glm::vec4(x / size, y / size, z / size, 1.0f);
+}
+
+const glm::mat4& MeshModel::localTransformation(const glm::vec3 trans, const glm::vec3 scale, const glm::vec3 angle, const bool &isLocal)
+{
+	glm::mat4& result = (this->translationTransform);
+
+
+	return result;
 }

@@ -38,12 +38,15 @@ private:
 	glm::mat4 zRotation;
 	glm::mat4x4 worldTransform;
 	glm::vec4 color;
+	glm::vec4 cg;
+	glm::vec4 translate;
 	std::string modelName;
 	bool draw;
 	bool drawCube;
 	void createCube();
 	void createNormals();
 	void createCenterLines();
+	void createCenteroGravity();
 	bool isCurrentModel;
 	float modelAIntensity;
 	float modelDIntensity;
@@ -69,6 +72,7 @@ public:
 	const glm::mat4& GetWorldTranslate() const;
 	const glm::mat4& GetWorldRotation() const;
 	const glm::vec4& GetColor() const;
+	const glm::mat4& localTransformation(const glm::vec3 trans, const glm::vec3 scale, const glm::vec3 angle, const bool &isLocal);
 	
 
 	//getters-setters
@@ -86,6 +90,7 @@ public:
 	void setModelAIntensity(const float &f) { this->modelAIntensity = f; }
 	void setModelDIntensity(const float &f) { this->modelDIntensity = f; }
 	void setModelSIntensity(const float &f) { this->modelSIntensity = f; }
+	
 
 	const bool& getDraw() { return this->draw; }
 	const std::string& GetModelName();
@@ -102,5 +107,5 @@ public:
 	const float getModelAIntensity() const { return this->modelAIntensity; }
 	const float getModelDIntensity() const { return this->modelDIntensity; }
 	const float getModelSIntensity() const { return this->modelSIntensity; }
-	void createPol();
+	const glm::vec4& getCenterOGravity() const { return this->cg; }
 };
