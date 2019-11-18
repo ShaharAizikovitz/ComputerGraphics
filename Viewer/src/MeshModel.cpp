@@ -62,7 +62,7 @@ MeshModel::MeshModel(const std::vector<Face>& faces, const std::vector<Vertex>& 
 	this->isCurrentModel = false;
 	this->createCube();
 	this->createCenterLines();
-
+	this->setCentePoint();
 	setScaleTransform(1500, 1500, 1500);
 }
 //ctor
@@ -89,6 +89,7 @@ MeshModel::MeshModel(const std::vector<Face>& faces, const std::vector<glm::vec3
 	this->isCurrentModel = false;
 	this->createCube();
 	this->createCenterLines();
+	this->setCentePoint();
 	setScaleTransform(500, 500, 500);
 }
 
@@ -134,6 +135,7 @@ MeshModel::MeshModel(const int type)
 	default:
 		break;
 	}
+	this->setCentePoint();
 	this->createCube();
 	this->createCenterLines();
 }
@@ -251,6 +253,23 @@ const glm::vec4& MeshModel::GetColor() const
 {
 	return color;
 }
+
+void MeshModel::setCentePoint()
+{
+	float x = 0;
+	float y = 0;
+	float z = 0;
+	size_t size = vertices.size();
+	for (size_t i = 0; i < size; i++)
+	{
+		x += vertices[i].x;
+		y += vertices[i].y;
+		z += vertices[i].z;
+	}
+
+	centerPoint = glm::vec3((x / size), (y / size), (z / size));
+}
+
 
 const std::string& MeshModel::GetModelName()
 {

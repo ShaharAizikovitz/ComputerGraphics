@@ -10,6 +10,12 @@
 class Utils
 {
 public:
+	glm::vec4 Homogeneous3to4(const glm::vec3 source);
+	glm::vec3 Homogeneous4to3(const glm::vec4 source);
+	glm::mat4 TranslationMatrix(const glm::vec3 translation);
+	glm::mat4 scaleMat(const glm::vec3 scale);
+	glm::mat4 rotateMat(const glm::vec3 angle);
+	glm::mat4 setFullTransformMat(const glm::vec3 translation, const glm::vec3 scale, const glm::vec3 angle, glm::vec3 center, bool isLocal);
 	static Vertex VertexFromStream(std::istream& issLine);
 	static glm::vec3 Vec3fFromStream(std::istream& issLine);
 	static glm::vec2 Vec2fFromStream(std::istream& issLine);

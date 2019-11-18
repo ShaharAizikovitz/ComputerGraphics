@@ -26,7 +26,7 @@ private:
 	std::vector<glm::vec3> normals;
 	std::vector<glm::vec3> v_normals;
 	std::vector<glm::vec4> centerLine; 
-
+	
 	glm::mat4 localTransform;
 	glm::mat4 scaleTransform;
 	glm::mat4 rotationTransform;
@@ -38,6 +38,7 @@ private:
 	glm::mat4 zRotation;
 	glm::mat4x4 worldTransform;
 	glm::vec4 color;
+	glm::vec3 centerPoint;
 	std::string modelName;
 	bool draw;
 	bool drawCube;
@@ -49,6 +50,7 @@ private:
 	float modelDIntensity;
 	float modelSIntensity;
 	Cube cube; 
+
 
 public:
 	//ctor
@@ -86,6 +88,7 @@ public:
 	void setModelAIntensity(const float &f) { this->modelAIntensity = f; }
 	void setModelDIntensity(const float &f) { this->modelDIntensity = f; }
 	void setModelSIntensity(const float &f) { this->modelSIntensity = f; }
+	void setCentePoint();
 
 	const bool& getDraw() { return this->draw; }
 	const std::string& GetModelName();
@@ -102,5 +105,5 @@ public:
 	const float getModelAIntensity() const { return this->modelAIntensity; }
 	const float getModelDIntensity() const { return this->modelDIntensity; }
 	const float getModelSIntensity() const { return this->modelSIntensity; }
-	void createPol();
+	
 };

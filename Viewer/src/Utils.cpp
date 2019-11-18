@@ -5,6 +5,60 @@
 #include <fstream>
 #include <sstream>
 
+
+// tal util fuctions
+glm::vec4 Utils::Homogeneous3to4(const glm::vec3 source)
+{
+	return glm::vec4(source[0], source[1], source[2], 1.0f);
+}
+
+glm::vec3 Utils::Homogeneous4to3(const glm::vec4 source)
+{
+	return glm::vec3(source[0] / source[3], source[1] / source[3], source[2] / source[3]);
+	//return glm::vec3(source[0] , source[1] , source[2] );
+}
+
+glm::mat4 Utils::TranslationMatrix(const glm::vec3 translation)
+{
+	return glm::mat4(
+		1.0f, 0.0f, 0.0f, translation.x,
+		0.0f, 1.0f, 0.0f, translation.y,
+		0.0f, 0.0f, 1.0f, translation.z,
+		0.0f, 0.0f, 0.0f, 1.0f);
+}
+
+glm::mat4 Utils::scaleMat(const glm::vec3 scale)
+{
+	return glm::mat4(scale.x, 0, 0, 0, 0, scale.y, 0, 0, 0, 0, scale.z, 0, 0, 0, 0, 1);
+
+}
+glm::mat4 Utils::rotateMat(const glm::vec3 angle)
+{
+
+	glm::mat4 x = glm::mat4(1, 0, 0, 0, 0, cosf(angle.x), -sinf(angle.x), 0, 0, sinf(angle.x), cosf(angle.x), 0, 0, 0, 0, 1);
+
+
+	glm::mat4 y = glm::mat4(cosf(angle.y), 0, sinf(angle.y), 0, 0, 1, 0, 0, -sinf(angle.y), 0, cosf(angle.y), 0, 0, 0, 0, 1);
+
+
+	glm::mat4 z = glm::mat4(cosf(angle.z), -sinf(angle.z), 0, 0, sinf(angle.z), cosf(angle.z), 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
+
+
+	return x * y * z;
+
+}
+glm::mat4 Utils::setFullTransformMat(const glm::vec3 translation, const glm::vec3 scale, const glm::vec3 angle, glm::vec3 center, bool isLocal)
+{
+	if (isLocal) {
+
+		return TranslationMatrix(-center)*rotateMat(angle)*scaleMat(scale)*TranslationMatrix(translation)*TranslationMatrix(center);
+
+	}
+	else
+		return TranslationMatrix(translation)*rotateMat(angle)*scaleMat(scale);
+}
+
+
 Vertex Utils::VertexFromStream(std::istream& issLine)
 {
 	int depth = INT32_MAX;
