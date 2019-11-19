@@ -13,9 +13,14 @@ Scene::Scene() :
 
 void Scene::AddModel(const std::shared_ptr<MeshModel>& model)
 {
+	int i = GetActiveModelIndex();
+	models[i]->SetColor({ 0,0,0,0 });
 	//last model to enter is the current one
 	this->currentModel = model;
 	models.push_back(model);
+	activeModelIndex = models.size() - 1;
+	models[activeModelIndex]->SetColor({ 1,1,0,0 });
+
 }
 
 const int Scene::GetModelCount() const
@@ -58,7 +63,10 @@ void Scene::SetActiveModelIndex(size_t index)
 	// implementation suggestion...
 	if (index >= 0 && index < models.size())
 	{
+		int i = GetActiveModelIndex();
+		models[i]->SetColor({ 0,0,0,0 });
 		activeModelIndex = index;
+		models[index]->SetColor({ 1,1,0,0 });
 	}
 }
 
@@ -66,7 +74,10 @@ const int Scene::GetActiveModelIndex() const
 {
 	return activeModelIndex;
 }
-
+const std::shared_ptr<MeshModel> Scene::getActiveModel() const
+{
+	return models.at(activeModelIndex);
+}
 const std::vector<std::shared_ptr<MeshModel>> Scene::getModels() const{
 	return this->models;
 }

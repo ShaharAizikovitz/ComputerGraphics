@@ -100,13 +100,7 @@ public:
 	void render(const Scene& scene);
 	void swapBuffers();
 	void clearColorBuffer(const glm::vec3& color);	
-	void rotateLocalX(float x);
-	void rotateLocalY(float y);
-	void rotateLocalZ(float z);
-	void rotateWorldX(float x);
-	void rotateWorldY(float y);
-	void rotateWorldZ(float z);
-	void translate(float x, float y, float z);
+	
 	void addLight(const Light &l) { this->scene.addLight(l); }
 	void init();
 	
@@ -140,7 +134,7 @@ public:
 	void setFov(float f);
 	void setProjection(bool p);
 	void setPerspective(float f, float ar, int n, int fa);
-	void setWorldTranslation(float x, float y, float z);
+	
 	void setToDrawaCube(const bool b) { this->tooDrawaCube = b; }
 	void setToDrawFaceNormals(bool b) { this->toDrawFaceNormals = b; }
 	void setCurrentModel(std::shared_ptr<MeshModel> m) { this->currentModel = m; this->currentModel->setIsCurrentModel(true); }

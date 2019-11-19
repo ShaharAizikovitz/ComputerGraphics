@@ -26,6 +26,7 @@ bool showOrthoProjection = true;
 bool showPerspProjection = false;
 bool showControlWindow = false;
 static char buf[256];
+std::shared_ptr<MeshModel> activeModel;
 
 glm::vec3 objectColor;
 glm::vec3 lightColor;
@@ -37,6 +38,7 @@ const glm::vec4 GetClearColor()
 
 void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 {
+	activeModel = scene.getActiveModel();
 	// 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
 	/*if (showDemoWindow)
 	{
@@ -53,27 +55,14 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 		static float f = 1500.0f;
 		static float turnUpDown = 0.0f;
 		static float fov = 50.0f;
-		static float rotateLocalX = 0.0f;
-		static float rotateLocalY = 0.0f;
-		static float rotateLocalZ = 0.0f;
-		static float scaleX = 0.0f;
-		static float scaleY = 0.0f;
-		static float scaleZ = 0.0f;
-		static float translateX = 0.0f;
-		static float translateY = 0.0f;
-		static float translateZ = 0.0f;
+	
 		static float ar = 1.0;
 		static float n = 1.0;
 		static float fa = 10.0;
-		static float worldX = 0.0f;
-		static float worldY = 0.0f;
-		static float worldZ = 0.0f;
-		static float rotateWorldX = 0.0f;
-		static float rotateWorldY = 0.0f;
-		static float rotateWorldZ = 0.0f;
-		glm::vec3 rotate[2] = { { 0.0,0.0,0.0 }, { 0.0,0.0,0.0 } }; //local = 0 world = 1
-		glm::vec3 translate[2] = { { 0.0,0.0,0.0 }, { 0.0,0.0,0.0 } };
-		glm::vec3 scale[2] = { { 1.0,1.0,1.0 }, { 1.0,1.0,1.0 } };
+		
+		static glm::vec3 rotate[2] = { { 0.0,0.0,0.0 }, { 0.0,0.0,0.0 } }; //local = 0 world = 1
+		static glm::vec3 translate[2] = { { 0.0,0.0,0.0 }, { 0.0,0.0,0.0 } };
+		static glm::vec3 scale[2] = { { 1.0,1.0,1.0 }, { 1.0,1.0,1.0 } };
 
 		ImGui::Begin("Model control", &showControlWindow);
 		//ImGui::BeginChild("Controls", ImVec2(200,200), ImGuiWindowFlags_AlwaysVerticalScrollbar);
@@ -144,18 +133,18 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 		ImGui::Text("");
 		if (e == 0) {
 
-		/*	ImGui::DragFloat("Scale x  ", &(activeModel->scale[w].x), 0.1f); ImGui::SameLine();
+			ImGui::DragFloat("Scale x  ", &(scale[w].x), 0.1f); ImGui::SameLine();
 			if (ImGui::Button("Reset x")) {
 				activeModel->scale[w].x = 1.0f;
 			}
-			ImGui::DragFloat("Scale y  ", &(activeModel->scale[w].y), 0.1f); ImGui::SameLine();
+			ImGui::DragFloat("Scale y  ", &(scale[w].y), 0.1f); ImGui::SameLine();
 			if (ImGui::Button("Reset y")) {
 				activeModel->scale[w].y = 1.0f;
 			}
-			ImGui::DragFloat("Scale z  ", &(activeModel->scale[w].z), 0.1f); ImGui::SameLine();
+			ImGui::DragFloat("Scale z  ", &(scale[w].z), 0.1f); ImGui::SameLine();
 			if (ImGui::Button("Reset z")) {
 				activeModel->scale[w].z = 1.0f;
-			}*/
+			}
 		}
 		if (e == 1) {
 			ImGui::SliderInt("Sensitivity", &mSensitivity, 1, 100);
