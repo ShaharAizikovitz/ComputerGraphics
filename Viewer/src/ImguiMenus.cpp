@@ -29,7 +29,7 @@ static char buf[256];
 
 glm::vec3 objectColor;
 glm::vec3 lightColor;
-
+glm::vec3 translate;
 const glm::vec4 GetClearColor()
 {
 	return glm::vec4(1.0f, 1.f, 1.0f, 1.00f);
@@ -82,7 +82,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 		ImVec2 size = ImGui::GetWindowSize();
 		ImVec2 pos = ImGui::GetWindowPos();
 
-		if (ImGui::IsMouseDown(0) && renderer.getCurrentModel() != NULL)
+		/*if (ImGui::IsMouseDown(0) && renderer.getCurrentModel() != NULL)
 		{
 			ImVec2 c = ImGui::GetMousePos();
 			if (!ImGui::IsMouseHoveringWindow())
@@ -90,7 +90,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 				renderer.rotateLocalX((c.y - size.y / 2));
 				renderer.rotateLocalY((c.x - size.x / 2));
 			}
-		}
+		}*/
 	
 		if (ImGui::SliderFloat("model ambient intensity:", &modelAIntensity, 0.0f, 1.0f) && renderer.isHasModel()) {
 			renderer.getCurrentModel()->setModelAIntensity(modelAIntensity);}
@@ -132,6 +132,12 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 			renderer.setScaleNumber(f);
 		}
 		ImGui::Text("World Translations");
+		
+		translate = renderer.getCurrentModel()->getWorldTranslation();
+		worldX = translate.x;
+		worldY = translate.y;
+		worldZ = translate.z;
+
 		if (ImGui::SliderFloat("X:", &worldX, 0.0f, 1280.0f)) {
 			renderer.setWorldTranslation(worldX, worldY, worldZ);
 		}

@@ -105,5 +105,5 @@ public:
 	const float getModelAIntensity() const { return this->modelAIntensity; }
 	const float getModelDIntensity() const { return this->modelDIntensity; }
 	const float getModelSIntensity() const { return this->modelSIntensity; }
-	
+	const glm::vec3 getWorldTranslation() const { return glm::vec3(this->worldTranslation[0][3], this->worldTranslation[1][3], this->worldTranslation[2][3]); }
 };

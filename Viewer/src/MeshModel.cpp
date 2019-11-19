@@ -235,6 +235,8 @@ const glm::mat4& MeshModel::getTranslationTransform() const {
 }
 
 
+
+
 const glm::mat4& MeshModel::GetWorldTransformation() const
 {
 	return worldTransform;
