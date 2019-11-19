@@ -44,6 +44,7 @@ public:
 	const int GetCameraCount() const;
 	const int GetActiveCameraIndex() const;
 	const int GetActiveModelIndex() const;
+	const std::shared_ptr<MeshModel> getActiveModel() const;
 	const std::vector<std::shared_ptr<MeshModel>> getModels() const;
 	const std::vector<Camera> getCameras() const;
 	 std::vector<Light> getLights() const { return this->Lights; }

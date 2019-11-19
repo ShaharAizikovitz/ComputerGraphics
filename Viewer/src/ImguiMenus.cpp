@@ -71,6 +71,10 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 		static float rotateWorldX = 0.0f;
 		static float rotateWorldY = 0.0f;
 		static float rotateWorldZ = 0.0f;
+		glm::vec3 rotate[2] = { { 0.0,0.0,0.0 }, { 0.0,0.0,0.0 } }; //local = 0 world = 1
+		glm::vec3 translate[2] = { { 0.0,0.0,0.0 }, { 0.0,0.0,0.0 } };
+		glm::vec3 scale[2] = { { 1.0,1.0,1.0 }, { 1.0,1.0,1.0 } };
+
 		ImGui::Begin("Model control", &showControlWindow);
 		//ImGui::BeginChild("Controls", ImVec2(200,200), ImGuiWindowFlags_AlwaysVerticalScrollbar);
 		
@@ -78,7 +82,9 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 		//ImGui::Checkbox("Demo Window", &showDemoWindow);      // Edit bools storing our window open/close state
 		//ImGui::Checkbox("Another Window", &showControlWindow);
 		//ImGui::Text("Current Camera:");
-		
+		static int e = 2;
+		static int w = 0;
+		static int mSensitivity = 50;
 		ImVec2 size = ImGui::GetWindowSize();
 		ImVec2 pos = ImGui::GetWindowPos();
 
@@ -116,6 +122,114 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 		//if (ImGui::SliderFloat("FAR", &fa, 10.0f, 150.0f) && renderer.isHasModel()) {
 		//	renderer.setPerspective(fov, ar, (int)n, (int)fa);
 		//}
+
+		ImGui::Text("");
+		ImGui::RadioButton("World", &w, 0); ImGui::SameLine();
+		ImGui::RadioButton("Local", &w, 1);
+		ImGui::Text("");
+		ImGui::Separator();
+		ImGui::Text("");
+		ImGui::RadioButton("Rotate", &e, 2); ImGui::SameLine();
+		ImGui::RadioButton("Scale", &e, 0); ImGui::SameLine();
+		ImGui::RadioButton("Move", &e, 1);
+		if (w) {
+
+
+		}
+		else {
+
+		}
+		ImGui::Text("");
+		ImGui::Separator();
+		ImGui::Text("");
+		if (e == 0) {
+
+		/*	ImGui::DragFloat("Scale x  ", &(activeModel->scale[w].x), 0.1f); ImGui::SameLine();
+			if (ImGui::Button("Reset x")) {
+				activeModel->scale[w].x = 1.0f;
+			}
+			ImGui::DragFloat("Scale y  ", &(activeModel->scale[w].y), 0.1f); ImGui::SameLine();
+			if (ImGui::Button("Reset y")) {
+				activeModel->scale[w].y = 1.0f;
+			}
+			ImGui::DragFloat("Scale z  ", &(activeModel->scale[w].z), 0.1f); ImGui::SameLine();
+			if (ImGui::Button("Reset z")) {
+				activeModel->scale[w].z = 1.0f;
+			}*/
+		}
+		if (e == 1) {
+			ImGui::SliderInt("Sensitivity", &mSensitivity, 1, 100);
+			ImGui::Text("Move on X");
+			if (ImGui::Button("x -  ")) {
+				activeModel->translate[w].x -= 1 * mSensitivity;
+			}
+			; ImGui::SameLine();
+			if (ImGui::Button("x +  ")) {
+				activeModel->translate[w].x += 1.0 * mSensitivity;
+			} ImGui::SameLine();
+			ImGui::Text(":  %d", (int)activeModel->translate[w].x);
+
+			ImGui::Text("Move on Y");
+			if (ImGui::Button("y -  ")) {
+				activeModel->translate[w].y -= 1 * mSensitivity;
+			}
+			; ImGui::SameLine();
+			if (ImGui::Button("y +  ")) {
+				activeModel->translate[w].y += 1 * mSensitivity;
+			}ImGui::SameLine();
+			ImGui::Text(":  %d", (int)activeModel->translate[w].y);
+
+			ImGui::Text("Move on Z");
+			if (ImGui::Button("z -  ")) {
+				activeModel->translate[w].z -= 1 * mSensitivity;
+			}
+			; ImGui::SameLine();
+			if (ImGui::Button("z +  ")) {
+				activeModel->translate[w].z += 1 * mSensitivity;
+			}ImGui::SameLine();
+			ImGui::Text(":  %d", (int)activeModel->translate[w].z);
+		}
+		if (e == 2) {
+			ImGui::PushStyleColor(ImGuiCol_FrameBg, { 1.0f, 0.0f, 0.0f, 0.8 });
+			ImGui::Text("Rotate x"); ImGui::SameLine();
+			ImGui::SliderAngle("x", &(activeModel->rotate[w].x)); ImGui::SameLine();
+			ImGui::PopStyleColor(1);
+			ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(0 / 7.0f, 0.6f, 0.6f));
+			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV(0 / 7.0f, 0.7f, 0.7f));
+			ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)ImColor::HSV(0 / 7.0f, 0.8f, 0.8f));
+			if (ImGui::Button("Reset x")) {
+				activeModel->rotate[w].x = 0.0f;
+			}
+			ImGui::PopStyleColor(3);
+
+			ImGui::PushStyleColor(ImGuiCol_FrameBg, { 0.0f, 1.0f, 0.0f, 0.8 });
+			ImGui::Text("Rotate y"); ImGui::SameLine();
+			ImGui::SliderAngle("y", &(activeModel->rotate[w].y)); ImGui::SameLine();
+			ImGui::PopStyleColor(1);
+			ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(0 / 7.0f, 0.6f, 0.6f));
+			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV(0 / 7.0f, 0.7f, 0.7f));
+			ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)ImColor::HSV(0 / 7.0f, 0.8f, 0.8f));
+			if (ImGui::Button("Reset y")) {
+				activeModel->rotate[w].y = 0.0f;
+			}
+			ImGui::PopStyleColor(3);
+
+			ImGui::PushStyleColor(ImGuiCol_FrameBg, { 0.0f, 0.0f, 1.0f, 0.8 });
+			ImGui::Text("Rotate z"); ImGui::SameLine();
+			ImGui::SliderAngle("z", &(activeModel->rotate[w].z)); ImGui::SameLine();
+			ImGui::PopStyleColor(1);
+			ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(0 / 7.0f, 0.6f, 0.6f));
+			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV(0 / 7.0f, 0.7f, 0.7f));
+			ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)ImColor::HSV(0 / 7.0f, 0.8f, 0.8f));
+			if (ImGui::Button("Reset z")) {
+				activeModel->rotate[w].z = 0.0f;
+			}
+			ImGui::PopStyleColor(3);
+		}
+		ImGui::Text("");
+
+
+
 		ImGui::Text("Current Object:");
 		ImGui::Text("Local Rotations");
 		if (ImGui::SliderFloat("Rotate local x", &rotateLocalX, 0.0, 360.0f) && renderer.isHasModel()) {

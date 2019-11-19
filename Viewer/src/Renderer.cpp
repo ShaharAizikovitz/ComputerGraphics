@@ -74,34 +74,7 @@ void Renderer::setEyeX(float eyex) {
 	glm::vec3 up = glm::vec3(0, 1, 0);
 	currentCamera.setCameraLookAt(eye, at, up);
 }
-void Renderer::rotateLocalX(float x) {
-	this->currentModel->setRotationTransform(x, 1, 1);
-}
-void Renderer::rotateLocalY(float y) {
-	this->currentModel->setRotationTransform(1, y, 1);
-}
-void Renderer::rotateLocalZ(float z) {
-	this->currentModel->setRotationTransform(1, 1, z);
-}
 
-void Renderer::rotateWorldX(float x) {
-	this->currentModel->setWorldRotation(x, 1, 1);
-}
-void Renderer::rotateWorldY(float y) {
-	this->currentModel->setWorldRotation(1, y, 1);
-}
-void Renderer::rotateWorldZ(float z) {
-	this->currentModel->setWorldRotation(1, 1, z);
-}
-void Renderer::setWorldTranslation(float x, float y, float z) {
-	if (this->currentModel != NULL)
-		this->currentModel->setWorldTranslation(x, y, z);
-}
-
-void Renderer::translate(float xt, float yt, float zt) {
-	if (this->currentModel != NULL)
-		this->currentModel->setTranslationTransform(xt, yt, zt);
-}
 void Renderer::setPerspective(float f, float ar, int n, int fa) {
 	this->currentCamera.setPerspectiveProjection(f, ar, n, fa);
 }
@@ -142,7 +115,7 @@ void Renderer::putPixel(int i, int j, const glm::vec3& color, const float &z)
 void Renderer::setScaleNumber(float f) {
 	//this->scaleNumber = f;
 	if (this->currentModel!=NULL)
-		this->currentModel->setScaleTransform(f,f,f);
+		this->currentModel->setScaleTransform(glm::vec3(f,f,f));
 }
 void Renderer::createBuffers(int viewportWidth, int viewportHeight)
 {

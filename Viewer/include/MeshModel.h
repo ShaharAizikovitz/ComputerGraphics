@@ -5,6 +5,7 @@
 #include <memory>
 #include "Face.h"
 #include "Vertex.h"
+#define PI 3.14159265358 / 180
 
 typedef struct Cube {
 	float front, back, right, left, top, bottom;
@@ -30,12 +31,10 @@ private:
 	glm::mat4 localTransform;
 	glm::mat4 scaleTransform;
 	glm::mat4 rotationTransform;
-	glm::mat4 translationTransform, worldTranslation, xRotationWorld, yRotationWorld, zRotationWorld;
+	glm::mat4 translationTransform, worldTranslation;
 
 	glm::mat4 worldRotation;
-	glm::mat4 xRotation;
-	glm::mat4 yRotation;
-	glm::mat4 zRotation;
+	
 	glm::mat4x4 worldTransform;
 	glm::vec4 color;
 	glm::vec3 centerPoint;
@@ -76,11 +75,11 @@ public:
 	//getters-setters
 	void SetColor(const glm::vec4& color);
 	void setDraw(const bool b) { this->draw = b; }
-	void setScaleTransform(float xFactor, float yFactor, float zFactor);
-	void setRotationTransform(float xDegree, float yDegree, float zDegree);
-	void setTranslationTransform(float x, float y, float z);
-	void setWorldTranslation(float x, float y, float z);
-	void setWorldRotation(float xDegree, float yDegree, float zDegree);
+	void setScaleTransform(const glm::vec3 scale);
+	void setRotationTransform(const glm::vec3 angle);
+	void setTranslationTransform(const glm::vec3 translation);
+	void setWorldTranslation(const glm::vec3 translation);
+	void setWorldRotation(const glm::vec3 angle);
 	void setCube(const Cube c) { this->cube = c; }
 	void setDrawCube(const bool b) { this->drawCube = b; }
 	void setCenteLines(const std::vector<glm::vec4> c) { this->centerLine = c; }
@@ -89,6 +88,7 @@ public:
 	void setModelDIntensity(const float &f) { this->modelDIntensity = f; }
 	void setModelSIntensity(const float &f) { this->modelSIntensity = f; }
 	void setCentePoint();
+	void setTransformations();
 
 	const bool& getDraw() { return this->draw; }
 	const std::string& GetModelName();
@@ -105,5 +105,6 @@ public:
 	const float getModelAIntensity() const { return this->modelAIntensity; }
 	const float getModelDIntensity() const { return this->modelDIntensity; }
 	const float getModelSIntensity() const { return this->modelSIntensity; }
-	const glm::vec3 getWorldTranslation() const { return glm::vec3(this->worldTranslation[0][3], this->worldTranslation[1][3], this->worldTranslation[2][3]); }
+	const glm::vec3 getWorldTranslation() const { return glm::vec3(this->worldTranslation[3][0], this->worldTranslation[3][1], this->worldTranslation[3][2]); }
+	
 };
