@@ -184,6 +184,21 @@ const glm::mat4& MeshModel::getTranslationTransform() const {
 	return this->translationTransform;
 }
 
+const glm::vec3 * MeshModel::getRotation() const
+{
+	return nullptr;
+}
+
+const glm::vec3 * MeshModel::getScale() const
+{
+	return nullptr;
+}
+
+const glm::vec3 * MeshModel::getTranslate() const
+{
+	return nullptr;
+}
+
 
 const glm::mat4& MeshModel::GetWorldTransformation() const
 {

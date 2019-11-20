@@ -989,7 +989,7 @@ void Renderer::render(const Scene& scene)
 		//calculate scaling: bounding box hieght is a third of the hieght of the viewport hieght
 		scale = this->viewportHeight / (3 * (c.top - c.bottom));
 		//set the model scale transform
-		model->setScaleTransform(scale, scale, scale);
+		model->setScaleTransform(glm::vec3(scale, scale, scale));
 		glm::mat4 localTransform = model->GetLocalTransform();
 		glm::mat4 scaleTransform = model->GetScaleTransform();
 		glm::mat4 translateTransform = model->getTranslationTransform();

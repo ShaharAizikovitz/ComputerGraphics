@@ -34,7 +34,8 @@ private:
 	glm::mat4 translationTransform, worldTranslation;
 
 	glm::mat4 worldRotation;
-	
+	glm::vec3 wRotation;
+	glm::vec3 lRotation;
 	glm::mat4x4 worldTransform;
 	glm::vec4 color;
 	glm::vec3 centerPoint;
@@ -106,5 +107,7 @@ public:
 	const float getModelDIntensity() const { return this->modelDIntensity; }
 	const float getModelSIntensity() const { return this->modelSIntensity; }
 	const glm::vec3 getWorldTranslation() const { return glm::vec3(this->worldTranslation[3][0], this->worldTranslation[3][1], this->worldTranslation[3][2]); }
-	
+	const glm::vec3* getRotation() const;
+	const glm::vec3* getScale() const;
+	const glm::vec3* getTranslate() const;
 };
