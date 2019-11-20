@@ -107,7 +107,7 @@ public:
 	const float getModelDIntensity() const { return this->modelDIntensity; }
 	const float getModelSIntensity() const { return this->modelSIntensity; }
 	const glm::vec3 getWorldTranslation() const { return glm::vec3(this->worldTranslation[3][0], this->worldTranslation[3][1], this->worldTranslation[3][2]); }
-	const glm::vec3* getRotation() const;
+	const std::vector<glm::vec3> getRotation() ;
 	const glm::vec3* getScale() const;
 	const glm::vec3* getTranslate() const;
 };

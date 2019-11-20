@@ -20,7 +20,9 @@ MeshModel::MeshModel(const std::vector<Face>& faces, const std::vector<Vertex>& 
 	translationTransform(glm::mat4(1)),
 	faces(faces),
 	vertexs(vertices),
-	normals(normals)
+	normals(normals),
+	wRotation( 0.0, 0.0, 0.0 ),
+	lRotation( 0.0, 0.0, 0.0 )
 {
 	this->drawCube = false;
 	this->isCurrentModel = false;
@@ -41,7 +43,9 @@ MeshModel::MeshModel(const std::vector<Face>& faces, const std::vector<Vertex>& 
 	faces(faces),
 	vertexs(vertices),
 	normals(normals),
-	isCurrentModel(isCurrent)
+	isCurrentModel(isCurrent),
+	wRotation(0.0, 0.0, 0.0),
+	lRotation(0.0, 0.0, 0.0)
 {
 	this->modelAIntensity = 0.2f;
 	this->modelDIntensity = 0.2f;
@@ -65,7 +69,9 @@ MeshModel::MeshModel(const std::vector<Face>& faces, const std::vector<glm::vec3
 	translationTransform(glm::mat4(1)),
 	faces(faces),
 	vertices(vertices),
-	normals(normals)
+	normals(normals),
+	wRotation(0.0, 0.0, 0.0),
+	lRotation(0.0, 0.0, 0.0)
 {
 	this->drawCube = false;
 	this->isCurrentModel = false;
@@ -91,6 +97,8 @@ MeshModel::MeshModel(const int type)
 	this->modelDIntensity = 0.2f;
 	this->modelSIntensity = 0.2f;
 	setScaleTransform(glm::vec3(500, 500, 500));
+	this->wRotation = { 0.0, 0.0, 0.0 };
+	this->lRotation = { 0.0, 0.0, 0.0 };
 	switch (type)
 	{
 	case 0: {
@@ -184,9 +192,13 @@ const glm::mat4& MeshModel::getTranslationTransform() const {
 	return this->translationTransform;
 }
 
-const glm::vec3 * MeshModel::getRotation() const
+
+const std::vector<glm::vec3> MeshModel::getRotation()
 {
-	return nullptr;
+	std::vector<glm::vec3> r;
+	r.push_back(wRotation);
+	r.push_back(lRotation);
+	return r;
 }
 
 const glm::vec3 * MeshModel::getScale() const
