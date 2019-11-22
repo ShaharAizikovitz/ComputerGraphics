@@ -14,7 +14,9 @@ Scene::Scene() :
 void Scene::AddModel(const std::shared_ptr<MeshModel>& model)
 {
 	int i = GetActiveModelIndex();
-	models[i]->SetColor({ 0,0,0,0 });
+	if (models.size()) {
+		models[i]->SetColor({ 0,0,0,0 });
+	}
 	//last model to enter is the current one
 	this->currentModel = model;
 	models.push_back(model);

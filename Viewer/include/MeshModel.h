@@ -77,7 +77,7 @@ public:
 	void SetColor(const glm::vec4& color);
 	void setDraw(const bool b) { this->draw = b; }
 	void setScaleTransform(const glm::vec3 scale);
-	void setRotationTransform(const glm::vec3 angle);
+	void setRotationTransform(const glm::vec3 angle,bool isLocal);
 	void setTranslationTransform(const glm::vec3 translation);
 	void setWorldTranslation(const glm::vec3 translation);
 	void setWorldRotation(const glm::vec3 angle);
@@ -90,6 +90,7 @@ public:
 	void setModelSIntensity(const float &f) { this->modelSIntensity = f; }
 	void setCentePoint();
 	void setTransformations();
+	
 
 	const bool& getDraw() { return this->draw; }
 	const std::string& GetModelName();
@@ -110,4 +111,5 @@ public:
 	const std::vector<glm::vec3> getRotation() ;
 	const glm::vec3* getScale() const;
 	const glm::vec3* getTranslate() const;
+	const glm::vec3 getCenter()const {return centerPoint; }
 };

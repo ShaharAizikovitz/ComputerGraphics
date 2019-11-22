@@ -28,6 +28,7 @@ MeshModel::MeshModel(const std::vector<Face>& faces, const std::vector<Vertex>& 
 	this->isCurrentModel = false;
 	this->createCube();
 	this->createCenterLines();
+	this->setCentePoint();
 	setScaleTransform(glm::vec3(1500, 1500, 1500));
 }
 // ctor being used right now 12.11.2019
@@ -122,6 +123,7 @@ MeshModel::MeshModel(const int type)
 	this->setCentePoint();
 	this->createCube();
 	this->createCenterLines();
+	setScaleTransform(glm::vec3(500, 500, 500));
 }
 
 
@@ -236,22 +238,19 @@ void MeshModel::setCentePoint()
 	float x = 0;
 	float y = 0;
 	float z = 0;
-	size_t size = vertices.size();
-	for (size_t i = 0; i < size; i++)
+	size_t size = vertexs.size();
+	std::vector<Vertex>::iterator it = vertexs.begin();
+	for (;it != vertexs.end(); it++)
 	{
-		x += vertices[i].x;
-		y += vertices[i].y;
-		z += vertices[i].z;
+		x += (*it).getPoint().x;
+		y += (*it).getPoint().y;
+		z += (*it).getPoint().z;
 	}
 
-	centerPoint = glm::vec3((x / size), (y / size), (z / size));
+	this->centerPoint = glm::vec3((x / size), (y / size), (z / size));
 }
 
-void MeshModel::setTransformations()
-{
-	this->localTransform = Utils::TranslationMatrix(centerPoint) * translationTransform * scaleTransform * rotationTransform * Utils::TranslationMatrix(-centerPoint);
-	this->worldTransform = worldTranslation * worldRotation;
-}
+
 
 
 const std::string& MeshModel::GetModelName()
@@ -302,9 +301,19 @@ void MeshModel::setWorldTranslation(const glm::vec3 translation) {
 	
 }
 
-void MeshModel::setRotationTransform(const glm::vec3 angle) {
+void MeshModel::setRotationTransform(const glm::vec3 angle, bool isLocal) {
 	
-	this->rotationTransform = Utils::rotateMat(angle);
+	glm::mat4 x = glm::mat4(1, 0, 0, 0, 0, cosf(angle.x), -sinf(angle.x), 0, 0, sinf(angle.x), cosf(angle.x), 0, 0, 0, 0, 1);
+	glm::mat4 y = glm::mat4(cosf(angle.y), 0, sinf(angle.y), 0, 0, 1, 0, 0, -sinf(angle.y), 0, cosf(angle.y), 0, 0, 0, 0, 1);
+	glm::mat4 z = glm::mat4(cosf(angle.z), -sinf(angle.z), 0, 0, sinf(angle.z), cosf(angle.z), 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
+
+	if (isLocal)
+	//	localTransform = (x * y * z);
+		localTransform = Utils::TranslationMatrix(centerPoint)*(x * y * z)*Utils::TranslationMatrix(-centerPoint);
+	else
+		worldRotation = (x * y * z);
+
+
 		
 }
 

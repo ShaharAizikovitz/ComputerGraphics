@@ -1075,16 +1075,16 @@ void Renderer::render(const Scene& scene)
 			glm::vec4 newVertex = glm::vec4((*vertex).getPoint().x, (*vertex).getPoint().y, (*vertex).getPoint().z, 1);
 
 			//object scale -> roration -> translation
-			newVertex = scaleTransform * newVertex;
+			/*newVertex = scaleTransform * newVertex;
 			newVertex = rotationTransform * newVertex;
-			newVertex = translateTransform * newVertex;
-			//newVertex = localTransform * newVertex;
+			newVertex = translateTransform * newVertex;*/
+			newVertex = localTransform * newVertex;
 			
 
 			// new set WORLD transformations.
 			newVertex = worldRotate * newVertex;
 			newVertex = worldTranslate * newVertex;
-
+			model->setCentePoint();
 			//camera projection
 			//newVertex = camera.getViewTransformation() * newVertex;
 			/* right now the  problem is with this transformation !!*/
@@ -1108,8 +1108,9 @@ void Renderer::render(const Scene& scene)
 
 			if (c.bottom >= newVertex.y) c.top = newVertex.y;
 			if (c.top < newVertex.y) c.top = newVertex.y;
-
-			(*vertex).setPoint(glm::vec3(newVertex.x, newVertex.y, newVertex.z)); 
+			std::cout << "pre " << (*model).getCenter().x << " " << (*model).getCenter().y << " " << (*model).getCenter().z << std::endl;
+			(*vertex).setPoint(glm::vec3(newVertex.x/ newVertex.w, newVertex.y / newVertex.w, newVertex.z / newVertex.w));
+			std::cout << "post " << (*model).getCenter().x << " " << (*model).getCenter().y << " " << (*model).getCenter().z << std::endl;
 		}
 		// ############## END OF IMPORTANT CODE #################
 		// ######################################################

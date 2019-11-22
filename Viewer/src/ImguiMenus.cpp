@@ -38,7 +38,9 @@ const glm::vec4 GetClearColor()
 
 void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 {
-	aM = scene.getActiveModel();
+	if (scene.GetModelCount()) {
+		aM = scene.getActiveModel();
+	}
 	// 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
 	/*if (showDemoWindow)
 	{
@@ -186,42 +188,44 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 		if (e == 2) {
 			ImGui::PushStyleColor(ImGuiCol_FrameBg, { 1.0f, 0.0f, 0.0f, 0.8 });
 			ImGui::Text("Rotate x"); ImGui::SameLine();
-			ImGui::SliderAngle("x", &(aM->rotate[w].x)); ImGui::SameLine();
+			ImGui::SliderAngle("x", &(rotate[w].x)); ImGui::SameLine();
 			ImGui::PopStyleColor(1);
 			ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(0 / 7.0f, 0.6f, 0.6f));
 			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV(0 / 7.0f, 0.7f, 0.7f));
 			ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)ImColor::HSV(0 / 7.0f, 0.8f, 0.8f));
 			if (ImGui::Button("Reset x")) {
-				aM->rotate[w].x = 0.0f;
+				rotate[w].x = 0.0f;
 			}
 			ImGui::PopStyleColor(3);
 
 			ImGui::PushStyleColor(ImGuiCol_FrameBg, { 0.0f, 1.0f, 0.0f, 0.8 });
 			ImGui::Text("Rotate y"); ImGui::SameLine();
-			ImGui::SliderAngle("y", &(aM->rotate[w].y)); ImGui::SameLine();
+			ImGui::SliderAngle("y", &(rotate[w].y)); ImGui::SameLine();
 			ImGui::PopStyleColor(1);
 			ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(0 / 7.0f, 0.6f, 0.6f));
 			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV(0 / 7.0f, 0.7f, 0.7f));
 			ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)ImColor::HSV(0 / 7.0f, 0.8f, 0.8f));
 			if (ImGui::Button("Reset y")) {
-				aM->rotate[w].y = 0.0f;
+				rotate[w].y = 0.0f;
 			}
 			ImGui::PopStyleColor(3);
 
 			ImGui::PushStyleColor(ImGuiCol_FrameBg, { 0.0f, 0.0f, 1.0f, 0.8 });
 			ImGui::Text("Rotate z"); ImGui::SameLine();
-			ImGui::SliderAngle("z", &(aM->rotate[w].z)); ImGui::SameLine();
+			ImGui::SliderAngle("z", &(rotate[w].z)); ImGui::SameLine();
 			ImGui::PopStyleColor(1);
 			ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(0 / 7.0f, 0.6f, 0.6f));
 			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV(0 / 7.0f, 0.7f, 0.7f));
 			ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)ImColor::HSV(0 / 7.0f, 0.8f, 0.8f));
 			if (ImGui::Button("Reset z")) {
-				aM->rotate[w].z = 0.0f;
+				rotate[w].z = 0.0f;
 			}
 			ImGui::PopStyleColor(3);
+			
 		}
 		ImGui::Text("");
-
+		aM->setRotationTransform(rotate[w], w);
+	
 
 
 		/*ImGui::Text("Current Object:");
