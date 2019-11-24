@@ -1080,10 +1080,10 @@ void Renderer::render(const Scene& scene)
 			newVertex = translateTransform * newVertex;*/
 			newVertex = localTransform * newVertex;
 			
-
+			
 			// new set WORLD transformations.
-			newVertex = worldRotate * newVertex;
-			newVertex = worldTranslate * newVertex;
+			newVertex = worldTransform * newVertex;
+			
 			model->setCentePoint();
 			//camera projection
 			//newVertex = camera.getViewTransformation() * newVertex;

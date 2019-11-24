@@ -62,8 +62,8 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 		static float n = 1.0;
 		static float fa = 10.0;
 				
-		static glm::vec3 rotate[2] = { aM->getRotation().at(0),aM->getRotation().at(1) }; //local = 1 world = 0
-		
+		//static glm::vec3 rotate[2] = { aM->getRotation().at(0),aM->getRotation().at(1) }; //local = 1 world = 0
+		static glm::vec3 rotate[2] = { { 0.0,0.0,0.0 }, { 0.0,0.0,0.0 } };
 		static glm::vec3 translate[2] = { { 0.0,0.0,0.0 }, { 0.0,0.0,0.0 } };
 		
 		static glm::vec3 scale[2] = { { 1.0,1.0,1.0 }, { 1.0,1.0,1.0 } };
@@ -154,36 +154,37 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 			}
 		}
 		if (e == 1) {
-			/*ImGui::SliderInt("Sensitivity", &mSensitivity, 1, 100);
+			ImGui::SliderInt("Sensitivity", &mSensitivity, 1, 200);
 			ImGui::Text("Move on X");
 			if (ImGui::Button("x -  ")) {
-				activeModel->translate[w].x -= 1 * mSensitivity;
+				translate[w].x -= 1 * mSensitivity;
 			}
 			; ImGui::SameLine();
 			if (ImGui::Button("x +  ")) {
-				activeModel->translate[w].x += 1.0 * mSensitivity;
+				translate[w].x += 1.0 * mSensitivity;
 			} ImGui::SameLine();
-			ImGui::Text(":  %d", (int)activeModel->translate[w].x);
+			ImGui::Text(":  %d", (int)translate[w].x);
 
 			ImGui::Text("Move on Y");
 			if (ImGui::Button("y -  ")) {
-				activeModel->translate[w].y -= 1 * mSensitivity;
+				translate[w].y -= 1 * mSensitivity;
 			}
 			; ImGui::SameLine();
 			if (ImGui::Button("y +  ")) {
-				activeModel->translate[w].y += 1 * mSensitivity;
+				translate[w].y += 1 * mSensitivity;
 			}ImGui::SameLine();
-			ImGui::Text(":  %d", (int)activeModel->translate[w].y);
+			ImGui::Text(":  %d", (int)translate[w].y);
 
 			ImGui::Text("Move on Z");
 			if (ImGui::Button("z -  ")) {
-				activeModel->translate[w].z -= 1 * mSensitivity;
+				translate[w].z -= 1 * mSensitivity;
 			}
 			; ImGui::SameLine();
 			if (ImGui::Button("z +  ")) {
-				activeModel->translate[w].z += 1 * mSensitivity;
+				translate[w].z += 1 * mSensitivity;
 			}ImGui::SameLine();
-			ImGui::Text(":  %d", (int)activeModel->translate[w].z);*/
+			ImGui::Text(":  %d", (int)translate[w].z);
+			aM->setTranslationTransform(translate[w], w);
 		}
 		if (e == 2) {
 			ImGui::PushStyleColor(ImGuiCol_FrameBg, { 1.0f, 0.0f, 0.0f, 0.8 });
@@ -221,10 +222,10 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 				rotate[w].z = 0.0f;
 			}
 			ImGui::PopStyleColor(3);
-			
+			aM->setRotationTransform(rotate[w], w);
 		}
 		ImGui::Text("");
-		aM->setRotationTransform(rotate[w], w);
+		
 	
 
 
@@ -499,7 +500,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 						renderer.setEyeX(0);
 						//renderer.translate(640, 360, 0);
 						//renderer.setPerspective(50,1,1,10);
-
+						showControlWindow = true;
 						free(outPath);
 					}
 					else if (result == NFD_CANCEL) {
@@ -515,7 +516,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 				if (ImGui::MenuItem("Add Poly"))
 				{
 					scene.AddModel(std::make_shared<MeshModel>(MeshModel(0)));
-					renderer.setCurrentModel(scene.getModels().at(scene.GetModelCount() - 1));
+					
 
 					renderer.setHasModel();
 					renderer.setEyeX(0);

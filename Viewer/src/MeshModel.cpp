@@ -289,10 +289,19 @@ void MeshModel::setScaleTransform(const glm::vec3 scale) {
 	scaleTransform = Utils::scaleMat(scale);
 	
 }
-void MeshModel::setTranslationTransform(const glm::vec3 translation) {
-	
-	this->translationTransform = Utils::TranslationMatrix(translation);
-	
+void MeshModel::setTranslationTransform(const glm::vec3 translation, bool isLocal) {
+	/*if (isLocal)
+		this->localTransform = Utils::TranslationMatrix(translation);
+	else
+		this->worldTransform = Utils::TranslationMatrix(translation);*/
+	glm::vec4 xVec = translationTransform[0];
+	glm::vec4 yVec = translationTransform[1];
+	glm::vec4 zVec = translationTransform[2];
+	glm::vec4 lVec(translation.x, translation.y, translation.z, 1);
+	if (isLocal)
+		this->localTransform = glm::mat4(xVec, yVec, zVec, lVec);
+	else
+		this->worldTransform = glm::mat4(xVec, yVec, zVec, lVec);
 }
 
 void MeshModel::setWorldTranslation(const glm::vec3 translation) {
@@ -309,9 +318,9 @@ void MeshModel::setRotationTransform(const glm::vec3 angle, bool isLocal) {
 
 	if (isLocal)
 	//	localTransform = (x * y * z);
-		localTransform = Utils::TranslationMatrix(centerPoint)*(x * y * z)*Utils::TranslationMatrix(-centerPoint);
+		this->localTransform = Utils::TranslationMatrix(-centerPoint)*(x * y * z)*Utils::TranslationMatrix(centerPoint);
 	else
-		worldRotation = (x * y * z);
+		this->worldTransform = (x * y * z);
 
 
 		

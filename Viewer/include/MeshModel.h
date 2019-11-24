@@ -78,7 +78,7 @@ public:
 	void setDraw(const bool b) { this->draw = b; }
 	void setScaleTransform(const glm::vec3 scale);
 	void setRotationTransform(const glm::vec3 angle,bool isLocal);
-	void setTranslationTransform(const glm::vec3 translation);
+	void setTranslationTransform(const glm::vec3 translation, bool isLocal);
 	void setWorldTranslation(const glm::vec3 translation);
 	void setWorldRotation(const glm::vec3 angle);
 	void setCube(const Cube c) { this->cube = c; }
