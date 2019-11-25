@@ -76,7 +76,7 @@ public:
 	//getters-setters
 	void SetColor(const glm::vec4& color);
 	void setDraw(const bool b) { this->draw = b; }
-	void setScaleTransform(const glm::vec3 scale);
+	void setScaleTransform(const glm::vec3 scale, bool isLocal);
 	void setRotationTransform(const glm::vec3 angle,bool isLocal);
 	void setTranslationTransform(const glm::vec3 translation, bool isLocal);
 	void setWorldTranslation(const glm::vec3 translation);
@@ -89,7 +89,7 @@ public:
 	void setModelDIntensity(const float &f) { this->modelDIntensity = f; }
 	void setModelSIntensity(const float &f) { this->modelSIntensity = f; }
 	void setCentePoint();
-	void setTransformations();
+	
 	
 
 	const bool& getDraw() { return this->draw; }

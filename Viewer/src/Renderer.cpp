@@ -115,7 +115,7 @@ void Renderer::putPixel(int i, int j, const glm::vec3& color, const float &z)
 void Renderer::setScaleNumber(float f) {
 	//this->scaleNumber = f;
 	if (this->currentModel!=NULL)
-		this->currentModel->setScaleTransform(glm::vec3(f,f,f));
+		this->currentModel->setScaleTransform(glm::vec3(f,f,f),true);
 }
 void Renderer::createBuffers(int viewportWidth, int viewportHeight)
 {
@@ -989,7 +989,7 @@ void Renderer::render(const Scene& scene)
 		//calculate scaling: bounding box hieght is a third of the hieght of the viewport hieght
 		scale = this->viewportHeight / (3 * (c.top - c.bottom));
 		//set the model scale transform
-		model->setScaleTransform(glm::vec3(scale, scale, scale));
+		//model->setScaleTransform(glm::vec3(scale, scale, scale),true);
 		glm::mat4 localTransform = model->GetLocalTransform();
 		glm::mat4 scaleTransform = model->GetScaleTransform();
 		glm::mat4 translateTransform = model->getTranslationTransform();
@@ -1108,9 +1108,9 @@ void Renderer::render(const Scene& scene)
 
 			if (c.bottom >= newVertex.y) c.top = newVertex.y;
 			if (c.top < newVertex.y) c.top = newVertex.y;
-			std::cout << "pre " << (*model).getCenter().x << " " << (*model).getCenter().y << " " << (*model).getCenter().z << std::endl;
+			
 			(*vertex).setPoint(glm::vec3(newVertex.x/ newVertex.w, newVertex.y / newVertex.w, newVertex.z / newVertex.w));
-			std::cout << "post " << (*model).getCenter().x << " " << (*model).getCenter().y << " " << (*model).getCenter().z << std::endl;
+			
 		}
 		// ############## END OF IMPORTANT CODE #################
 		// ######################################################

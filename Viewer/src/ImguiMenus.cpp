@@ -38,6 +38,10 @@ const glm::vec4 GetClearColor()
 
 void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 {
+	 glm::vec3 rotate[2] = { { 0.0,0.0,0.0 }, { 0.0,0.0,0.0 } };
+	 glm::vec3 translate[2] = { { 0.0,0.0,0.0 }, { 0.0,0.0,0.0 } };
+	 glm::vec3 scale[2] = { { 1.0,1.0,1.0 }, { 1.0,1.0,1.0 } };
+	 float uniScale[2] = { 1.0,1.0 };
 	if (scene.GetModelCount()) {
 		aM = scene.getActiveModel();
 	}
@@ -62,11 +66,8 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 		static float n = 1.0;
 		static float fa = 10.0;
 				
-		//static glm::vec3 rotate[2] = { aM->getRotation().at(0),aM->getRotation().at(1) }; //local = 1 world = 0
-		static glm::vec3 rotate[2] = { { 0.0,0.0,0.0 }, { 0.0,0.0,0.0 } };
-		static glm::vec3 translate[2] = { { 0.0,0.0,0.0 }, { 0.0,0.0,0.0 } };
+		//local = 1 world = 0
 		
-		static glm::vec3 scale[2] = { { 1.0,1.0,1.0 }, { 1.0,1.0,1.0 } };
 
 		ImGui::Begin("Model control", &showControlWindow);
 		//ImGui::BeginChild("Controls", ImVec2(200,200), ImGuiWindowFlags_AlwaysVerticalScrollbar);
@@ -75,8 +76,8 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 		//ImGui::Checkbox("Demo Window", &showDemoWindow);      // Edit bools storing our window open/close state
 		//ImGui::Checkbox("Another Window", &showControlWindow);
 		//ImGui::Text("Current Camera:");
-		static int e = 2;
-		static int w = 0;
+		static int e = 2; // hold the radio button for rotation\translation\scale
+		static int w = 0; // 0= world 1 = local
 		static int mSensitivity = 50;
 		ImVec2 size = ImGui::GetWindowSize();
 		ImVec2 pos = ImGui::GetWindowPos();
@@ -139,19 +140,24 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 		ImGui::Text("");
 		if (e == 0) {
 
-			ImGui::DragFloat("Scale x  ", &(scale[w].x), 0.1f); ImGui::SameLine();
+			ImGui::DragFloat("Scale x  ", &(scale[w].x), 0.1f); /*ImGui::SameLine();*/
 			
-			if (ImGui::Button("Reset x")) {
-			//	activeModel->setScaleTransform(glm::vec3(1.0, activeModel->GetScaleTransform[][]));
-			}
-			ImGui::DragFloat("Scale y  ", &(scale[w].y), 0.1f); ImGui::SameLine();
-			if (ImGui::Button("Reset y")) {
-			//	activeModel->scale[w].y = 1.0f;
-			}
-			ImGui::DragFloat("Scale z  ", &(scale[w].z), 0.1f); ImGui::SameLine();
-			if (ImGui::Button("Reset z")) {
-				//activeModel->scale[w].z = 1.0f;
-			}
+			/*if (ImGui::Button("Reset x")) {
+				scale[w].x = 1.0;
+			}*/
+			ImGui::DragFloat("Scale y  ", &(scale[w].y), 0.1f); /*ImGui::SameLine();*/
+			/*if (ImGui::Button("Reset y")) {
+				scale[w].y = 1.0;
+			}*/
+			ImGui::DragFloat("Scale z  ", &(scale[w].z), 0.1f); /*ImGui::SameLine();*/
+			/*if (ImGui::Button("Reset z")) {
+				scale[w].z = 1.0;
+			}*/
+			if (ImGui::DragFloat("Scale uniform  ", &(uniScale[w]), 0.1f))
+				aM->setScaleTransform(glm::vec3(uniScale[w], uniScale[w], uniScale[w]),w);
+			else 
+				aM->setScaleTransform(scale[w], w);
+
 		}
 		if (e == 1) {
 			ImGui::SliderInt("Sensitivity", &mSensitivity, 1, 200);

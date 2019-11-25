@@ -22,9 +22,9 @@ glm::mat4 Utils::TranslationMatrix(const glm::vec3 translation)
 {
 	return glm::mat4(
 		1.0f, 0.0f, 0.0f, 0.0f,
-		translation.x, 1.0f, 0.0f,0.0f,
-		translation.y, 0.0f, 1.0f, 0.0f,
-		translation.z, 0.0f, 0.0f, 1.0f);
+		0.0f, 1.0f, 0.0f,0.0f,
+		0.0f, 0.0f, 1.0f, 0.0f,
+		translation.x, translation.y, translation.z, 1.0f);
 }
 
 glm::mat4 Utils::scaleMat(const glm::vec3 scale)
