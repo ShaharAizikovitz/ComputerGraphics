@@ -138,6 +138,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 		ImGui::Text("");
 		ImGui::Separator();
 		ImGui::Text("");
+		//scale transform
 		if (e == 0) {
 
 			ImGui::DragFloat("Scale x  ", &(scale[w].x), 0.1f); /*ImGui::SameLine();*/
@@ -159,6 +160,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 				aM->setScaleTransform(scale[w], w);
 
 		}
+		//translation transform
 		if (e == 1) {
 			ImGui::SliderInt("Sensitivity", &mSensitivity, 1, 200);
 			ImGui::Text("Move on X");
@@ -192,10 +194,11 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 			ImGui::Text(":  %d", (int)translate[w].z);
 			aM->setTranslationTransform(translate[w], w);
 		}
+		//rotation transform
 		if (e == 2) {
 			ImGui::PushStyleColor(ImGuiCol_FrameBg, { 1.0f, 0.0f, 0.0f, 0.8 });
 			ImGui::Text("Rotate x"); ImGui::SameLine();
-			ImGui::SliderAngle("x", &(rotate[w].x)); ImGui::SameLine();
+			if (ImGui::SliderAngle("x", &(rotate[w].x))) {} ImGui::SameLine();
 			ImGui::PopStyleColor(1);
 			ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(0 / 7.0f, 0.6f, 0.6f));
 			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV(0 / 7.0f, 0.7f, 0.7f));
@@ -207,7 +210,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 
 			ImGui::PushStyleColor(ImGuiCol_FrameBg, { 0.0f, 1.0f, 0.0f, 0.8 });
 			ImGui::Text("Rotate y"); ImGui::SameLine();
-			ImGui::SliderAngle("y", &(rotate[w].y)); ImGui::SameLine();
+			if (ImGui::SliderAngle("y", &(rotate[w].y))) {} ImGui::SameLine();
 			ImGui::PopStyleColor(1);
 			ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(0 / 7.0f, 0.6f, 0.6f));
 			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV(0 / 7.0f, 0.7f, 0.7f));
@@ -219,7 +222,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 
 			ImGui::PushStyleColor(ImGuiCol_FrameBg, { 0.0f, 0.0f, 1.0f, 0.8 });
 			ImGui::Text("Rotate z"); ImGui::SameLine();
-			ImGui::SliderAngle("z", &(rotate[w].z)); ImGui::SameLine();
+			if (ImGui::SliderAngle("z", &(rotate[w].z))) {} ImGui::SameLine();
 			ImGui::PopStyleColor(1);
 			ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(0 / 7.0f, 0.6f, 0.6f));
 			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV(0 / 7.0f, 0.7f, 0.7f));
