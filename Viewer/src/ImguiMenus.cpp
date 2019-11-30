@@ -141,19 +141,12 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 		//scale transform
 		if (e == 0) {
 
-			ImGui::DragFloat("Scale x  ", &(scale[w].x), 0.1f); /*ImGui::SameLine();*/
+			ImGui::DragFloat("Scale x  ", &(scale[w].x), 0.1f);
+						
+			ImGui::DragFloat("Scale y  ", &(scale[w].y), 0.1f); 
 			
-			/*if (ImGui::Button("Reset x")) {
-				scale[w].x = 1.0;
-			}*/
-			ImGui::DragFloat("Scale y  ", &(scale[w].y), 0.1f); /*ImGui::SameLine();*/
-			/*if (ImGui::Button("Reset y")) {
-				scale[w].y = 1.0;
-			}*/
-			ImGui::DragFloat("Scale z  ", &(scale[w].z), 0.1f); /*ImGui::SameLine();*/
-			/*if (ImGui::Button("Reset z")) {
-				scale[w].z = 1.0;
-			}*/
+			ImGui::DragFloat("Scale z  ", &(scale[w].z), 0.1f); 
+			
 			if (ImGui::DragFloat("Scale uniform  ", &(uniScale[w]), 0.1f))
 				aM->setScaleTransform(glm::vec3(uniScale[w], uniScale[w], uniScale[w]),w);
 			else 
@@ -198,84 +191,34 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 		if (e == 2) {
 			ImGui::PushStyleColor(ImGuiCol_FrameBg, { 1.0f, 0.0f, 0.0f, 0.8 });
 			ImGui::Text("Rotate x"); ImGui::SameLine();
-			if (ImGui::SliderAngle("x", &(rotate[w].x))) {} ImGui::SameLine();
+			if (ImGui::SliderAngle("x", &(rotate[w].x))) {}
 			ImGui::PopStyleColor(1);
 			ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(0 / 7.0f, 0.6f, 0.6f));
 			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV(0 / 7.0f, 0.7f, 0.7f));
 			ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)ImColor::HSV(0 / 7.0f, 0.8f, 0.8f));
-			if (ImGui::Button("Reset x")) {
-				rotate[w].x = 0.0f;
-			}
 			ImGui::PopStyleColor(3);
 
 			ImGui::PushStyleColor(ImGuiCol_FrameBg, { 0.0f, 1.0f, 0.0f, 0.8 });
 			ImGui::Text("Rotate y"); ImGui::SameLine();
-			if (ImGui::SliderAngle("y", &(rotate[w].y))) {} ImGui::SameLine();
+			if (ImGui::SliderAngle("y", &(rotate[w].y))) {}
 			ImGui::PopStyleColor(1);
 			ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(0 / 7.0f, 0.6f, 0.6f));
 			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV(0 / 7.0f, 0.7f, 0.7f));
 			ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)ImColor::HSV(0 / 7.0f, 0.8f, 0.8f));
-			if (ImGui::Button("Reset y")) {
-				rotate[w].y = 0.0f;
-			}
 			ImGui::PopStyleColor(3);
 
 			ImGui::PushStyleColor(ImGuiCol_FrameBg, { 0.0f, 0.0f, 1.0f, 0.8 });
 			ImGui::Text("Rotate z"); ImGui::SameLine();
-			if (ImGui::SliderAngle("z", &(rotate[w].z))) {} ImGui::SameLine();
+			if (ImGui::SliderAngle("z", &(rotate[w].z))) {} 
 			ImGui::PopStyleColor(1);
 			ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(0 / 7.0f, 0.6f, 0.6f));
 			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV(0 / 7.0f, 0.7f, 0.7f));
 			ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)ImColor::HSV(0 / 7.0f, 0.8f, 0.8f));
-			if (ImGui::Button("Reset z")) {
-				rotate[w].z = 0.0f;
-			}
 			ImGui::PopStyleColor(3);
 			aM->setRotationTransform(rotate[w], w);
 		}
 		ImGui::Text("");
-		
-	
-
-
-		/*ImGui::Text("Current Object:");
-		ImGui::Text("Local Rotations");
-		if (ImGui::SliderFloat("Rotate local x", &rotateLocalX, 0.0, 360.0f) && renderer.isHasModel()) {
-			renderer.rotateLocalX(rotateLocalX);
-		}
-		if (ImGui::SliderFloat("Rotate local y", &rotateLocalY, 0.0, 360.0f) && renderer.isHasModel()) {
-			renderer.rotateLocalY(rotateLocalY);
-		}
-		if (ImGui::SliderFloat("Rotate local z", &rotateLocalZ, 0.0, 360.0f) && renderer.isHasModel()) {
-			renderer.rotateLocalZ(rotateLocalZ);
-		}
-		ImGui::Text("Scaling:");
-		if (ImGui::SliderFloat("scale", &f, 0.0f, 1600.0f) && renderer.isHasModel()) {
-			renderer.setScaleNumber(f);
-		}
-		ImGui::Text("World Translations");
-		
-		
-		if (ImGui::SliderFloat("X:", &worldX, 0.0f, 1280.0f)) {
-			renderer.setWorldTranslation(worldX, worldY, worldZ);
-		}
-		if (ImGui::SliderFloat("Y:", &worldY, 0.0f, 1280.0f)) {
-			renderer.setWorldTranslation(worldX, worldY, worldZ);
-		}
-		if (ImGui::SliderFloat("Z:", &worldZ, 0.0f, 80.0f)) {
-			renderer.setWorldTranslation(worldX, worldY, worldZ);
-		}
-		ImGui::Text("World Rotations");
-		if (ImGui::SliderFloat("Rotate world x", &rotateWorldX, 0.0, 360.0f) && renderer.isHasModel()) {
-			renderer.rotateWorldX(rotateWorldX);
-		}
-		if (ImGui::SliderFloat("Rotate world y", &rotateWorldY, 0.0, 360.0f) && renderer.isHasModel()) {
-			renderer.rotateWorldY(rotateWorldY);
-		}
-		if (ImGui::SliderFloat("Rotate world z", &rotateWorldZ, 0.0, 360.0f) && renderer.isHasModel()) {
-			renderer.rotateWorldZ(rotateLocalZ);
-		}*/
-		
+				
 		ImGui::End();
 	}
 
