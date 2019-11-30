@@ -20,6 +20,8 @@ private:
 	std::vector<Light> Lights;
 	std::vector<Camera> cameras;
 	Camera currentCamera;
+	std::vector<char *> modelsNames;
+	std::vector<char *> camerasNames;
 
 	int activeCameraIndex;
 	int activeModelIndex;
@@ -46,6 +48,7 @@ public:
 	const int GetActiveModelIndex() const;
 	const std::shared_ptr<MeshModel> getActiveModel() const;
 	const std::vector<std::shared_ptr<MeshModel>> getModels() const;
+	const std::vector<char*> getModelsNames() const;
 	const std::vector<Camera> getCameras() const;
 	 std::vector<Light> getLights() const { return this->Lights; }
 	const Camera getCurrentCamera() const { return this->currentCamera; }

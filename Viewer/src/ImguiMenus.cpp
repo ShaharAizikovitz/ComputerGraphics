@@ -477,6 +477,58 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 				}
 				ImGui::EndMenu();
 			}
+			if (ImGui::BeginMenu("Models and Cameras"))
+			{
+				if (ImGui::BeginMenu("Models"))
+				{
+					int size = scene.GetModelCount();
+					if (size != 0) {
+						std::vector<char*> names(scene.getModelsNames());
+						int size = scene.GetModelCount();
+						float sz = ImGui::GetTextLineHeight();
+						for (int i = 0; i < size; i++)
+						{
+							const char* name = ImGui::GetStyleColorName((ImGuiCol)i);
+							ImVec2 p = ImGui::GetCursorScreenPos();
+							ImGui::GetWindowDrawList()->AddRectFilled(p, ImVec2(p.x + sz, p.y + sz), ImGui::GetColorU32((ImGuiCol)i));
+							ImGui::Dummy(ImVec2(sz, sz));
+							ImGui::SameLine();
+							if (ImGui::MenuItem(names[i]))
+							{
+								scene.SetActiveModelIndex(i);
+								aM = scene.getActiveModel();
+
+							}
+						}
+					}
+					ImGui::EndMenu();
+
+				}
+
+				if (ImGui::BeginMenu("Cameras"))
+				{
+					/*int size = scene.GetCameraCount();
+					if (size != 0) {
+						std::vector<char*> cNames(scene.getcamerasNames());
+
+						float sz = ImGui::GetTextLineHeight();
+						for (int i = 0; i < size; i++)
+						{
+							const char* name = ImGui::GetStyleColorName((ImGuiCol)i);
+							ImVec2 p = ImGui::GetCursorScreenPos();
+							ImGui::GetWindowDrawList()->AddRectFilled(p, ImVec2(p.x + sz, p.y + sz), ImGui::GetColorU32((ImGuiCol)i));
+							ImGui::Dummy(ImVec2(sz, sz));
+							ImGui::SameLine();
+							if (ImGui::MenuItem(cNames[i]))
+							{
+								scene.SetActiveCameraIndex(i);
+							}
+						}
+					}
+					ImGui::EndMenu();*/
+				}
+				ImGui::EndMenu();
+			}
 			if (ImGui::BeginMenu("Add Primitives"))
 			{
 				if (ImGui::MenuItem("Add Poly"))
