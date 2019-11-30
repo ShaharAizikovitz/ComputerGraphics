@@ -81,7 +81,11 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 		static int mSensitivity = 50;
 		ImVec2 size = ImGui::GetWindowSize();
 		ImVec2 pos = ImGui::GetWindowPos();
-
+		char xu[2] = "";
+		char yv[2] = "";
+		char zw[2] = "";
+		char oporation[15] ="";
+		
 		/*if (ImGui::IsMouseDown(0) && renderer.getCurrentModel() != NULL)
 		{
 			ImVec2 c = ImGui::GetMousePos();
@@ -129,23 +133,27 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 		
 		
 		if (w) {
-
-
+			strcpy(xu , "U");
+			strcpy(yv , "V");
+			strcpy(zw , "W");
 		}
 		else {
-
+			
+			strcpy(xu , "X");
+			strcpy(yv , "Y");
+			strcpy(zw , "Z");
 		}
 		ImGui::Text("");
 		ImGui::Separator();
 		ImGui::Text("");
 		//scale transform
 		if (e == 0) {
-
-			ImGui::DragFloat("Scale x  ", &(scale[w].x), 0.1f);
-						
-			ImGui::DragFloat("Scale y  ", &(scale[w].y), 0.1f); 
-			
-			ImGui::DragFloat("Scale z  ", &(scale[w].z), 0.1f); 
+			strcpy(oporation, "Scale ");
+			ImGui::DragFloat(strcat(oporation,xu), &(scale[w].x), 0.1f);
+			strcpy(oporation, "Scale ");
+			ImGui::DragFloat(strcat(oporation, yv), &(scale[w].y), 0.1f);
+			strcpy(oporation, "Scale ");
+			ImGui::DragFloat(strcat(oporation, zw), &(scale[w].z), 0.1f);
 			
 			if (ImGui::DragFloat("Scale uniform  ", &(uniScale[w]), 0.1f))
 				aM->setScaleTransform(glm::vec3(uniScale[w], uniScale[w], uniScale[w]),w);
@@ -155,33 +163,36 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 		}
 		//translation transform
 		if (e == 1) {
+			strcpy(oporation, "Move on ");
 			ImGui::SliderInt("Sensitivity", &mSensitivity, 1, 200);
-			ImGui::Text("Move on X");
-			if (ImGui::Button("x -  ")) {
+			ImGui::Text(strcat(oporation, xu));
+			if (ImGui::Button(" - ")) {
 				translate[w].x -= 1 * mSensitivity;
 			}
 			; ImGui::SameLine();
-			if (ImGui::Button("x +  ")) {
+			if (ImGui::Button(" + ")) {
 				translate[w].x += 1.0 * mSensitivity;
 			} ImGui::SameLine();
 			ImGui::Text(":  %d", (int)translate[w].x);
-
-			ImGui::Text("Move on Y");
-			if (ImGui::Button("y -  ")) {
+			
+			strcpy(oporation, "Move on ");
+			ImGui::Text(strcat(oporation, yv));
+			if (ImGui::Button(" - ")) {
 				translate[w].y -= 1 * mSensitivity;
 			}
 			; ImGui::SameLine();
-			if (ImGui::Button("y +  ")) {
+			if (ImGui::Button(" + ")) {
 				translate[w].y += 1 * mSensitivity;
 			}ImGui::SameLine();
 			ImGui::Text(":  %d", (int)translate[w].y);
 
-			ImGui::Text("Move on Z");
-			if (ImGui::Button("z -  ")) {
+			strcpy(oporation, "Move on ");
+			ImGui::Text(strcat(oporation,  zw));
+			if (ImGui::Button(" - ")) {
 				translate[w].z -= 1 * mSensitivity;
 			}
 			; ImGui::SameLine();
-			if (ImGui::Button("z +  ")) {
+			if (ImGui::Button(" + ")) {
 				translate[w].z += 1 * mSensitivity;
 			}ImGui::SameLine();
 			ImGui::Text(":  %d", (int)translate[w].z);
@@ -189,27 +200,30 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 		}
 		//rotation transform
 		if (e == 2) {
+			strcpy(oporation, "Rotate ");
 			ImGui::PushStyleColor(ImGuiCol_FrameBg, { 1.0f, 0.0f, 0.0f, 0.8 });
-			ImGui::Text("Rotate x"); ImGui::SameLine();
-			if (ImGui::SliderAngle("x", &(rotate[w].x))) {}
+			ImGui::Text(strcat(oporation, xu)); ImGui::SameLine();
+			if (ImGui::SliderAngle(xu, &(rotate[w].x))) {}
 			ImGui::PopStyleColor(1);
 			ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(0 / 7.0f, 0.6f, 0.6f));
 			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV(0 / 7.0f, 0.7f, 0.7f));
 			ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)ImColor::HSV(0 / 7.0f, 0.8f, 0.8f));
 			ImGui::PopStyleColor(3);
 
+			strcpy(oporation, "Rotate ");
 			ImGui::PushStyleColor(ImGuiCol_FrameBg, { 0.0f, 1.0f, 0.0f, 0.8 });
-			ImGui::Text("Rotate y"); ImGui::SameLine();
-			if (ImGui::SliderAngle("y", &(rotate[w].y))) {}
+			ImGui::Text(strcat(oporation, yv)); ImGui::SameLine();
+			if (ImGui::SliderAngle(yv, &(rotate[w].y))) {}
 			ImGui::PopStyleColor(1);
 			ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(0 / 7.0f, 0.6f, 0.6f));
 			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV(0 / 7.0f, 0.7f, 0.7f));
 			ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)ImColor::HSV(0 / 7.0f, 0.8f, 0.8f));
 			ImGui::PopStyleColor(3);
 
+			strcpy(oporation, "Rotate ");
 			ImGui::PushStyleColor(ImGuiCol_FrameBg, { 0.0f, 0.0f, 1.0f, 0.8 });
-			ImGui::Text("Rotate z"); ImGui::SameLine();
-			if (ImGui::SliderAngle("z", &(rotate[w].z))) {} 
+			ImGui::Text(strcat(oporation, zw)); ImGui::SameLine();
+			if (ImGui::SliderAngle(zw, &(rotate[w].z))) {} 
 			ImGui::PopStyleColor(1);
 			ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(0 / 7.0f, 0.6f, 0.6f));
 			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV(0 / 7.0f, 0.7f, 0.7f));
