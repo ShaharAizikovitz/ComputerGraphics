@@ -285,7 +285,10 @@ const glm::mat4& MeshModel::GetWorldRotation() const {
 void MeshModel::setScaleTransform(const glm::vec3 scale, bool isLocal) {
 
 	if (isLocal)
+	{
+		glm::vec4 centerP = this->localTransform * glm::vec4(centerPoint, 1);
 		this->localTransform = (Utils::TranslationMatrix(centerPoint)*Utils::scaleMat(scale)*Utils::TranslationMatrix(-centerPoint))*this->localTransform;
+	}
 	else
 		this->worldTransform = Utils::scaleMat(scale)*this->worldTransform;
 }

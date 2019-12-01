@@ -196,21 +196,22 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 		}
 		//rotation transform
 		if (e == 2) {
-			ImGui::PushStyleColor(ImGuiCol_FrameBg, { 1.0f, 0.0f, 0.0f, 0.8 });
+			if (ImGui::SliderAngle("x", &(rotate[w].x), 0.0f, 360.0f)) {} ImGui::SameLine();
+			/*ImGui::PushStyleColor(ImGuiCol_FrameBg, { 1.0f, 0.0f, 0.0f, 0.8 });
 			ImGui::Text("Rotate x"); ImGui::SameLine();
-			if (ImGui::SliderAngle("x", &(rotate[w].x))) {} ImGui::SameLine();
+			if (ImGui::SliderAngle("x", &(rotate[w].x), 0.0f, 360.0f)) {} ImGui::SameLine();
 			ImGui::PopStyleColor(1);
 			ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(0 / 7.0f, 0.6f, 0.6f));
 			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV(0 / 7.0f, 0.7f, 0.7f));
-			ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)ImColor::HSV(0 / 7.0f, 0.8f, 0.8f));
-			if (ImGui::Button("Reset x")) {
+			ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)ImColor::HSV(0 / 7.0f, 0.8f, 0.8f));*/
+			/*if (ImGui::Button("Reset x")) {
 				rotate[w].x = 0.0f;
-			}
-			ImGui::PopStyleColor(3);
+			}*/
+			//ImGui::PopStyleColor(3);
 
 			ImGui::PushStyleColor(ImGuiCol_FrameBg, { 0.0f, 1.0f, 0.0f, 0.8 });
 			ImGui::Text("Rotate y"); ImGui::SameLine();
-			if (ImGui::SliderAngle("y", &(rotate[w].y))) {} ImGui::SameLine();
+			if (ImGui::SliderAngle("y", &(rotate[w].y), 0.0f, 360.0f)) {} ImGui::SameLine();
 			ImGui::PopStyleColor(1);
 			ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(0 / 7.0f, 0.6f, 0.6f));
 			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV(0 / 7.0f, 0.7f, 0.7f));
@@ -222,7 +223,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 
 			ImGui::PushStyleColor(ImGuiCol_FrameBg, { 0.0f, 0.0f, 1.0f, 0.8 });
 			ImGui::Text("Rotate z"); ImGui::SameLine();
-			if (ImGui::SliderAngle("z", &(rotate[w].z))) {} ImGui::SameLine();
+			if (ImGui::SliderAngle("z", &(rotate[w].z), 0.0f, 360.0f)) {} ImGui::SameLine();
 			ImGui::PopStyleColor(1);
 			ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(0 / 7.0f, 0.6f, 0.6f));
 			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV(0 / 7.0f, 0.7f, 0.7f));
