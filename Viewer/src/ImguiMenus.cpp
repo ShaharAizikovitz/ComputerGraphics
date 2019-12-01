@@ -79,19 +79,17 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 		static int e = 2; // hold the radio button for rotation\translation\scale
 		static int w = 0; // 0= world 1 = local
 		static int mSensitivity = 50;
+		static float alpha = 0.0f;
+		static float beta  = 0.0f;
+		static float gama = 0.0f;
 		ImVec2 size = ImGui::GetWindowSize();
 		ImVec2 pos = ImGui::GetWindowPos();
+		char xu[2] = "";
+		char yv[2] = "";
+		char zw[2] = "";
+		char oporation[15] ="";
 
-		/*if (ImGui::IsMouseDown(0) && renderer.getCurrentModel() != NULL)
-		{
-			ImVec2 c = ImGui::GetMousePos();
-			if (!ImGui::IsMouseHoveringWindow())
-			{
-				renderer.rotateLocalX((c.y - size.y / 2));
-				renderer.rotateLocalY((c.x - size.x / 2));
-			}
-		}*/
-	
+		// ambient options
 		if (ImGui::SliderFloat("model ambient intensity:", &modelAIntensity, 0.0f, 1.0f) && renderer.isHasModel()) {
 			renderer.getCurrentModel()->setModelAIntensity(modelAIntensity);}
 		if (ImGui::SliderFloat("model Diffusive intensity:", &modelDIntensity, 0.0f, 1.0f) && renderer.isHasModel()) {
@@ -100,23 +98,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 			renderer.getCurrentModel()->setModelSIntensity(modelSIntensity);}
 		ImGui::Separator();
 
-		//if (ImGui::SliderFloat("turn left or right", &turnUpDown, 0.0f, 360.0f) && renderer.isHasModel()) {
-		//	renderer.setEyeX(turnUpDown);
-		//}// Edit 1 float using a slider from 0.0f to 2000.0f
-		//if (ImGui::SliderFloat("FOV", &fov, 0.0f, 90.0f) && renderer.isHasModel()) {
-		//	renderer.setPerspective(fov,ar,(int)n,(int)fa);
-		//}
-		//if (ImGui::SliderFloat("ASPECT RATIO", &ar, 1.0f, 90.0f) && renderer.isHasModel()) {
-		//	renderer.setPerspective(fov, ar, (int)n, (int)fa);
-		//}
-		//if (ImGui::SliderFloat("NEAR", &n, 1.0f, 90.0f) && renderer.isHasModel()) {
-		//	renderer.setPerspective(fov, ar, (int)n, (int)fa);
-		//	//renderer.setProj(fov, ar, n, fa); 
-		//}
-		//if (ImGui::SliderFloat("FAR", &fa, 10.0f, 150.0f) && renderer.isHasModel()) {
-		//	renderer.setPerspective(fov, ar, (int)n, (int)fa);
-		//}
-
+		// global(world)/local options
 		ImGui::Text("");
 		ImGui::RadioButton("World", &w, 0); ImGui::SameLine();
 		ImGui::RadioButton("Local", &w, 1);
@@ -127,33 +109,29 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 		ImGui::RadioButton("Scale", &e, 0); ImGui::SameLine();
 		ImGui::RadioButton("Move", &e, 1);
 		
-		
 		if (w) {
-
-
+			strcpy(xu , "U");
+			strcpy(yv , "V");
+			strcpy(zw , "W");
 		}
 		else {
-
+			
+			strcpy(xu , "X");
+			strcpy(yv , "Y");
+			strcpy(zw , "Z");
 		}
 		ImGui::Text("");
 		ImGui::Separator();
 		ImGui::Text("");
 		//scale transform
 		if (e == 0) {
-
-			ImGui::DragFloat("Scale x  ", &(scale[w].x), 0.1f); /*ImGui::SameLine();*/
+			strcpy(oporation, "Scale ");
+			ImGui::DragFloat(strcat(oporation,xu), &(scale[w].x), 0.1f);
+			strcpy(oporation, "Scale ");
+			ImGui::DragFloat(strcat(oporation, yv), &(scale[w].y), 0.1f);
+			strcpy(oporation, "Scale ");
+			ImGui::DragFloat(strcat(oporation, zw), &(scale[w].z), 0.1f);
 			
-			/*if (ImGui::Button("Reset x")) {
-				scale[w].x = 1.0;
-			}*/
-			ImGui::DragFloat("Scale y  ", &(scale[w].y), 0.1f); /*ImGui::SameLine();*/
-			/*if (ImGui::Button("Reset y")) {
-				scale[w].y = 1.0;
-			}*/
-			ImGui::DragFloat("Scale z  ", &(scale[w].z), 0.1f); /*ImGui::SameLine();*/
-			/*if (ImGui::Button("Reset z")) {
-				scale[w].z = 1.0;
-			}*/
 			if (ImGui::DragFloat("Scale uniform  ", &(uniScale[w]), 0.1f))
 				aM->setScaleTransform(glm::vec3(uniScale[w], uniScale[w], uniScale[w]),w);
 			else 
@@ -162,33 +140,36 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 		}
 		//translation transform
 		if (e == 1) {
+			strcpy(oporation, "Move on ");
 			ImGui::SliderInt("Sensitivity", &mSensitivity, 1, 200);
-			ImGui::Text("Move on X");
-			if (ImGui::Button("x -  ")) {
+			ImGui::Text(strcat(oporation, xu));
+			if (ImGui::Button(" - ")) {
 				translate[w].x -= 1 * mSensitivity;
 			}
 			; ImGui::SameLine();
-			if (ImGui::Button("x +  ")) {
+			if (ImGui::Button(" + ")) {
 				translate[w].x += 1.0 * mSensitivity;
 			} ImGui::SameLine();
 			ImGui::Text(":  %d", (int)translate[w].x);
-
-			ImGui::Text("Move on Y");
-			if (ImGui::Button("y -  ")) {
+			
+			strcpy(oporation, "Move on ");
+			ImGui::Text(strcat(oporation, yv));
+			if (ImGui::Button(" - ")) {
 				translate[w].y -= 1 * mSensitivity;
 			}
 			; ImGui::SameLine();
-			if (ImGui::Button("y +  ")) {
+			if (ImGui::Button(" + ")) {
 				translate[w].y += 1 * mSensitivity;
 			}ImGui::SameLine();
 			ImGui::Text(":  %d", (int)translate[w].y);
 
-			ImGui::Text("Move on Z");
-			if (ImGui::Button("z -  ")) {
+			strcpy(oporation, "Move on ");
+			ImGui::Text(strcat(oporation,  zw));
+			if (ImGui::Button(" - ")) {
 				translate[w].z -= 1 * mSensitivity;
 			}
 			; ImGui::SameLine();
-			if (ImGui::Button("z +  ")) {
+			if (ImGui::Button(" + ")) {
 				translate[w].z += 1 * mSensitivity;
 			}ImGui::SameLine();
 			ImGui::Text(":  %d", (int)translate[w].z);
@@ -196,87 +177,43 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 		}
 		//rotation transform
 		if (e == 2) {
-			if (ImGui::SliderAngle("x", &(rotate[w].x), 0.0f, 360.0f)) {} ImGui::SameLine();
-			/*ImGui::PushStyleColor(ImGuiCol_FrameBg, { 1.0f, 0.0f, 0.0f, 0.8 });
-			ImGui::Text("Rotate x"); ImGui::SameLine();
-			if (ImGui::SliderAngle("x", &(rotate[w].x), 0.0f, 360.0f)) {} ImGui::SameLine();
+			//rotate x-axis
+			strcpy(oporation, "Rotate ");
+			ImGui::PushStyleColor(ImGuiCol_FrameBg, { 1.0f, 0.0f, 0.0f, 0.8 });
+			ImGui::Text(strcat(oporation, xu)); ImGui::SameLine();
+			if (ImGui::SliderAngle(xu, &alpha)) { rotate[w].x = alpha; }
 			ImGui::PopStyleColor(1);
 			ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(0 / 7.0f, 0.6f, 0.6f));
 			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV(0 / 7.0f, 0.7f, 0.7f));
-			ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)ImColor::HSV(0 / 7.0f, 0.8f, 0.8f));*/
-			/*if (ImGui::Button("Reset x")) {
-				rotate[w].x = 0.0f;
-			}*/
-			//ImGui::PopStyleColor(3);
+			ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)ImColor::HSV(0 / 7.0f, 0.8f, 0.8f));
+			ImGui::PopStyleColor(3);
 
+			//rotate y-axis
+			strcpy(oporation, "Rotate ");
 			ImGui::PushStyleColor(ImGuiCol_FrameBg, { 0.0f, 1.0f, 0.0f, 0.8 });
-			ImGui::Text("Rotate y"); ImGui::SameLine();
-			if (ImGui::SliderAngle("y", &(rotate[w].y), 0.0f, 360.0f)) {} ImGui::SameLine();
+			ImGui::Text(strcat(oporation, yv)); ImGui::SameLine();
+			if (ImGui::SliderAngle(yv, &beta)) { rotate[w].y = beta; }
 			ImGui::PopStyleColor(1);
 			ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(0 / 7.0f, 0.6f, 0.6f));
 			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV(0 / 7.0f, 0.7f, 0.7f));
 			ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)ImColor::HSV(0 / 7.0f, 0.8f, 0.8f));
-			if (ImGui::Button("Reset y")) {
-				rotate[w].y = 0.0f;
-			}
 			ImGui::PopStyleColor(3);
 
+			//rotate z-axis
+			strcpy(oporation, "Rotate ");
 			ImGui::PushStyleColor(ImGuiCol_FrameBg, { 0.0f, 0.0f, 1.0f, 0.8 });
-			ImGui::Text("Rotate z"); ImGui::SameLine();
-			if (ImGui::SliderAngle("z", &(rotate[w].z), 0.0f, 360.0f)) {} ImGui::SameLine();
+			ImGui::Text(strcat(oporation, zw)); ImGui::SameLine();
+			if (ImGui::SliderAngle(zw, &gama)) { rotate[w].z = gama; }
 			ImGui::PopStyleColor(1);
 			ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(0 / 7.0f, 0.6f, 0.6f));
 			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV(0 / 7.0f, 0.7f, 0.7f));
 			ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)ImColor::HSV(0 / 7.0f, 0.8f, 0.8f));
-			if (ImGui::Button("Reset z")) {
-				rotate[w].z = 0.0f;
-			}
 			ImGui::PopStyleColor(3);
-			aM->setRotationTransform(rotate[w], w);
+			
+			aM->setRotationTransform(rotate[w], w);	
 		}
 		ImGui::Text("");
-		
-	
-
-
-		/*ImGui::Text("Current Object:");
-		ImGui::Text("Local Rotations");
-		if (ImGui::SliderFloat("Rotate local x", &rotateLocalX, 0.0, 360.0f) && renderer.isHasModel()) {
-			renderer.rotateLocalX(rotateLocalX);
-		}
-		if (ImGui::SliderFloat("Rotate local y", &rotateLocalY, 0.0, 360.0f) && renderer.isHasModel()) {
-			renderer.rotateLocalY(rotateLocalY);
-		}
-		if (ImGui::SliderFloat("Rotate local z", &rotateLocalZ, 0.0, 360.0f) && renderer.isHasModel()) {
-			renderer.rotateLocalZ(rotateLocalZ);
-		}
-		ImGui::Text("Scaling:");
-		if (ImGui::SliderFloat("scale", &f, 0.0f, 1600.0f) && renderer.isHasModel()) {
-			renderer.setScaleNumber(f);
-		}
-		ImGui::Text("World Translations");
-		
-		
-		if (ImGui::SliderFloat("X:", &worldX, 0.0f, 1280.0f)) {
-			renderer.setWorldTranslation(worldX, worldY, worldZ);
-		}
-		if (ImGui::SliderFloat("Y:", &worldY, 0.0f, 1280.0f)) {
-			renderer.setWorldTranslation(worldX, worldY, worldZ);
-		}
-		if (ImGui::SliderFloat("Z:", &worldZ, 0.0f, 80.0f)) {
-			renderer.setWorldTranslation(worldX, worldY, worldZ);
-		}
-		ImGui::Text("World Rotations");
-		if (ImGui::SliderFloat("Rotate world x", &rotateWorldX, 0.0, 360.0f) && renderer.isHasModel()) {
-			renderer.rotateWorldX(rotateWorldX);
-		}
-		if (ImGui::SliderFloat("Rotate world y", &rotateWorldY, 0.0, 360.0f) && renderer.isHasModel()) {
-			renderer.rotateWorldY(rotateWorldY);
-		}
-		if (ImGui::SliderFloat("Rotate world z", &rotateWorldZ, 0.0, 360.0f) && renderer.isHasModel()) {
-			renderer.rotateWorldZ(rotateLocalZ);
-		}*/
-		
+				
 		ImGui::End();
 	}
 
@@ -518,6 +455,58 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 					else {
 					}
 
+				}
+				ImGui::EndMenu();
+			}
+			if (ImGui::BeginMenu("Models and Cameras"))
+			{
+				if (ImGui::BeginMenu("Models"))
+				{
+					int size = scene.GetModelCount();
+					if (size != 0) {
+						std::vector<char*> names(scene.getModelsNames());
+						int size = scene.GetModelCount();
+						float sz = ImGui::GetTextLineHeight();
+						for (int i = 0; i < size; i++)
+						{
+							const char* name = ImGui::GetStyleColorName((ImGuiCol)i);
+							ImVec2 p = ImGui::GetCursorScreenPos();
+							ImGui::GetWindowDrawList()->AddRectFilled(p, ImVec2(p.x + sz, p.y + sz), ImGui::GetColorU32((ImGuiCol)i));
+							ImGui::Dummy(ImVec2(sz, sz));
+							ImGui::SameLine();
+							if (ImGui::MenuItem(names[i]))
+							{
+								scene.SetActiveModelIndex(i);
+								aM = scene.getActiveModel();
+
+							}
+						}
+					}
+					ImGui::EndMenu();
+
+				}
+
+				if (ImGui::BeginMenu("Cameras"))
+				{
+					/*int size = scene.GetCameraCount();
+					if (size != 0) {
+						std::vector<char*> cNames(scene.getcamerasNames());
+
+						float sz = ImGui::GetTextLineHeight();
+						for (int i = 0; i < size; i++)
+						{
+							const char* name = ImGui::GetStyleColorName((ImGuiCol)i);
+							ImVec2 p = ImGui::GetCursorScreenPos();
+							ImGui::GetWindowDrawList()->AddRectFilled(p, ImVec2(p.x + sz, p.y + sz), ImGui::GetColorU32((ImGuiCol)i));
+							ImGui::Dummy(ImVec2(sz, sz));
+							ImGui::SameLine();
+							if (ImGui::MenuItem(cNames[i]))
+							{
+								scene.SetActiveCameraIndex(i);
+							}
+						}
+					}
+					ImGui::EndMenu();*/
 				}
 				ImGui::EndMenu();
 			}

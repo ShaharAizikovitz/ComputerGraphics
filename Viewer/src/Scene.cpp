@@ -13,6 +13,12 @@ Scene::Scene() :
 
 void Scene::AddModel(const std::shared_ptr<MeshModel>& model)
 {
+	char *name = new char[model->GetModelName().length() + 1];
+	strcpy(name, model->GetModelName().c_str());
+	char * end = strstr(name, ".obj");
+	*end = '\0';
+	modelsNames.push_back(name);
+
 	int i = GetActiveModelIndex();
 	if (models.size()) {
 		models[i]->SetColor({ 0,0,0,0 });
@@ -84,6 +90,10 @@ const std::vector<std::shared_ptr<MeshModel>> Scene::getModels() const{
 	return this->models;
 }
 
+const std::vector<char *> Scene::getModelsNames() const
+{
+	return modelsNames;
+}
 const std::vector<Camera> Scene::getCameras() const {
 	return this->cameras;
 }
