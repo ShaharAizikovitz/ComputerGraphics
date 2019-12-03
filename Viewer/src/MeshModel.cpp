@@ -250,6 +250,18 @@ void MeshModel::setCentePoint()
 	this->centerPoint = glm::vec3((x / size), (y / size), (z / size));
 }
 
+void MeshModel::resetShape()
+{
+	this->localTransform = glm::mat4(1);
+	this->worldTransform = glm::mat4(1);
+	this->worldTranslation = glm::mat4(1);
+	this->worldRotation = glm::mat4(1);
+	this->scaleTransform = glm::mat4(1);
+	this->rotationTransform = glm::mat4();
+	this->translationTransform = glm::mat4(1);
+	
+}
+
 
 const std::string& MeshModel::GetModelName()
 {
@@ -311,7 +323,7 @@ void MeshModel::setRotationTransform(const glm::vec3 angle, bool isLocal) {
 	glm::mat4 x = glm::mat4(1, 0, 0, 0, 0, cosf(angle.x), -sinf(angle.x), 0, 0, sinf(angle.x), cosf(angle.x), 0, 0, 0, 0, 1);
 	glm::mat4 y = glm::mat4(cosf(angle.y), 0, sinf(angle.y), 0, 0, 1, 0, 0, -sinf(angle.y), 0, cosf(angle.y), 0, 0, 0, 0, 1);
 	glm::mat4 z = glm::mat4(cosf(angle.z), -sinf(angle.z), 0, 0, sinf(angle.z), cosf(angle.z), 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
-	this->rotationTransform = (x * y * z);
+	this->rotationTransform = (x * y * z)*this->rotationTransform;
 	if (isLocal)
 	//	localTransform = (x * y * z);
 		this->localTransform = (Utils::TranslationMatrix(centerPoint)*(x * y * z)*Utils::TranslationMatrix(-centerPoint))*this->localTransform;

@@ -135,7 +135,8 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 			if (ImGui::DragFloat("Scale uniform  ", &(uniScale[w]), 0.1f))
 				aM->setScaleTransform(glm::vec3(uniScale[w], uniScale[w], uniScale[w]),w);
 			else 
-				aM->setScaleTransform(scale[w], w);
+				if (scale[w]!= glm::vec3(1.0))
+					aM->setScaleTransform(scale[w], w);
 
 		}
 		//translation transform
@@ -173,7 +174,8 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 				translate[w].z += 1 * mSensitivity;
 			}ImGui::SameLine();
 			ImGui::Text(":  %d", (int)translate[w].z);
-			aM->setTranslationTransform(translate[w], w);
+			if (translate[w] != glm::vec3(0.0))
+				aM->setTranslationTransform(translate[w], w);
 		}
 		//rotation transform
 		if (e == 2) {
@@ -205,15 +207,24 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 			ImGui::Text(strcat(oporation, zw)); ImGui::SameLine();
 			if (ImGui::SliderAngle(zw, &gama)) { rotate[w].z = gama; }
 			ImGui::PopStyleColor(1);
-			ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(0 / 7.0f, 0.6f, 0.6f));
+			/*ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(0 / 7.0f, 0.6f, 0.6f));
 			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV(0 / 7.0f, 0.7f, 0.7f));
 			ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)ImColor::HSV(0 / 7.0f, 0.8f, 0.8f));
-			ImGui::PopStyleColor(3);
-			
-			aM->setRotationTransform(rotate[w], w);	
+			ImGui::PopStyleColor(3);*/
+			if (rotate[w]!= glm::vec3(0.0))
+				aM->setRotationTransform(rotate[w], w);	
 		}
 		ImGui::Text("");
-				
+		ImGui::PushStyleColor(ImGuiCol_Button, { 1.0f, 0.0f, 0.0f, 0.8 });
+		if (ImGui::Button(" Reset Shape to origin ")) {
+			aM->resetShape();
+			rotate[2] =  glm::vec3(0.0), glm::vec3(0.0) ;
+			translate[2] = glm::vec3(0.0), glm::vec3(0.0);
+			scale[2] = glm::vec3(1.0), glm::vec3(1.0);
+			uniScale[2] =  1.0,1.0 ;
+
+		}
+		ImGui::PopStyleColor(1);
 		ImGui::End();
 	}
 

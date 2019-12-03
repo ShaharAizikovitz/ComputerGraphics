@@ -1084,7 +1084,7 @@ void Renderer::render(const Scene& scene)
 			// new set WORLD transformations.
 			newVertex = worldTransform * newVertex;
 			
-			model->setCentePoint();
+			
 			//camera projection
 			//newVertex = camera.getViewTransformation() * newVertex;
 			/* right now the  problem is with this transformation !!*/

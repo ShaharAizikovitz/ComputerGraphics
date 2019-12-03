@@ -89,7 +89,7 @@ public:
 	void setModelDIntensity(const float &f) { this->modelDIntensity = f; }
 	void setModelSIntensity(const float &f) { this->modelSIntensity = f; }
 	void setCentePoint();
-	
+	void resetShape();
 	
 
 	const bool& getDraw() { return this->draw; }
@@ -112,4 +112,5 @@ public:
 	const glm::vec3* getScale() const;
 	const glm::vec3* getTranslate() const;
 	const glm::vec3 getCenter()const {return centerPoint; }
+	
 };
