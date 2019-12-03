@@ -35,6 +35,7 @@ public:
 	//setters
 	void SetActiveCameraIndex(size_t index);
 	void SetActiveModelIndex(size_t index);
+	void setCurrentModel(const std::shared_ptr<MeshModel>& m) { this->currentModel = m; }
 
 	//getters
 	const std::shared_ptr<MeshModel> getCurrentModel() const { return this->currentModel; }

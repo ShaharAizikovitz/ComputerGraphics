@@ -50,18 +50,18 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 	{
 		//static float objectColor;
 		static float modelAIntensity = 0.2f, modelDIntensity = 0.2f, modelSIntensity = 0.2f;
-		static float f = 1500.0f;
+		static float scale = 1500.0f;
 		static float turnUpDown = 0.0f;
 		static float fov = 50.0f;
-		static float rotateLocalX = 0.0f;
-		static float rotateLocalY = 0.0f;
-		static float rotateLocalZ = 0.0f;
+		static float rotateLocalX = 1.0f;
+		static float rotateLocalY = 1.0f;
+		static float rotateLocalZ = 1.0f;
 		static float scaleX = 0.0f;
 		static float scaleY = 0.0f;
 		static float scaleZ = 0.0f;
-		static float translateX = 0.0f;
-		static float translateY = 0.0f;
-		static float translateZ = 0.0f;
+		static float translateLocalX = 0.0f;
+		static float translateLocalY = 0.0f;
+		static float translateLocalZ = 0.0f;
 		static float ar = 1.0;
 		static float n = 1.0;
 		static float fa = 10.0;
@@ -79,7 +79,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 		//ImGui::Checkbox("Another Window", &showControlWindow);
 		//ImGui::Text("Current Camera:");
 		
-		ImVec2 size = ImGui::GetWindowSize();
+		/*ImVec2 size = ImGui::GetWindowSize();
 		ImVec2 pos = ImGui::GetWindowPos();
 
 		if (ImGui::IsMouseDown(0) && renderer.getCurrentModel() != NULL)
@@ -90,15 +90,15 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 				renderer.rotateLocalX((c.y - size.y / 2));
 				renderer.rotateLocalY((c.x - size.x / 2));
 			}
-		}
+		}*/
 	
-		if (ImGui::SliderFloat("model ambient intensity:", &modelAIntensity, 0.0f, 1.0f) && renderer.isHasModel()) {
+		/*if (ImGui::SliderFloat("model ambient intensity:", &modelAIntensity, 0.0f, 1.0f) && renderer.isHasModel()) {
 			renderer.getCurrentModel()->setModelAIntensity(modelAIntensity);}
 		if (ImGui::SliderFloat("model Diffusive intensity:", &modelDIntensity, 0.0f, 1.0f) && renderer.isHasModel()) {
 			renderer.getCurrentModel()->setModelDIntensity(modelDIntensity);}
 		if (ImGui::SliderFloat("model Specular intensity:", &modelSIntensity, 0.0f, 1.0f) && renderer.isHasModel()) {
 			renderer.getCurrentModel()->setModelSIntensity(modelSIntensity);}
-		ImGui::Separator();
+		ImGui::Separator();*/
 
 		//if (ImGui::SliderFloat("turn left or right", &turnUpDown, 0.0f, 360.0f) && renderer.isHasModel()) {
 		//	renderer.setEyeX(turnUpDown);
@@ -116,42 +116,55 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 		//if (ImGui::SliderFloat("FAR", &fa, 10.0f, 150.0f) && renderer.isHasModel()) {
 		//	renderer.setPerspective(fov, ar, (int)n, (int)fa);
 		//}
+
+		//local transformations
 		ImGui::Text("Current Object:");
 		ImGui::Text("Local Rotations");
 		if (ImGui::SliderFloat("Rotate local x", &rotateLocalX, 0.0, 360.0f) && renderer.isHasModel()) {
-			renderer.rotateLocalX(rotateLocalX);
+			scene.getCurrentModel()->setRotationTransform(rotateLocalX, 1.0f, 1.0f);
 		}
 		if (ImGui::SliderFloat("Rotate local y", &rotateLocalY, 0.0, 360.0f) && renderer.isHasModel()) {
-			renderer.rotateLocalY(rotateLocalY);
+			scene.getCurrentModel()->setRotationTransform(1.0f, rotateLocalY, 1.0f);
 		}
 		if (ImGui::SliderFloat("Rotate local z", &rotateLocalZ, 0.0, 360.0f) && renderer.isHasModel()) {
-			renderer.rotateLocalZ(rotateLocalZ);
+			scene.getCurrentModel()->setRotationTransform(1.0f, 1.0f, rotateLocalZ);
 		}
+		ImGui::Text("Local Translations");
+		if (ImGui::SliderFloat("Translate local x", &translateLocalX, 0.0, 360.0f) && renderer.isHasModel()) {
+			scene.getCurrentModel()->setTranslationTransform(translateLocalX, translateLocalY, translateLocalZ);
+		}
+		if (ImGui::SliderFloat("Translate local y", &translateLocalY, 0.0, 360.0f) && renderer.isHasModel()) {
+			scene.getCurrentModel()->setTranslationTransform(translateLocalX, translateLocalY, translateLocalZ);
+		}
+		if (ImGui::SliderFloat("Translate local z", &translateLocalZ, 0.0, 360.0f) && renderer.isHasModel()) {
+			scene.getCurrentModel()->setTranslationTransform(translateLocalX, translateLocalY, translateLocalZ);
+		}
+		//scaling
 		ImGui::Text("Scaling:");
-		if (ImGui::SliderFloat("scale", &f, 0.0f, 1600.0f) && renderer.isHasModel()) {
-			renderer.setScaleNumber(f);
+		if (ImGui::SliderFloat("uniform scale", &scale, 0.0f, 1600.0f) && renderer.isHasModel()) {
+			scene.getCurrentModel()->setScaleTransform(scale, scale, scale);
 		}
+		// world transformations
 		ImGui::Text("World Translations");
 		if (ImGui::SliderFloat("X:", &worldX, 0.0f, 1280.0f)) {
-			renderer.setWorldTranslation(worldX, worldY, worldZ);
+			scene.getCurrentModel()->setWorldTranslation(worldX, worldY, worldZ);
 		}
 		if (ImGui::SliderFloat("Y:", &worldY, 0.0f, 1280.0f)) {
-			renderer.setWorldTranslation(worldX, worldY, worldZ);
+			scene.getCurrentModel()->setWorldTranslation(worldX, worldY, worldZ);
 		}
 		if (ImGui::SliderFloat("Z:", &worldZ, 0.0f, 80.0f)) {
-			renderer.setWorldTranslation(worldX, worldY, worldZ);
+			scene.getCurrentModel()->setWorldTranslation(worldX, worldY, worldZ);
 		}
 		ImGui::Text("World Rotations");
 		if (ImGui::SliderFloat("Rotate world x", &rotateWorldX, 0.0, 360.0f) && renderer.isHasModel()) {
-			renderer.rotateWorldX(rotateWorldX);
+			scene.getCurrentModel()->setWorldRotation(rotateWorldX, 1.0f, 1.0f);
 		}
 		if (ImGui::SliderFloat("Rotate world y", &rotateWorldY, 0.0, 360.0f) && renderer.isHasModel()) {
-			renderer.rotateWorldY(rotateWorldY);
+			scene.getCurrentModel()->setWorldRotation(1.0f, rotateWorldY, 1.0f);
 		}
 		if (ImGui::SliderFloat("Rotate world z", &rotateWorldZ, 0.0, 360.0f) && renderer.isHasModel()) {
-			renderer.rotateWorldZ(rotateLocalZ);
-		}
-		
+			scene.getCurrentModel()->setWorldRotation(1.0f, 1.0f, rotateWorldZ);
+		}	
 		ImGui::End();
 	}
 
@@ -314,14 +327,17 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 	
 		if (lights.size() > 0)
 		{
-			int count = 1;
-			for ( /*l = lights.begin()*/; l != lights.end(); l++/*, count++*/)
+			int count = 0;
+			for ( /*l = lights.begin()*/; l != lights.end(); l++, count++)
 			{
 				glm::vec3 pos = (*l).getLightPos();
-				ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.0f, 1.0f), "Light #%d", count);
-				if (ImGui::SliderInt("light x pos", (int*)&light_x, -3000, 3000)) { (*l).setPosition(glm::vec3(pos.x + light_x, pos.y, pos.z)); }
-				if (ImGui::SliderInt("light y pos", (int*)&light_y, -3000, 3000)) { (*l).setPosition(glm::vec3(pos.x, pos.y + light_y, pos.z)); }
-				if (ImGui::SliderInt("light z pos", (int*)&light_z, -3000, 3000)) { (*l).setPosition(glm::vec3(pos.x, pos.y, pos.z + light_z)); }
+				ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.0f, 1.0f), "Light #%d", count + 1);
+				if (ImGui::SliderInt("light x pos", (int*)&light_x, -3000, 3000)) { 
+					l->setPosition(glm::vec3(pos.x + light_x, pos.y, pos.z)); 
+					renderer.getScene().getLights().at(count).setPosition(glm::vec3(pos.x + light_x, pos.y + light_y, pos.z + light_z));
+				}
+				if (ImGui::SliderInt("light y pos", (int*)&light_y, -3000, 3000)) { l->setPosition(glm::vec3(pos.x, pos.y + light_y, pos.z)); }
+				if (ImGui::SliderInt("light z pos", (int*)&light_z, -3000, 3000)) { l->setPosition(glm::vec3(pos.x, pos.y, pos.z + light_z)); }
 				ImGui::Separator();
 			}
 			/*for (size_t i = 0; i < renderer.getScene().getLights().size(); i++)
@@ -379,8 +395,8 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 					if (result == NFD_OKAY) {
 						scene.AddModel(std::make_shared<MeshModel>(Utils::LoadMeshModel(outPath)));
 						//set renderer current model to the last model in the scene model list
-						renderer.setCurrentModel(scene.getModels().at(scene.GetModelCount() - 1));
-
+						//scene.setCurrentModel(scene.getModels().at(scene.GetModelCount() - 1));
+						showControlWindow = true;
 						renderer.setHasModel();
 						renderer.setEyeX(0);
 						//renderer.translate(640, 360, 0);
@@ -493,7 +509,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 
 					for (it = models.begin(); it != models.end(); it++)
 					{
-						name = (*it)->GetModelName().c_str();
+						name = (*it)->getModelName().c_str();
 						(*it)->setIsCurrentModel(false);
 
 						if (ImGui::MenuItem(name))

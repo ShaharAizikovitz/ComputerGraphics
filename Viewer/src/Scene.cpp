@@ -7,8 +7,8 @@ Scene::Scene() :
 	activeCameraIndex(0),
 	activeModelIndex(0)
 {
-	Utils::createGrid();
-	AddModel(std::make_shared<MeshModel>(Utils::LoadMeshModel("../Data/obj_examples/grid.obj")));
+	//Utils::createGrid();
+	//AddModel(std::make_shared<MeshModel>(Utils::LoadMeshModel("../Data/obj_examples/grid.obj")));
 }
 
 void Scene::AddModel(const std::shared_ptr<MeshModel>& model)

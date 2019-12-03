@@ -70,18 +70,11 @@ private:		//members
 
 	//drawing routings
 	float calculateColor(glm::vec3 &n1, glm::vec3 &n2, glm::vec3 &n);
-	void drawLine(glm::vec3 p1, glm::vec3 p2, glm::vec3 color, bool scale);
 	void drawLine1(glm::vec3 p1, glm::vec3 p2, glm::vec3 color, bool scale);
-	void drawLine(Vertex p1, Vertex p2, glm::vec3 color, bool scale);
 	void drawCube(); 
 	void drawTriangle(std::vector<Vertex>&points, glm::vec3 &color);
-	void drawBetween2Edges(std::vector<Vertex> &points, Edge &e1, Edge &e2, const glm::vec3 &color);
-	void scanLine(std::vector<Vertex>&, int &e1, int &e2, int &y, const glm::vec3 &color);
 	void scanLine1(std::vector<Vertex>&, int &e1, int &e2, int &y, const glm::vec3 &color);
 	void fillTriangle3(std::vector<Vertex> points, const glm::vec3 & color);
-	void fillTriangle2(std::vector<Vertex> points, const glm::vec3 & color);
-	void fillTriangle1(std::vector<Vertex> points, const glm::vec3 &color);
-	void fillTriangle(std::vector<Vertex> points, const glm::vec3 &color);
 	void barycentric(glm::vec3 p, glm::vec3 a, glm::vec3 b, glm::vec3 c, float &u, float &v, float &w);
 	glm::vec3 barycentric1(glm::vec3 point, glm::vec3 a, glm::vec3 b, glm::vec3 c);
 	glm::vec3 barycentric2(glm::vec3 point, glm::vec3 a, glm::vec3 b, glm::vec3 c);
@@ -157,4 +150,17 @@ public:
 	void setIsProjPerspective(const bool &t) { this->isProjPerspective = t; }
 	void setIsProjOrthographic(const bool &t) { this->isProjOrthographic = t; }
 	void setReflection(const float &r) { this->reflection = r; }
+
+
+	//for debugging erase later
+	static void calcNormals(std::vector<Vertex> & polygon)
+	{
+		glm::vec3 n1, n2, normal;
+		n1 = glm::normalize(polygon.at(0).getPoint() - polygon.at(1).getPoint());
+		n2 = glm::normalize(polygon.at(0).getPoint() - polygon.at(2).getPoint());
+		normal = glm::cross(n1, n2);
+		polygon.at(0).addNormal(normal);
+		polygon.at(1).addNormal(normal);
+		polygon.at(2).addNormal(normal);
+	}
 };
