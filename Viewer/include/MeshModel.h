@@ -38,23 +38,20 @@ private:
 	glm::mat4 zRotation;
 	glm::mat4x4 worldTransform;
 	glm::vec4 color;
-<<<<<<< HEAD
 	glm::vec4 center;
-=======
+
 	glm::vec4 cg;
 	glm::vec4 translate;
->>>>>>> 830cd442d2494622ceabc6fdc05c9e218a074b98
+
 	std::string modelName;
 	bool draw;
 	bool drawCube;
 	void createCube();
 	void createNormals();
 	void createCenterLines();
-<<<<<<< HEAD
 	void calculateCenter();
-=======
+
 	void createCenteroGravity();
->>>>>>> 830cd442d2494622ceabc6fdc05c9e218a074b98
 	bool isCurrentModel;
 	float modelAIntensity;
 	float modelDIntensity;
@@ -66,25 +63,12 @@ public:
 	MeshModel(const std::vector<Face>& faces, const std::vector<glm::vec3>& vertices, const std::vector<glm::vec3>& normals, const std::string& modelName = "");
 	MeshModel(const std::vector<Face>& faces, const std::vector<Vertex>& vertices, const std::vector<glm::vec3>& normals, const std::string& modelName);
 	MeshModel(const std::vector<Face>& faces, const std::vector<Vertex>& vertices, const std::vector<glm::vec3>& normals, const std::string& modelName, const bool &isCurrent);
-	MeshModel(const int type); 
+	MeshModel(const int type);
+	MeshModel() {}
 	virtual ~MeshModel();
-	MeshModel(){}
+	
 
 	void addVertexNormal(glm::vec3 &n) { this->v_normals.push_back(n); }
-<<<<<<< HEAD
-=======
-	void SetWorldTransformation(const glm::mat4& worldTransform);
-	const glm::mat4& GetWorldTransformation() const;
-	const glm::mat4& GetLocalTransform() const;
-	const glm::mat4& GetScaleTransform() const;
-	const glm::mat4& GetTranslationTransform() const;
-	const glm::mat4& GetRotationTransform() const;
-	const glm::mat4& GetWorldTranslate() const;
-	const glm::mat4& GetWorldRotation() const;
-	const glm::vec4& GetColor() const;
-	const glm::mat4& localTransformation(const glm::vec3 trans, const glm::vec3 scale, const glm::vec3 angle, const bool &isLocal);
->>>>>>> 830cd442d2494622ceabc6fdc05c9e218a074b98
-	
 
 	//getters-setters
 	void setDraw(const bool b) { this->draw = b; }
@@ -100,13 +84,10 @@ public:
 	void setModelAIntensity(const float &f) { this->modelAIntensity = f; }
 	void setModelDIntensity(const float &f) { this->modelDIntensity = f; }
 	void setModelSIntensity(const float &f) { this->modelSIntensity = f; }
-<<<<<<< HEAD
 	void setWorldTransformation(const glm::mat4& worldTransform) { this->worldTransform = worldTransform; }
 	void setColor(const glm::vec4& color) { this->color = color; }
 
-=======
-	
->>>>>>> 830cd442d2494622ceabc6fdc05c9e218a074b98
+
 
 	const bool& getDraw() { return this->draw; }
 	const Cube getCube() const { return this->cube; }
@@ -118,7 +99,7 @@ public:
 	const float getModelAIntensity() const { return this->modelAIntensity; }
 	const float getModelDIntensity() const { return this->modelDIntensity; }
 	const float getModelSIntensity() const { return this->modelSIntensity; }
-<<<<<<< HEAD
+
 	const glm::mat4& getScaleTransform() const { return this->scaleTransform; }
 	const glm::mat4& getWorldTransformation() const { return this->worldTransform; }
 	const glm::mat4& getLocalTransform() const { return this->localTransform; }
@@ -132,7 +113,6 @@ public:
 	const glm::mat4& getWorldTranslate() const { return this->worldTranslation; }
 	const glm::mat4& getWorldRotation() const { return this->worldRotation; }
 
-=======
 	const glm::vec4& getCenterOGravity() const { return this->cg; }
->>>>>>> 830cd442d2494622ceabc6fdc05c9e218a074b98
+
 };
