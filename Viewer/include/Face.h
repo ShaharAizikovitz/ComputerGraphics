@@ -14,6 +14,7 @@ private:
 
 public:
 	Face(std::istream& issLine);
+	Face(std::vector<int> vertexIndices1);
 	virtual ~Face();
 
 	//getters

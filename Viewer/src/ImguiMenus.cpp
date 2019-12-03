@@ -412,7 +412,24 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 				}
 				ImGui::EndMenu();
 			}
+			if (ImGui::BeginMenu("Add Primitives"))
+			{
+				if (ImGui::MenuItem("Add Poly"))
+				{
+					scene.AddModel(std::make_shared<MeshModel>(MeshModel(0)));
+					renderer.setCurrentModel(scene.getModels().at(scene.GetModelCount() - 1));
 
+					renderer.setHasModel();
+					renderer.setEyeX(0);
+				
+
+				}
+				if (ImGui::MenuItem("Add box"))
+				{
+
+				}
+				ImGui::EndMenu();
+			}
 			//camera menu
 			if (ImGui::BeginMenu("Camera"))
 			{
