@@ -100,11 +100,9 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 
 		// global(world)/local options
 		ImGui::Text("");
-		ImGui::PushStyleColor(ImGuiCol_FrameBgActive, {0.3f, 0.7f, 0.3f, 0.4 });
 		ImGui::RadioButton("World", &w, 0); ImGui::SameLine();
 		ImGui::RadioButton("Local", &w, 1);
-		ImGui::PopStyleColor(1);
-
+	
 		ImGui::Text("");
 		ImGui::Separator();
 		ImGui::Text("");

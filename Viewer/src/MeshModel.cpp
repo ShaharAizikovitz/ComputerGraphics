@@ -257,7 +257,7 @@ void MeshModel::resetShape()
 	this->worldTranslation = glm::mat4(1);
 	this->worldRotation = glm::mat4(1);
 	this->scaleTransform = glm::mat4(1);
-	this->rotationTransform = glm::mat4();
+	this->rotationTransform = glm::mat4(1);
 	this->translationTransform = glm::mat4(1);
 	
 }
@@ -299,14 +299,16 @@ void MeshModel::setScaleTransform(const glm::vec3 scale, bool isLocal) {
 	if (isLocal)
 	{
 		glm::vec4 centerP = this->localTransform * glm::vec4(centerPoint, 1);
-		this->localTransform = (Utils::TranslationMatrix(centerPoint)*Utils::scaleMat(scale)*Utils::TranslationMatrix(-centerPoint))*this->localTransform;
+		this->localTransform = (Utils::TranslationMatrix(centerP)*Utils::scaleMat(scale)*Utils::TranslationMatrix(-centerP))*this->localTransform;
 	}
 	else
 		this->worldTransform = Utils::scaleMat(scale)*this->worldTransform;
 }
 void MeshModel::setTranslationTransform(const glm::vec3 translation, bool isLocal) {
-	if (isLocal)
-		this->localTransform = (Utils::TranslationMatrix(centerPoint)* Utils::TranslationMatrix(translation) * this->rotationTransform *Utils::TranslationMatrix(-centerPoint))*this->localTransform;
+	if (isLocal) {
+		glm::vec4 centerP = this->localTransform * glm::vec4(centerPoint, 1);
+		this->localTransform = (Utils::TranslationMatrix(centerP)* Utils::TranslationMatrix(translation) * this->rotationTransform *Utils::TranslationMatrix(-centerP))*this->localTransform;
+	}
 	else
 		this->worldTransform = Utils::TranslationMatrix(translation)*this->worldTransform;
 	
@@ -324,9 +326,10 @@ void MeshModel::setRotationTransform(const glm::vec3 angle, bool isLocal) {
 	glm::mat4 y = glm::mat4(cosf(angle.y), 0, sinf(angle.y), 0, 0, 1, 0, 0, -sinf(angle.y), 0, cosf(angle.y), 0, 0, 0, 0, 1);
 	glm::mat4 z = glm::mat4(cosf(angle.z), -sinf(angle.z), 0, 0, sinf(angle.z), cosf(angle.z), 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
 	this->rotationTransform = (x * y * z)*this->rotationTransform;
-	if (isLocal)
-	//	localTransform = (x * y * z);
-		this->localTransform = (Utils::TranslationMatrix(centerPoint)*(x * y * z)*Utils::TranslationMatrix(-centerPoint))*this->localTransform;
+	if (isLocal) {
+		glm::vec4 centerP = this->localTransform * glm::vec4(centerPoint, 1);
+		this->localTransform = (Utils::TranslationMatrix(centerP)*(x * y * z)*Utils::TranslationMatrix(-centerP))*this->localTransform;
+	}
 	else
 		this->worldTransform = (x * y * z)*this->worldTransform;
 
