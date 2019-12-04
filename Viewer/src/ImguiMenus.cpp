@@ -100,8 +100,11 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 
 		// global(world)/local options
 		ImGui::Text("");
+		ImGui::PushStyleColor(ImGuiCol_FrameBgActive, {0.3f, 0.7f, 0.3f, 0.4 });
 		ImGui::RadioButton("World", &w, 0); ImGui::SameLine();
 		ImGui::RadioButton("Local", &w, 1);
+		ImGui::PopStyleColor(1);
+
 		ImGui::Text("");
 		ImGui::Separator();
 		ImGui::Text("");
@@ -215,14 +218,12 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 				aM->setRotationTransform(rotate[w], w);	
 		}
 		ImGui::Text("");
-		ImGui::PushStyleColor(ImGuiCol_Button, { 1.0f, 0.0f, 0.0f, 0.8 });
+		ImGui::PushStyleColor(ImGuiCol_Button, { 0.5f, 0.1f, 0.1f, 0.8 });
 		if (ImGui::Button(" Reset Shape to origin ")) {
 			aM->resetShape();
-			rotate[2] =  glm::vec3(0.0), glm::vec3(0.0) ;
-			translate[2] = glm::vec3(0.0), glm::vec3(0.0);
-			scale[2] = glm::vec3(1.0), glm::vec3(1.0);
-			uniScale[2] =  1.0,1.0 ;
-
+			gama = 0.0;
+			beta = 0.0;
+			alpha = 0.0;
 		}
 		ImGui::PopStyleColor(1);
 		ImGui::End();
