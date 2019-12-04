@@ -307,7 +307,8 @@ void MeshModel::setScaleTransform(const glm::vec3 scale, bool isLocal) {
 void MeshModel::setTranslationTransform(const glm::vec3 translation, bool isLocal) {
 	if (isLocal) {
 		glm::vec4 centerP = this->localTransform * glm::vec4(centerPoint, 1);
-		this->localTransform = (Utils::TranslationMatrix(centerP)* Utils::TranslationMatrix(translation) * this->rotationTransform *Utils::TranslationMatrix(-centerP))*this->localTransform;
+		glm::vec4 newAxies = this->rotationTransform*glm::vec4(translation, 1);
+		this->localTransform = Utils::TranslationMatrix(newAxies) *this->localTransform;
 	}
 	else
 		this->worldTransform = Utils::TranslationMatrix(translation)*this->worldTransform;

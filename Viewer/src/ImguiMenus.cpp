@@ -145,33 +145,33 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 			strcpy(oporation, "Move on ");
 			ImGui::SliderInt("Sensitivity", &mSensitivity, 1, 200);
 			ImGui::Text(strcat(oporation, xu));
-			if (ImGui::Button(" - ")) {
+			if (ImGui::Button("x - ")) {
 				translate[w].x -= 1 * mSensitivity;
 			}
 			; ImGui::SameLine();
-			if (ImGui::Button(" + ")) {
+			if (ImGui::Button("x + ")) {
 				translate[w].x += 1.0 * mSensitivity;
 			} ImGui::SameLine();
 			ImGui::Text(":  %d", (int)translate[w].x);
 			
 			strcpy(oporation, "Move on ");
 			ImGui::Text(strcat(oporation, yv));
-			if (ImGui::Button(" - ")) {
+			if (ImGui::Button("y - ")) {
 				translate[w].y -= 1 * mSensitivity;
 			}
 			; ImGui::SameLine();
-			if (ImGui::Button(" + ")) {
+			if (ImGui::Button("y + ")) {
 				translate[w].y += 1 * mSensitivity;
 			}ImGui::SameLine();
 			ImGui::Text(":  %d", (int)translate[w].y);
 
 			strcpy(oporation, "Move on ");
 			ImGui::Text(strcat(oporation,  zw));
-			if (ImGui::Button(" - ")) {
+			if (ImGui::Button("z - ")) {
 				translate[w].z -= 1 * mSensitivity;
 			}
 			; ImGui::SameLine();
-			if (ImGui::Button(" + ")) {
+			if (ImGui::Button("z + ")) {
 				translate[w].z += 1 * mSensitivity;
 			}ImGui::SameLine();
 			ImGui::Text(":  %d", (int)translate[w].z);
