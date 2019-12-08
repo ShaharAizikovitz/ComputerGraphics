@@ -233,6 +233,7 @@ const glm::vec4& MeshModel::GetColor() const
 	return color;
 }
 
+/*calculate the original center point for the model from the obj points*/
 void MeshModel::setCentePoint()
 {
 	float x = 0;
@@ -249,7 +250,7 @@ void MeshModel::setCentePoint()
 
 	this->centerPoint = glm::vec3((x / size), (y / size), (z / size));
 }
-
+/*reseting all the matrices of the model to I*/
 void MeshModel::resetShape()
 {
 	this->localTransform = glm::mat4(1);
@@ -297,18 +298,18 @@ const glm::mat4& MeshModel::GetWorldRotation() const {
 void MeshModel::setScaleTransform(const glm::vec3 scale, bool isLocal) {
 
 	if (isLocal)
-	{
-		//glm::vec4 newAxies = this->rotationTransform*glm::vec4(scale, 1);
-		glm::vec4 centerP = this->localTransform * glm::vec4(centerPoint, 1);
-	//	this->localTransform = (Utils::TranslationMatrix(centerP)*Utils::scaleMat(scale)*Utils::TranslationMatrix(-centerP))*this->localTransform;
+	{// for local we multiplay from the right
 		this->localTransform = this->localTransform*(Utils::TranslationMatrix(centerPoint)*Utils::scaleMat(scale)*Utils::TranslationMatrix(-centerPoint));
 	}
 	else
 		this->worldTransform = Utils::scaleMat(scale)*this->worldTransform;
 }
+
+/*calculating the trnaslaion in local or world transfom 
+  for local we calc the new axies to move in new diractions */
 void MeshModel::setTranslationTransform(const glm::vec3 translation, bool isLocal) {
 	if (isLocal) {
-		glm::vec4 centerP = this->localTransform * glm::vec4(centerPoint, 1);
+		/*clac the new axies*/
 		glm::vec4 newAxies = this->rotationTransform*glm::vec4(translation, 1);
 		this->localTransform = Utils::TranslationMatrix(newAxies) *this->localTransform;
 	}
@@ -325,13 +326,20 @@ void MeshModel::setWorldTranslation(const glm::vec3 translation) {
 
 void MeshModel::setRotationTransform(const glm::vec3 angle, bool isLocal) {
 	
+	/*glm::vec4 newAxies = this->rotationTransform*glm::vec4(angle, 1);
+	glm::mat4 x = glm::mat4(1, 0, 0, 0, 0, cosf(newAxies.x), -sinf(newAxies.x), 0, 0, sinf(newAxies.x), cosf(newAxies.x), 0, 0, 0, 0, 1);
+	glm::mat4 y = glm::mat4(cosf(newAxies.y), 0, sinf(newAxies.y), 0, 0, 1, 0, 0, -sinf(newAxies.y), 0, cosf(newAxies.y), 0, 0, 0, 0, 1);
+	glm::mat4 z = glm::mat4(cosf(newAxies.z), -sinf(newAxies.z), 0, 0, sinf(newAxies.z), cosf(newAxies.z), 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);*/
+	
 	glm::mat4 x = glm::mat4(1, 0, 0, 0, 0, cosf(angle.x), -sinf(angle.x), 0, 0, sinf(angle.x), cosf(angle.x), 0, 0, 0, 0, 1);
 	glm::mat4 y = glm::mat4(cosf(angle.y), 0, sinf(angle.y), 0, 0, 1, 0, 0, -sinf(angle.y), 0, cosf(angle.y), 0, 0, 0, 0, 1);
 	glm::mat4 z = glm::mat4(cosf(angle.z), -sinf(angle.z), 0, 0, sinf(angle.z), cosf(angle.z), 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
 	
+	// for local rotation we move the obj to center rotate and then back to the spot
 	if (isLocal) {
-		this->rotationTransform = (x * y * z)*this->rotationTransform;
-		glm::vec4 centerP = this->localTransform * glm::vec4(centerPoint, 1);
+		this->rotationTransform = (x * y * z)*this->rotationTransform; // we keep all the local rotation for new axies system(translate)
+		
+		glm::vec4 centerP = this->localTransform * glm::vec4(centerPoint, 1);// where the center is after the last transformation
 
 		this->localTransform = (Utils::TranslationMatrix(centerP)*(x * y * z)*Utils::TranslationMatrix(-centerP))*this->localTransform;
 	}
@@ -341,7 +349,7 @@ void MeshModel::setRotationTransform(const glm::vec3 angle, bool isLocal) {
 
 		
 }
-
+//Not in use atm
 void MeshModel::setWorldRotation(const glm::vec3 angle) {
 	
 		this->worldRotation = Utils::rotateMat(angle);
@@ -351,5 +359,4 @@ void MeshModel::setWorldRotation(const glm::vec3 angle) {
 const glm::mat4& MeshModel::GetScaleTransform() const {
 	return this->scaleTransform;
 }
-MeshModel::MeshModel() {
-}
+

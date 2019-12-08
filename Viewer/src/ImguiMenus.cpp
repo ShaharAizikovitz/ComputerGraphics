@@ -38,10 +38,10 @@ const glm::vec4 GetClearColor()
 
 void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 {
-	 glm::vec3 rotate[2] = { { 0.0,0.0,0.0 }, { 0.0,0.0,0.0 } };
-	 glm::vec3 translate[2] = { { 0.0,0.0,0.0 }, { 0.0,0.0,0.0 } };
-	 glm::vec3 scale[2] = { { 1.0,1.0,1.0 }, { 1.0,1.0,1.0 } };
-	 float uniScale[2] = { 1.0,1.0 };
+	 glm::vec3 rotate[2] = { { 0.0,0.0,0.0 }, { 0.0,0.0,0.0 } }; //hold rotaion values for world and local
+	 glm::vec3 translate[2] = { { 0.0,0.0,0.0 }, { 0.0,0.0,0.0 } };//hold translation values for world and local
+	 glm::vec3 scale[2] = { { 1.0,1.0,1.0 }, { 1.0,1.0,1.0 } };//hold scaling values for world and local
+	 float uniScale[2] = { 1.0,1.0 }; // hold uni scale value for world and local
 	if (scene.GetModelCount()) {
 		aM = scene.getActiveModel();
 	}
@@ -76,15 +76,15 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 		//ImGui::Checkbox("Demo Window", &showDemoWindow);      // Edit bools storing our window open/close state
 		//ImGui::Checkbox("Another Window", &showControlWindow);
 		//ImGui::Text("Current Camera:");
-		static int e = 2; // hold the radio button for rotation\translation\scale
-		static int w = 0; // 0= world 1 = local
+		static int transformOporation = 2; // hold the radio button for rotation\translation\scale
+		static int isLocal = 0; // 0= world 1 = local
 		static int mSensitivity = 50;
 		static float alpha = 0.0f;
 		static float beta  = 0.0f;
 		static float gama = 0.0f;
 		ImVec2 size = ImGui::GetWindowSize();
 		ImVec2 pos = ImGui::GetWindowPos();
-		char xu[2] = "";
+		char xu[2] = ""; 
 		char yv[2] = "";
 		char zw[2] = "";
 		char oporation[15] ="";
@@ -100,17 +100,17 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 
 		// global(world)/local options
 		ImGui::Text("");
-		ImGui::RadioButton("World", &w, 0); ImGui::SameLine();
-		ImGui::RadioButton("Local", &w, 1);
+		ImGui::RadioButton("World", &isLocal, 0); ImGui::SameLine();
+		ImGui::RadioButton("Local", &isLocal, 1);
 	
 		ImGui::Text("");
 		ImGui::Separator();
 		ImGui::Text("");
-		ImGui::RadioButton("Rotate", &e, 2); ImGui::SameLine();
-		ImGui::RadioButton("Scale", &e, 0); ImGui::SameLine();
-		ImGui::RadioButton("Move", &e, 1);
+		ImGui::RadioButton("Rotate", &transformOporation, 2); ImGui::SameLine();
+		ImGui::RadioButton("Scale", &transformOporation, 0); ImGui::SameLine();
+		ImGui::RadioButton("Move", &transformOporation, 1);
 		
-		if (w) {
+		if (isLocal) {
 			strcpy(xu , "U");
 			strcpy(yv , "V");
 			strcpy(zw , "W");
@@ -125,66 +125,66 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 		ImGui::Separator();
 		ImGui::Text("");
 		//scale transform
-		if (e == 0) {
+		if (transformOporation == 0) {
 			strcpy(oporation, "Scale ");
-			ImGui::DragFloat(strcat(oporation,xu), &(scale[w].x), 0.1f);
+			ImGui::DragFloat(strcat(oporation,xu), &(scale[isLocal].x), 0.1f);
 			strcpy(oporation, "Scale ");
-			ImGui::DragFloat(strcat(oporation, yv), &(scale[w].y), 0.1f);
+			ImGui::DragFloat(strcat(oporation, yv), &(scale[isLocal].y), 0.1f);
 			strcpy(oporation, "Scale ");
-			ImGui::DragFloat(strcat(oporation, zw), &(scale[w].z), 0.1f);
+			ImGui::DragFloat(strcat(oporation, zw), &(scale[isLocal].z), 0.1f);
 			
-			if (ImGui::DragFloat("Scale uniform  ", &(uniScale[w]), 0.1f))
-				aM->setScaleTransform(glm::vec3(uniScale[w], uniScale[w], uniScale[w]),w);
+			if (ImGui::DragFloat("Scale uniform  ", &(uniScale[isLocal]), 0.1f))
+				aM->setScaleTransform(glm::vec3(uniScale[isLocal], uniScale[isLocal], uniScale[isLocal]), isLocal);
 			else 
-				if (scale[w]!= glm::vec3(1.0))
-					aM->setScaleTransform(scale[w], w);
+				if (scale[isLocal]!= glm::vec3(1.0))
+					aM->setScaleTransform(scale[isLocal], isLocal);
 
 		}
 		//translation transform
-		if (e == 1) {
+		if (transformOporation == 1) {
 			strcpy(oporation, "Move on ");
 			ImGui::SliderInt("Sensitivity", &mSensitivity, 1, 200);
 			ImGui::Text(strcat(oporation, xu));
 			if (ImGui::Button("x - ")) {
-				translate[w].x -= 1 * mSensitivity;
+				translate[isLocal].x -= 1 * mSensitivity;
 			}
 			; ImGui::SameLine();
 			if (ImGui::Button("x + ")) {
-				translate[w].x += 1.0 * mSensitivity;
+				translate[isLocal].x += 1.0 * mSensitivity;
 			} ImGui::SameLine();
-			ImGui::Text(":  %d", (int)translate[w].x);
+			ImGui::Text(":  %d", (int)translate[isLocal].x);
 			
 			strcpy(oporation, "Move on ");
 			ImGui::Text(strcat(oporation, yv));
 			if (ImGui::Button("y - ")) {
-				translate[w].y -= 1 * mSensitivity;
+				translate[isLocal].y -= 1 * mSensitivity;
 			}
 			; ImGui::SameLine();
 			if (ImGui::Button("y + ")) {
-				translate[w].y += 1 * mSensitivity;
+				translate[isLocal].y += 1 * mSensitivity;
 			}ImGui::SameLine();
-			ImGui::Text(":  %d", (int)translate[w].y);
+			ImGui::Text(":  %d", (int)translate[isLocal].y);
 
 			strcpy(oporation, "Move on ");
 			ImGui::Text(strcat(oporation,  zw));
 			if (ImGui::Button("z - ")) {
-				translate[w].z -= 1 * mSensitivity;
+				translate[isLocal].z -= 1 * mSensitivity;
 			}
 			; ImGui::SameLine();
 			if (ImGui::Button("z + ")) {
-				translate[w].z += 1 * mSensitivity;
+				translate[isLocal].z += 1 * mSensitivity;
 			}ImGui::SameLine();
-			ImGui::Text(":  %d", (int)translate[w].z);
-			if (translate[w] != glm::vec3(0.0))
-				aM->setTranslationTransform(translate[w], w);
+			ImGui::Text(":  %d", (int)translate[isLocal].z);
+			if (translate[isLocal] != glm::vec3(0.0))
+				aM->setTranslationTransform(translate[isLocal], isLocal);
 		}
 		//rotation transform
-		if (e == 2) {
+		if (transformOporation == 2) {
 			//rotate x-axis
 			strcpy(oporation, "Rotate ");
 			ImGui::PushStyleColor(ImGuiCol_FrameBg, { 1.0f, 0.0f, 0.0f, 0.8 });
 			ImGui::Text(strcat(oporation, xu)); ImGui::SameLine();
-			if (ImGui::SliderAngle(xu, &alpha)) { rotate[w].x = alpha; }
+			if (ImGui::SliderAngle(xu, &alpha)) { rotate[isLocal].x = alpha; }
 			ImGui::PopStyleColor(1);
 			ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(0 / 7.0f, 0.6f, 0.6f));
 			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV(0 / 7.0f, 0.7f, 0.7f));
@@ -195,7 +195,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 			strcpy(oporation, "Rotate ");
 			ImGui::PushStyleColor(ImGuiCol_FrameBg, { 0.0f, 1.0f, 0.0f, 0.8 });
 			ImGui::Text(strcat(oporation, yv)); ImGui::SameLine();
-			if (ImGui::SliderAngle(yv, &beta)) { rotate[w].y = beta; }
+			if (ImGui::SliderAngle(yv, &beta)) { rotate[isLocal].y = beta; }
 			ImGui::PopStyleColor(1);
 			ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(0 / 7.0f, 0.6f, 0.6f));
 			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV(0 / 7.0f, 0.7f, 0.7f));
@@ -206,14 +206,14 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 			strcpy(oporation, "Rotate ");
 			ImGui::PushStyleColor(ImGuiCol_FrameBg, { 0.0f, 0.0f, 1.0f, 0.8 });
 			ImGui::Text(strcat(oporation, zw)); ImGui::SameLine();
-			if (ImGui::SliderAngle(zw, &gama)) { rotate[w].z = gama; }
+			if (ImGui::SliderAngle(zw, &gama)) { rotate[isLocal].z = gama; }
 			ImGui::PopStyleColor(1);
 			/*ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(0 / 7.0f, 0.6f, 0.6f));
 			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV(0 / 7.0f, 0.7f, 0.7f));
 			ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)ImColor::HSV(0 / 7.0f, 0.8f, 0.8f));
 			ImGui::PopStyleColor(3);*/
-			if (rotate[w]!= glm::vec3(0.0))
-				aM->setRotationTransform(rotate[w], w);	
+			if (rotate[isLocal]!= glm::vec3(0.0))
+				aM->setRotationTransform(rotate[isLocal], isLocal);
 		}
 		ImGui::Text("");
 		ImGui::PushStyleColor(ImGuiCol_Button, { 0.5f, 0.1f, 0.1f, 0.8 });
