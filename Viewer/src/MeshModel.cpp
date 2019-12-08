@@ -327,10 +327,10 @@ void MeshModel::setRotationTransform(const glm::vec3 angle, bool isLocal) {
 	glm::mat4 x = glm::mat4(1, 0, 0, 0, 0, cosf(angle.x), -sinf(angle.x), 0, 0, sinf(angle.x), cosf(angle.x), 0, 0, 0, 0, 1);
 	glm::mat4 y = glm::mat4(cosf(angle.y), 0, sinf(angle.y), 0, 0, 1, 0, 0, -sinf(angle.y), 0, cosf(angle.y), 0, 0, 0, 0, 1);
 	glm::mat4 z = glm::mat4(cosf(angle.z), -sinf(angle.z), 0, 0, sinf(angle.z), cosf(angle.z), 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
-	this->rotationTransform = (x * y * z)*this->rotationTransform;
+	
 	if (isLocal) {
+		this->rotationTransform = (x * y * z)*this->rotationTransform;
 		glm::vec4 centerP = this->localTransform * glm::vec4(centerPoint, 1);
-
 		this->localTransform = (Utils::TranslationMatrix(centerP)*(x * y * z)*Utils::TranslationMatrix(-centerP))*this->localTransform;
 	}
 	else
