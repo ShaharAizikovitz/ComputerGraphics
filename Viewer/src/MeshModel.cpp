@@ -298,9 +298,10 @@ void MeshModel::setScaleTransform(const glm::vec3 scale, bool isLocal) {
 
 	if (isLocal)
 	{
-		glm::vec4 newAxies = this->rotationTransform*glm::vec4(scale, 1);
+		//glm::vec4 newAxies = this->rotationTransform*glm::vec4(scale, 1);
 		glm::vec4 centerP = this->localTransform * glm::vec4(centerPoint, 1);
-		this->localTransform = (Utils::TranslationMatrix(centerP)*Utils::scaleMat(scale)*Utils::TranslationMatrix(-centerP))*this->localTransform;
+	//	this->localTransform = (Utils::TranslationMatrix(centerP)*Utils::scaleMat(scale)*Utils::TranslationMatrix(-centerP))*this->localTransform;
+		this->localTransform = this->localTransform*(Utils::TranslationMatrix(centerPoint)*Utils::scaleMat(scale)*Utils::TranslationMatrix(-centerPoint));
 	}
 	else
 		this->worldTransform = Utils::scaleMat(scale)*this->worldTransform;
