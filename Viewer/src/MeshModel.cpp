@@ -338,9 +338,7 @@ void MeshModel::setRotationTransform(const glm::vec3 angle, bool isLocal) {
 	// for local rotation we move the obj to center rotate and then back to the spot
 	if (isLocal) {
 		this->rotationTransform = (x * y * z)*this->rotationTransform; // we keep all the local rotation for new axies system(translate)
-		
 		glm::vec4 centerP = this->localTransform * glm::vec4(centerPoint, 1);// where the center is after the last transformation
-
 		this->localTransform = (Utils::TranslationMatrix(centerP)*(x * y * z)*Utils::TranslationMatrix(-centerP))*this->localTransform;
 	}
 	else
