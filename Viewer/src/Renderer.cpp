@@ -619,6 +619,20 @@ void Renderer::render(const Scene& scene)
 			newVertex = localTransform * newVertex;
 			newVertex = worldTransform * newVertex;
 			(*vertex).setPoint(glm::vec3(newVertex.x, newVertex.y, newVertex.z));
+
+
+			//object scale -> roration -> translation
+<<<<<<< HEAD
+			//newVertex = scaleTransform * newVertex;
+			//newVertex = rotationTransform * newVertex;
+			//newVertex = translateTransform * newVertex;
+			//newVertex = localTransform * newVertex;
+=======
+			newVertex = scaleTransform * newVertex;
+			newVertex = rotationTransform * newVertex;
+			newVertex = translateTransform * newVertex;
+			newVertex = localTransform * newVertex;
+>>>>>>> 830cd442d2494622ceabc6fdc05c9e218a074b98
 			
 
 			// new set WORLD transformations.
