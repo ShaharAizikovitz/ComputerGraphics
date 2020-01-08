@@ -86,7 +86,7 @@ public:
 	void setModelSIntensity(const float &f) { this->modelSIntensity = f; }
 	void setWorldTransformation(const glm::mat4& worldTransform) { this->worldTransform = worldTransform; }
 	void setColor(const glm::vec4& color) { this->color = color; }
-
+	void setModelName(const std::string s) { this->modelName = s; }
 
 
 	const bool& getDraw() { return this->draw; }

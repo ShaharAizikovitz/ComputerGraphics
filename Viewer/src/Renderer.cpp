@@ -506,7 +506,6 @@ void Renderer::render(const Scene& scene)
 	color.x = 0.0;
 	color.y = 0.0;
 	color.z = 0.0;
-	Camera camera;
 	float scale = 1.0f;
 	
 	
@@ -514,7 +513,7 @@ void Renderer::render(const Scene& scene)
 	//models = vector of pointers (pointing to a MeshModel) representing this list.
 	std::vector<std::shared_ptr<MeshModel>> models = scene.getModels();
 	std::shared_ptr<MeshModel> model; 
-	camera = scene.getCurrentCamera();
+	std::shared_ptr<Camera> camera = scene.getCurrentCamera();
 	//projection = (this->isProjOrthographic) ? camera.getOrthographicTransformation() : camera.getperspectiveTransformation();
 	
 	//if no models exist exit render routine
@@ -530,17 +529,12 @@ void Renderer::render(const Scene& scene)
 		Cube c = model->getCube();
 		//calculate scaling: bounding box hieght is a third of the hieght of the viewport hieght
 		scale = this->viewportHeight / (3 * (c.top - c.bottom));
-		//set the model scale transform
-		//model->setScaleTransform(scale, scale, scale);
 		glm::mat4 localTransform = model->getLocalTransform();
-		/*glm::mat4 scaleTransform = model->GetScaleTransform();
-		glm::mat4 translateTransform = model->getTranslationTransform();
-		glm::mat4 rotationTransform = model->GetRotationTransform();*/
 		glm::mat4 worldTransform = model->getWorldTransformation();
-		//glm::mat4 worldTranslate = model->GetWorldTranslate();
-		//glm::mat4 worldRotate = model->GetWorldRotation();
-		glm::vec4 normal_vertex;
-		glm::mat4 worldToCameraTranslation(glm::vec4(1, 0, 0, 0), glm::vec4(0, 1, 0, 0), glm::vec4(0, 0, 1, 0), glm::vec4(viewportWidth / 2, viewportHeight / 2, 0, 1));
+		glm::mat4 cameraTransform = camera->getViewTransformation();
+		glm::mat4 cameraProjection = camera->getProjection();
+
+		//glm::mat4 worldToCameraTranslation(glm::vec4(1, 0, 0, 0), glm::vec4(0, 1, 0, 0), glm::vec4(0, 0, 1, 0), glm::vec4(viewportWidth / 2, viewportHeight / 2, 0, 1));
 		//get the faces from the pointer to the model
 		std::vector<Face> faces = (*model).getFaces();
 		std::string name = model->getModelName(); 
@@ -618,6 +612,8 @@ void Renderer::render(const Scene& scene)
 			
 			newVertex = localTransform * newVertex;
 			newVertex = worldTransform * newVertex;
+			newVertex = cameraTransform * newVertex;
+			newVertex = cameraProjection * newVertex;
 			(*vertex).setPoint(glm::vec3(newVertex.x, newVertex.y, newVertex.z));
 			
 

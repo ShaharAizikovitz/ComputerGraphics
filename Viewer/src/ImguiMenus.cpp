@@ -456,8 +456,8 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 				if (ImGui::MenuItem("Cameras"))
 				{
 					int count;
-					std::vector<Camera> cameras = scene.getCameras();
-					std::vector<Camera>::iterator it;
+					std::vector<std::shared_ptr<Camera>> cameras = scene.getCameras();
+					std::vector<std::shared_ptr<Camera>>::iterator it;
 					for (it = cameras.begin(), count = 0; it != cameras.end();  count++, it++)
 					{
 						string name("camera %d", count);
@@ -500,7 +500,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 			{
 				std::vector<Light> lights = scene.getLights();
 				std::vector<Light>::iterator light;
-				const char *name;
+				//const char *name;
 
 				if (ImGui::MenuItem("add light"))
 				{

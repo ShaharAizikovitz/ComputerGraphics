@@ -7,6 +7,10 @@ Scene::Scene() :
 	activeCameraIndex(0),
 	activeModelIndex(0)
 {
+	std::shared_ptr<Camera> camera = std::make_shared<Camera>();
+	camera->setModelName("world");
+	addCamera(camera);
+	//camera->set
 	//Utils::createGrid();
 	//AddModel(std::make_shared<MeshModel>(Utils::LoadMeshModel("../Data/obj_examples/grid.obj")));
 }
@@ -22,16 +26,25 @@ const int Scene::GetModelCount() const
 {
 	return models.size();
 }
-
-void Scene::addCamera(const Camera& camera)
+void Scene::addCamera(const std::shared_ptr<Camera>& camera)
 {
 	cameras.push_back(camera);
+	this->currentCamera = camera;
+	this->currentCamera->setCameraNum(cameras.size() - 1);
+	for each (std::shared_ptr<Camera> c in cameras)
+		c->setCurrent(false);
+
+	this->currentCamera->setCurrent(true);
+}
+void Scene::addCamera(const Camera& camera)
+{
+	/*cameras.push_back(camera);
 	this->currentCamera = camera;
 	this->currentCamera.setCameraNum(cameras.size() - 1);
 	for each (Camera c in cameras)
 		c.setCurrent(false);
 
-	this->currentCamera.setCurrent(true);
+	this->currentCamera.setCurrent(true);*/
 }
 
 const int Scene::GetCameraCount() const
@@ -71,6 +84,6 @@ const std::vector<std::shared_ptr<MeshModel>> Scene::getModels() const{
 	return this->models;
 }
 
-const std::vector<Camera> Scene::getCameras() const {
+const std::vector<std::shared_ptr<Camera>> Scene::getCameras() const {
 	return this->cameras;
 }
