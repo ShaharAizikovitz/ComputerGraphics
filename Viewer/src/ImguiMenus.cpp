@@ -71,6 +71,8 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 		static float rotateWorldX = 0.0f;
 		static float rotateWorldY = 0.0f;
 		static float rotateWorldZ = 0.0f;
+		static bool isdragged = true;
+		static bool firstClick = true;
 		ImGui::Begin("Model control", &showControlWindow);
 		//ImGui::BeginChild("Controls", ImVec2(200,200), ImGuiWindowFlags_AlwaysVerticalScrollbar);
 		
@@ -79,18 +81,31 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 		//ImGui::Checkbox("Another Window", &showControlWindow);
 		//ImGui::Text("Current Camera:");
 		
-		/*ImVec2 size = ImGui::GetWindowSize();
+		ImVec2 size = ImGui::GetWindowSize();
 		ImVec2 pos = ImGui::GetWindowPos();
+		ImVec2 cursorLast, cursorCurrent;
 
-		if (ImGui::IsMouseDown(0) && renderer.getCurrentModel() != NULL)
+		if (ImGui::IsMouseClicked(0))
 		{
-			ImVec2 c = ImGui::GetMousePos();
-			if (!ImGui::IsMouseHoveringWindow())
+			cursorLast = ImGui::GetMousePos();
+			firstClick = true;
+		}
+		if (ImGui::IsMouseDown(0) /*&& renderer.getCurrentModel() != NULL*/)
+		{
+			if (!firstClick)
 			{
-				renderer.rotateLocalX((c.y - size.y / 2));
-				renderer.rotateLocalY((c.x - size.x / 2));
+				if (!ImGui::IsMouseHoveringWindow())
+				{
+					cursorCurrent = ImGui::GetMousePos();
+					scene.getCurrentModel()->setRotationTransform(1.0f, (cursorCurrent.x - cursorLast.x), 1.0f);
+					scene.getCurrentModel()->setRotationTransform((cursorCurrent.y - cursorLast.y), 1.0f, 1.0f);
+				}
 			}
-		}*/
+			else
+				firstClick = false;
+		}
+		if (ImGui::IsMouseReleased(0))
+			isdragged = true;
 	
 		/*if (ImGui::SliderFloat("model ambient intensity:", &modelAIntensity, 0.0f, 1.0f) && renderer.isHasModel()) {
 			renderer.getCurrentModel()->setModelAIntensity(modelAIntensity);}

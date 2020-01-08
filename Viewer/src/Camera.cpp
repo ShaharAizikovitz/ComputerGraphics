@@ -9,6 +9,11 @@
 #define INIT_SCALE 1000
 
 //ctor
+Camera::Camera()
+{
+	//SetPerspectiveProjection(45, 280, 1, 10);
+	setCameraLookAt(glm::vec3(0.0f, 0.0f, 50.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+}
 Camera::Camera(const glm::vec3& eye, const glm::vec3& at, const glm::vec3& up) :
 	zoom(1.0)
 {
@@ -33,11 +38,7 @@ Camera::Camera(const glm::vec3& eye, const glm::vec3& at, const glm::vec3& up) :
 Camera::~Camera()
 {
 }
-Camera::Camera()
-{
-	//SetPerspectiveProjection(45, 280, 1, 10);
-	setCameraLookAt(glm::vec3(0, 0, 0), glm::vec3(0, 0, 0), glm::vec3(0, 0, 0));
-}
+
 
 void Camera::setCameraScale()
 {
