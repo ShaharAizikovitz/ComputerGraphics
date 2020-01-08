@@ -44,7 +44,35 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 		ImGui::ShowDemoWindow(&showDemoWindow);
 	}*/
 
-	//ImGui::Text("CAM:%s", scene.getCurrentCamera().);
+	{
+		static bool isdragged = true;
+		static bool firstClick = true;
+		ImVec2 size = ImGui::GetWindowSize();
+		ImVec2 pos = ImGui::GetWindowPos();
+		ImVec2 cursorLast, cursorCurrent;
+
+		if (ImGui::IsMouseClicked(0))
+		{
+			cursorLast = ImGui::GetMousePos();
+			firstClick = true;
+		}
+		if (ImGui::IsMouseDown(0) /*&& renderer.getCurrentModel() != NULL*/)
+		{
+			if (!firstClick)
+			{
+				if (!ImGui::IsMouseHoveringAnyWindow())
+				{
+					cursorCurrent = ImGui::GetMousePos();
+					scene.getCurrentModel()->setRotationTransform(1.0f, (cursorCurrent.x - cursorLast.x), 1.0f);
+					scene.getCurrentModel()->setRotationTransform((cursorCurrent.y - cursorLast.y), 1.0f, 1.0f);
+				}
+			}
+			else
+				firstClick = false;
+		}
+		if (ImGui::IsMouseReleased(0))
+			isdragged = true;
+	}
 
 	// 2. Show controls window
 	if ( showControlWindow )
@@ -72,8 +100,6 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 		static float rotateWorldX = 0.0f;
 		static float rotateWorldY = 0.0f;
 		static float rotateWorldZ = 0.0f;
-		static bool isdragged = true;
-		static bool firstClick = true;
 		ImGui::Begin("Model control", &showControlWindow);
 		//ImGui::BeginChild("Controls", ImVec2(200,200), ImGuiWindowFlags_AlwaysVerticalScrollbar);
 		
@@ -81,32 +107,6 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 		//ImGui::Checkbox("Demo Window", &showDemoWindow);      // Edit bools storing our window open/close state
 		//ImGui::Checkbox("Another Window", &showControlWindow);
 		//ImGui::Text("Current Camera:");
-		
-		ImVec2 size = ImGui::GetWindowSize();
-		ImVec2 pos = ImGui::GetWindowPos();
-		ImVec2 cursorLast, cursorCurrent;
-
-		if (ImGui::IsMouseClicked(0))
-		{
-			cursorLast = ImGui::GetMousePos();
-			firstClick = true;
-		}
-		if (ImGui::IsMouseDown(0) /*&& renderer.getCurrentModel() != NULL*/)
-		{
-			if (!firstClick)
-			{
-				if (!ImGui::IsMouseHoveringWindow())
-				{
-					cursorCurrent = ImGui::GetMousePos();
-					scene.getCurrentModel()->setRotationTransform(1.0f, (cursorCurrent.x - cursorLast.x), 1.0f);
-					scene.getCurrentModel()->setRotationTransform((cursorCurrent.y - cursorLast.y), 1.0f, 1.0f);
-				}
-			}
-			else
-				firstClick = false;
-		}
-		if (ImGui::IsMouseReleased(0))
-			isdragged = true;
 	
 		/*if (ImGui::SliderFloat("model ambient intensity:", &modelAIntensity, 0.0f, 1.0f) && renderer.isHasModel()) {
 			renderer.getCurrentModel()->setModelAIntensity(modelAIntensity);}
@@ -425,7 +425,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 		if (ortho == 1)
 		{
 			if (ImGui::SliderFloat("field of view ", (float*)&fov, 0.0f, 90.0f)) { camera->setFOV(fov); }
-			if (ImGui::SliderFloat("aspect ratio ", (float*)&ar, 0.0f, 90.0f)) { camera->setAspectRatio(ar); }
+			if (ImGui::SliderFloat("aspect ratio ", (float*)&ar, 0.2f, 1.5f)) { camera->setAspectRatio(ar); }
 		}
 		// view volume
 		ImGui::Text("view volume");
@@ -482,8 +482,9 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 						//set renderer current model to the last model in the scene model list
 						//scene.setCurrentModel(scene.getModels().at(scene.GetModelCount() - 1));
 						showControlWindow = true;
+						showCameraControlWindow = true;
 						renderer.setHasModel();
-						renderer.setEyeX(0);
+						//renderer.setEyeX(0);
 						//renderer.translate(640, 360, 0);
 						//renderer.setPerspective(50,1,1,10);
 
@@ -516,24 +517,31 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 				ImGui::EndMenu();
 			}
 			//camera menu
-			if (ImGui::BeginMenu("Camera"))
+			if (ImGui::BeginMenu("Cameras"))
 			{
 				if (ImGui::MenuItem("Add camera"))
 				{
 					Camera c;
 					scene.addCamera(c);
 				}
-				if (ImGui::BeginMenu("Cameras"))
+				if (ImGui::BeginMenu("Active cameras"))
 				{
 					int count;
 					std::vector<std::shared_ptr<Camera>> cameras = scene.getCameras();
 					std::vector<std::shared_ptr<Camera>>::iterator it;
 					for (it = cameras.begin(), count = 0; it != cameras.end(); count++, it++)
 					{
-						std::string name("camera ");
-						std::string index(std::to_string((*it)->getCameraIndex()));
-						name.append(index);
-						if (ImGui::MenuItem(name.c_str()))
+						std::string name;
+						if (count == 0 )
+							name = "world";
+						
+						else
+						{
+							name = "camera ";
+							std::string index(std::to_string((*it)->getCameraIndex()));
+							name.append(index);
+						}
+						if (ImGui::MenuItem(name.c_str()) )
 						{
 							scene.setActiveCameraIndex((*it)->getCameraIndex());
 							showCameraControlWindow = true;
@@ -653,11 +661,5 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 
 			ImGui::EndMainMenuBar();
 		}
-		/*ImVec4 clear_color = ImVec4(0.99f, 0.55f, 0.10f, 1.00f);
-		ImGui::TextColored(clear_color, "Some text");*/
-		/*ImGui::Begin("label", true, ImVec2(20, 30), 0,);
-		ImGui::LabelText("%s", "hello"); */
-		//ImGui::GetWindowDrawList()->AddText(ImVec2(20, 40), ImColor(255, 255, 0, 255), "hello!", 0, 0.0f, 0);
-		//ImGui::GetWindowDrawList()->AddText(ImGui::GetWindowFont(), ImGui::GetWindowFontSize(), ImVec2(100.f, 100.f), ImColor(255, 255, 0, 255), "Hello World", 0, 0.0f, 0);
 	}	
 }

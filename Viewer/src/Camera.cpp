@@ -9,6 +9,7 @@
 Camera::Camera()
 {
 	init();
+	setCameraLookAt();
 	setCameraLookAt(glm::vec3(0.0f, 0.0f, 50.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 }
 Camera::Camera(const glm::vec3& eye, const glm::vec3& at, const glm::vec3& up) :
@@ -37,6 +38,9 @@ void Camera::init()
 	this->perspectiveTransformation = glm::mat4(1);
 	this->orthographicTransformation = glm::mat4(1);
 	this->scalingTransformation = glm::mat4(1);
+	this->eye = glm::vec4(0.0f, 0.0f, 50.0f, 0.0f);
+	this->at = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
+	this->up = glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
 }
 
 void Camera::setCameraScale()
@@ -46,7 +50,6 @@ void Camera::setCameraScale()
 
 const glm::mat4 Camera::getViewTransformation() {
 	return viewTransformation;
-	//return (this->isOrtho) ? this->viewTransformation * this->orthographicTransformation : this->viewTransformation * this->perspectiveTransformation;
 }
 const glm::mat4 Camera::getperspectiveTransformation()
 {
@@ -65,6 +68,23 @@ void Camera::setCameraViewWorldTransform(glm::vec4 &v)
 	this->viewWorldTransform = glm::mat4x4(glm::vec4(1, 0, 0, 0), glm::vec4(0, 1, 0, 0), glm::vec4(0, 0, 1, 0), v); 
 }
 
+void Camera::setCameraLookAt()
+{
+	glm::vec3 z = glm::normalize(this->eye - this->at);
+	glm::vec3 x = glm::normalize(glm::cross(glm::vec3(this->up), glm::vec3(z)));
+	glm::vec3 y = glm::normalize(glm::cross(z, x));
+
+	glm::vec4 t = glm::vec4(0, 0, 0, 1);
+	glm::vec4 x4 = glm::vec4(x, 0);
+	glm::vec4 y4 = glm::vec4(y, 0);
+	glm::vec4 z4 = glm::vec4(z, 0);
+
+	glm::mat4 c(x4, y4, z4, t);
+	glm::mat4 iden(1);
+	iden[3] = iden[3] - glm::vec4(this->eye);
+
+	this->viewTransformation = c * iden;
+}
 void Camera::setCameraLookAt(const glm::vec3& eye, const glm::vec3& at, const glm::vec3& up)
 {
 	glm::vec3 z = glm::normalize(eye - at);
@@ -143,5 +163,12 @@ void Camera::SetZoom(const float zoom)
 void Camera::scaleTransform(glm::vec3& vect) {
 	vect.x = vect.x * 50;
 	vect.x = vect.y * 50;
+}
+void Camera::updateProjection()
+{
+	if (isOrtho)
+		setOrthographicProjection(left, right, bottom, top);
+	else
+		setPerspectiveProjection(FOV, aspectRatio, zNear,zFar);
 }
 

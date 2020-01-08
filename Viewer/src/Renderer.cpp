@@ -614,6 +614,10 @@ void Renderer::render(const Scene& scene)
 			newVertex = worldTransform * newVertex;
 			newVertex = cameraTransform * newVertex;
 			newVertex = cameraProjection * newVertex;
+			if (camera->getIsOrtho())
+			{
+				newVertex = glm::vec4(newVertex.x / newVertex.w, newVertex.y / newVertex.w, newVertex.z / newVertex.w, 1.0f);
+			}
 			(*vertex).setPoint(glm::vec3(newVertex.x, newVertex.y, newVertex.z));
 			
 
