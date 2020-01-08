@@ -63,7 +63,7 @@ void Renderer::setHasModel() {
 	this->hasModel = true;
 }
 void Renderer::setEyeX(float eyex) {
-	glm::vec3 eye;
+	//glm::vec3 eye;
 	//eye = glm::vec3(1280 * sin(PI*eyex / 180), 0, cos(PI*eyex / 180) * 1280);
 	//eye = glm::vec3(1280 * sin(PI*eyex / 180), 0, cos(PI*eyex / 180) * 1280);
 	glm::vec3 at = glm::vec3(0, 0, -1);
@@ -72,7 +72,7 @@ void Renderer::setEyeX(float eyex) {
 	//glm::vec3 at = glm::vec3(0, 0, 0);
 
 	glm::vec3 up = glm::vec3(0, 1, 0);
-	currentCamera.setCameraLookAt(eye, at, up);
+	//currentCamera.setCameraLookAt(eye, at, up);
 }
 void Renderer::rotateLocalX(float x) {
 	this->currentModel->setRotationTransform(x, 1, 1);
@@ -103,7 +103,7 @@ void Renderer::translate(float xt, float yt, float zt) {
 		this->currentModel->setTranslationTransform(xt, yt, zt);
 }
 void Renderer::setPerspective(float f, float ar, int n, int fa) {
-	this->currentCamera.setPerspectiveProjection(f, ar, n, fa);
+	//this->currentCamera.setPerspectiveProjection(f, ar, n, fa);
 }
 void Renderer::setProjection(bool p)
 {
@@ -262,11 +262,11 @@ void Renderer::setProj(float & fovy,  float & aspectRatio,  int & _near,  int & 
 	glm::vec4 v3(0, 0, -1 * (_far + _near) / (_far - _near), -1);
 	glm::vec4 v4(0, 0, -2 * (_far * _near) / (_far - _near), 0);
 	this->proj = glm::mat4(v1, v2, v3, v4);
-	this->currentCamera.setAspectRatio(aspectRatio);
-	this->currentCamera.setFOV(fovy);
-	this->currentCamera.setNear(_near);
-	this->currentCamera.setFar(_far); 
-	this->currentCamera.setPerspectiveProjection(fovy, aspectRatio, _near, _far); 
+	//this->currentCamera.setAspectRatio(aspectRatio);
+	//this->currentCamera.setFOV(fovy);
+	//this->currentCamera.setNear(_near);
+	//this->currentCamera.setFar(_far); 
+	//this->currentCamera.setPerspectiveProjection(fovy, aspectRatio, _near, _far); 
 }
 
 void Renderer::setViewport(int viewportWidth, int viewportHeight, int viewportX, int viewportY)
@@ -279,10 +279,10 @@ void Renderer::setViewport(int viewportWidth, int viewportHeight, int viewportX,
 	createOpenGLBuffer();
 }
 
-float Renderer::calculateColor(glm::vec3 &n1, glm::vec3 &n2, glm::vec3 &n)
+float Renderer::calculateColor(const Scene& scene, glm::vec3 &n1, glm::vec3 &n2, glm::vec3 &n)
 {
-	float ambient, diffusive, specular;
-	std::vector<Light> lights = this->scene.getLights();
+	//float ambient, diffusive, specular;
+	std::vector<Light> lights = scene.getLights();
 	return 0.0f;
 }
 
@@ -379,7 +379,7 @@ void Renderer::drawCube()
 	drawLine1(c.cPoints[3], c.cPoints[7], glm::vec3(0, 0, 1), true);
 }
 
-void Renderer::scanLine1(std::vector<Vertex>&polygon, int & e1, int & e2, int & y, const glm::vec3 & color)
+void Renderer::scanLine1(const Scene & scene, std::vector<Vertex>&polygon, int & e1, int & e2, int & y, const glm::vec3 & color)
 {
 	int dx = 0;
 	int delta = 0;
@@ -443,7 +443,7 @@ void Renderer::scanLine1(std::vector<Vertex>&polygon, int & e1, int & e2, int & 
 				{
 					int alpha = 2;
 					float rv = glm::dot(lightnor, normal);
-					I += this->specularIntensity * _CMATH_::pow(rv,alpha) * this->scene.getCurrentModel()->getModelSIntensity();
+					I += this->specularIntensity * _CMATH_::pow(rv,alpha) * scene.getCurrentModel()->getModelSIntensity();
 				}
 			}
 		}
@@ -455,7 +455,7 @@ void Renderer::scanLine1(std::vector<Vertex>&polygon, int & e1, int & e2, int & 
 	}
 }
 
-void Renderer::fillTriangle3(std::vector<Vertex> polygon, const glm::vec3 & color)
+void Renderer::fillTriangle3(const Scene& scene, std::vector<Vertex> polygon, const glm::vec3 & color)
 {
 	glm::vec2 z, P, P1, P2, P3;
 	glm::vec2 ul, ur, ll, lr;
@@ -473,12 +473,12 @@ void Renderer::fillTriangle3(std::vector<Vertex> polygon, const glm::vec3 & colo
 	P1 = glm::vec2(polygon.at(0).getPoint().x, polygon.at(0).getPoint().y);
 	P2 = glm::vec2(polygon.at(1).getPoint().x, polygon.at(1).getPoint().y);
 	P3 = glm::vec2(polygon.at(2).getPoint().x, polygon.at(2).getPoint().y);
-	ex1 = ul.x = ll.x = P1.x;
-	ex2 = ur.x = lr.x = P3.x;
+	ex1 = ul.x = ll.x = (int)P1.x;
+	ex2 = ur.x = lr.x = (int)P3.x;
 
 	for (int y = (int)ul.y; y >= (int)ll.y; y--)
 	{
-		scanLine1(polygon, ex1, ex2, y, color); 
+		scanLine1(scene, polygon, ex1, ex2, y, color); 
 	}
 }
 
@@ -513,7 +513,7 @@ void Renderer::render(const Scene& scene)
 	//models = vector of pointers (pointing to a MeshModel) representing this list.
 	std::vector<std::shared_ptr<MeshModel>> models = scene.getModels();
 	std::shared_ptr<MeshModel> model; 
-	std::shared_ptr<Camera> camera = scene.getCurrentCamera();
+	std::shared_ptr<Camera> camera = scene.getActiveCamera();
 	//projection = (this->isProjOrthographic) ? camera.getOrthographicTransformation() : camera.getperspectiveTransformation();
 	
 	//if no models exist exit render routine
@@ -739,7 +739,7 @@ void Renderer::render(const Scene& scene)
 			
 			glm::vec3 finalColor = (this->fillTriangles) ? glm::vec3(0.8, 0.8, 0.8) : this->ambientColor;
 			if (this->fillTriangles)
-				fillTriangle3(polygon, GREEN);
+				fillTriangle3(scene, polygon, GREEN);
 
 		}
 

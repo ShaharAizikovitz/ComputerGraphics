@@ -13,3 +13,4 @@
 #define V_NORMAL_SCALE 70
 #define F_NORMAL_SCALE 50
 
+#define INIT_SCALE 1000

@@ -25,6 +25,7 @@ bool showAddLightWindow = false;
 bool showOrthoProjection = true;
 bool showPerspProjection = false;
 bool showControlWindow = false;
+bool showCameraControlWindow = false;
 static char buf[256];
 
 glm::vec3 objectColor;
@@ -311,7 +312,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 			light.setActive(true);
 			light.setType(type);
 			if (diffusive && (diameterVal = atoi(buf)) <= 1000) light.setDiameter(diameterVal);
-			renderer.addLight(light);
+			//renderer.addLight(light);
 			showAddLightWindow = false;
 		}
 		
@@ -326,7 +327,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 
 		static float Intensity = 0.5f, factor = 0.5f;
 		static int light_x, light_y, light_z;
-		std::vector <Light> lights = renderer.getScene().getLights();
+		std::vector <Light> lights = scene.getLights();
 		std::vector <Light>::iterator l = lights.begin();
 		
 		//float clearColor;
@@ -349,7 +350,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 				ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.0f, 1.0f), "Light #%d", count + 1);
 				if (ImGui::SliderInt("light x pos", (int*)&light_x, -3000, 3000)) { 
 					l->setPosition(glm::vec3(pos.x + light_x, pos.y, pos.z)); 
-					renderer.getScene().getLights().at(count).setPosition(glm::vec3(pos.x + light_x, pos.y + light_y, pos.z + light_z));
+					scene.getLights().at(count).setPosition(glm::vec3(pos.x + light_x, pos.y + light_y, pos.z + light_z));
 				}
 				if (ImGui::SliderInt("light y pos", (int*)&light_y, -3000, 3000)) { l->setPosition(glm::vec3(pos.x, pos.y + light_y, pos.z)); }
 				if (ImGui::SliderInt("light z pos", (int*)&light_z, -3000, 3000)) { l->setPosition(glm::vec3(pos.x, pos.y, pos.z + light_z)); }
@@ -392,6 +393,75 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 		if (ImGui::SliderFloat("Ambient:", (float*)&Ka, 0.0f, 1.0f)) { renderer.setAmbientIntensity(Ka); }
 		if (ImGui::SliderFloat("Diffusive:", (float*)&Kd, 0.0f, 1.0f)) { renderer.setDiffusiveIntensity(Kd); }
 		if (ImGui::SliderFloat("Specular:", (float*)&Ks, 0.0f, 1.0f)) { renderer.setSpecularIntensity(Ks); }
+		ImGui::End();
+	}
+
+	// 3.5 show cameras control window
+	if (showCameraControlWindow && scene.getCameras().size())
+	{
+		std::shared_ptr<Camera> camera = scene.getActiveCamera();
+		//const viewVolume vv = camera->getViewVolume();
+		static float e_x = camera->getEye().x, e_y = camera->getEye().y, e_z = camera->getEye().z;
+		static float a_x = camera->getAt().x, a_y = camera->getAt().y, a_z = camera->getAt().z;
+		static float u_x = camera->getUp().x, u_y = camera->getUp().y, u_z = camera->getUp().z;
+		const glm::vec4 eye = camera->getEye();
+		const glm::vec4 at = camera->getAt();
+		const glm::vec4 up = camera->getUp();
+		static bool table = true;
+		static float fov;
+		static float ar;
+		const int _near = camera->getNear(), _far = camera->getFar(), left = camera->getLeft(), right = camera->getRight(), bottom = camera->getBottom(), top = camera->getTop();
+		static int ortho = 0;
+		ImGui::Begin("cameras control window", &showCameraControlWindow);
+
+		//ImGui::BeginTable("view volume", headers, widths);
+		// display cameras parameters
+		ImGui::Text("camera %d", camera->getCameraIndex());
+		ImGui::Columns(2);
+		// projection
+		ImGui::Text("projection");
+		if (ImGui::RadioButton("orthgraphic", &ortho, 0)) { camera->setIsortho(true); }
+		if (ImGui::RadioButton("perspective", &ortho, 1)) { camera->setIsortho(false); }
+		if (ortho == 1)
+		{
+			if (ImGui::SliderFloat("field of view ", (float*)&fov, 0.0f, 90.0f)) { camera->setFOV(fov); }
+			if (ImGui::SliderFloat("aspect ratio ", (float*)&ar, 0.0f, 90.0f)) { camera->setAspectRatio(ar); }
+		}
+		// view volume
+		ImGui::Text("view volume");
+		if (ImGui::SliderInt("near", (int*)&_near, -100, 100)) { camera->setNear(_near); }
+		if (ImGui::SliderInt("far", (int*)&_far, -100, 100)) { camera->setFar(_far); }
+		//ImGui::NextColumn();
+		if (ImGui::SliderInt("left", (int*)&left, -100, 100)) { camera->setLeft(left); }
+		if (ImGui::SliderInt("right", (int*)&right, -100, 100)) { camera->setRight(right); }
+		//ImGui::NextColumn();
+		if (ImGui::SliderInt("bottom", (int*)&bottom, -100, 100)) { camera->setBottom(bottom); }
+		if (ImGui::SliderInt("top", (int*)&top, -100, 100)) { camera->setTop(top); }
+		ImGui::NextColumn();
+		//ImGui::Separator();
+		ImGui::BeginGroup();
+		ImGui::Text("camera look at");
+		//ImGui::Separator();
+
+		//ImGui::Columns(3);
+		ImGui::Text("Eye:");;
+		if (ImGui::SliderFloat("eye x:", (float*)&e_x, -100.0f, 100.0f)) { camera->setEye(glm::vec4(e_x, e_y, e_z, 1.0f)); }
+		if (ImGui::SliderFloat("eye y:", (float*)&e_y, -100.0f, 100.0f)) { camera->setEye(glm::vec4(e_x, e_y, e_z, 1.0f)); }
+		if (ImGui::SliderFloat("eye z:", (float*)&e_z, -100.0f, 100.0f)) { camera->setEye(glm::vec4(e_x, e_y, e_z, 1.0f)); }
+
+		//ImGui::NextColumn();
+		ImGui::Text("at:");
+		if (ImGui::SliderFloat("at x:", (float*)&a_x, -100.0f, 100.0f)) { camera->setAt(glm::vec4(a_x, a_y, a_z, 1.0f)); }
+		if (ImGui::SliderFloat("at y:", (float*)&a_y, -100.0f, 100.0f)) { camera->setAt(glm::vec4(a_x, a_y, a_z, 1.0f)); }
+		if (ImGui::SliderFloat("at z:", (float*)&a_z, -100.0f, 100.0f)) { camera->setAt(glm::vec4(a_x, a_y, a_z, 1.0f)); }
+
+		//ImGui::NextColumn();
+		ImGui::Text("up:");
+		if (ImGui::SliderFloat("up x:", (float*)&u_x, -1.0f, 1.0f)) { camera->setUp(glm::vec4(u_x, u_y, u_z, 1.0f)); }
+		if (ImGui::SliderFloat("up y:", (float*)&u_y, -1.0f, 1.0f)) { camera->setUp(glm::vec4(u_x, u_y, u_z, 1.0f)); }
+		if (ImGui::SliderFloat("up z:", (float*)&u_z, -1.0f, 1.0f)) { camera->setUp(glm::vec4(u_x, u_y, u_z, 1.0f)); }
+
+		ImGui::EndGroup();
 		ImGui::End();
 	}
 
@@ -453,19 +523,40 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 					Camera c;
 					scene.addCamera(c);
 				}
-				if (ImGui::MenuItem("Cameras"))
+				if (ImGui::BeginMenu("Cameras"))
 				{
 					int count;
 					std::vector<std::shared_ptr<Camera>> cameras = scene.getCameras();
 					std::vector<std::shared_ptr<Camera>>::iterator it;
-					for (it = cameras.begin(), count = 0; it != cameras.end();  count++, it++)
+					for (it = cameras.begin(), count = 0; it != cameras.end(); count++, it++)
 					{
-						string name("camera %d", count);
+						std::string name("camera ");
+						std::string index(std::to_string((*it)->getCameraIndex()));
+						name.append(index);
 						if (ImGui::MenuItem(name.c_str()))
 						{
-
+							scene.setActiveCameraIndex((*it)->getCameraIndex());
+							showCameraControlWindow = true;
 						}
 					}
+					/*int size = scene.getCameraCount();
+					if (size != 0) {
+						std::vector<char*> cNames(scene.getcamerasNames());
+						float sz = ImGui::GetTextLineHeight();
+						for (int i = 0; i < size; i++)
+						{
+							const char* name = ImGui::GetStyleColorName((ImGuiCol)i);
+							ImVec2 p = ImGui::GetCursorScreenPos();
+							ImGui::GetWindowDrawList()->AddRectFilled(p, ImVec2(p.x + sz, p.y + sz), ImGui::GetColorU32((ImGuiCol)i));
+							ImGui::Dummy(ImVec2(sz, sz));
+							ImGui::SameLine();
+							if (ImGui::MenuItem(cNames[i]))
+							{
+								scene.setActiveCameraIndex(i);
+							}
+						}
+					}*/
+					ImGui::EndMenu();
 				}
 
 				ImGui::EndMenu();

@@ -54,8 +54,6 @@ private:		//members
 	std::shared_ptr<MeshModel> currentModel;
 	std::vector< std::shared_ptr<MeshModel>> models;
 	std::vector<Light> lights;
-	Camera currentCamera;
-	Scene scene;
 	GLuint glScreenTex;
 	GLuint glScreenVtc;
 
@@ -69,12 +67,12 @@ private:		//members
 	void initOpenGLRendering();
 
 	//drawing routings
-	float calculateColor(glm::vec3 &n1, glm::vec3 &n2, glm::vec3 &n);
+	float calculateColor(const Scene& scene, glm::vec3 &n1, glm::vec3 &n2, glm::vec3 &n);
 	void drawLine1(glm::vec3 p1, glm::vec3 p2, glm::vec3 color, bool scale);
 	void drawCube(); 
 	void drawTriangle(std::vector<Vertex>&points, glm::vec3 &color);
-	void scanLine1(std::vector<Vertex>&, int &e1, int &e2, int &y, const glm::vec3 &color);
-	void fillTriangle3(std::vector<Vertex> points, const glm::vec3 & color);
+	void scanLine1(const Scene& scene, std::vector<Vertex>&, int &e1, int &e2, int &y, const glm::vec3 &color);
+	void fillTriangle3(const Scene& scene, std::vector<Vertex> points, const glm::vec3 & color);
 	void barycentric(glm::vec3 p, glm::vec3 a, glm::vec3 b, glm::vec3 c, float &u, float &v, float &w);
 	glm::vec3 barycentric1(glm::vec3 point, glm::vec3 a, glm::vec3 b, glm::vec3 c);
 	glm::vec3 barycentric2(glm::vec3 point, glm::vec3 a, glm::vec3 b, glm::vec3 c);
@@ -100,7 +98,7 @@ public:
 	void rotateWorldY(float y);
 	void rotateWorldZ(float z);
 	void translate(float x, float y, float z);
-	void addLight(const Light &l) { this->scene.addLight(l); }
+	//void addLight(const Light &l) { this->scene.addLight(l); }
 	void init();
 	
 	//getters\setters
@@ -119,7 +117,7 @@ public:
 	const bool& getdrawLines() const { return this->drawLines; }
 	std::shared_ptr<MeshModel> getCurrentModel() const { return this->currentModel; }
 	std::vector<std::shared_ptr<MeshModel>> getModels() const { return this->models; }
-	const Scene getScene() const { return this->scene; }
+	//const Scene getScene() const { return this->scene; }
 
 	//setters
 	void setProj( float & fovy,  float & aspectRatio,  int & _near,  int & _far); 

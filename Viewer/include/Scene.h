@@ -32,6 +32,7 @@ public:
 	void addLight(const Light l) { this->Lights.push_back(l); }
 	void addCamera(const Camera& camera);
 	void addCamera(const std::shared_ptr<Camera>& camera);
+	void setActiveCameraIndex(const int& i) { this->activeCameraIndex = i; }
 	
 	//setters
 	void SetActiveCameraIndex(size_t index);
@@ -50,5 +51,5 @@ public:
 	const std::vector<std::shared_ptr<Camera>> getCameras() const;
 	 std::vector<Light> getLights() const { return this->Lights; }
 	//const Camera getCurrentCamera() const { return this->currentCamera; }
-	std::shared_ptr<Camera> getCurrentCamera() const { return this->currentCamera; }
+	std::shared_ptr<Camera> getActiveCamera() const { return this->currentCamera; }
 };

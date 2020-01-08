@@ -5,14 +5,22 @@
 #include <iostream>
 #include <GLFW/glfw3.h>
 
-#define PI 3.14159265358
-#define INIT_SCALE 1000
-
 //ctor
 Camera::Camera()
 {
 	init();
 	setCameraLookAt(glm::vec3(0.0f, 0.0f, 50.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+}
+Camera::Camera(const glm::vec3& eye, const glm::vec3& at, const glm::vec3& up) :
+	zoom(1.0)
+{
+	init();
+	setCameraLookAt(eye, at, up);
+	setPerspectiveProjection(FOV , aspectRatio , zNear, zFar);
+	setOrthographicProjection(left, right, bottom, top);
+}
+Camera::~Camera()
+{
 }
 void Camera::init()
 {
@@ -23,26 +31,13 @@ void Camera::init()
 	right = 200;
 	top = 200;
 	bottom = -200;
-	_near = 100;
-	_far = 500;
+	zNear = 100;
+	zFar = 500;
 	this->viewTransformation = glm::mat4(1);
 	this->perspectiveTransformation = glm::mat4(1);
 	this->orthographicTransformation = glm::mat4(1);
 	this->scalingTransformation = glm::mat4(1);
 }
-Camera::Camera(const glm::vec3& eye, const glm::vec3& at, const glm::vec3& up) :
-	zoom(1.0)
-{
-	init();
-	setCameraLookAt(eye, at, up);
-	setPerspectiveProjection(FOV , aspectRatio , _near, _far);
-	setOrthographicProjection(left, right, bottom, top);
-}
-
-Camera::~Camera()
-{
-}
-
 
 void Camera::setCameraScale()
 {
@@ -97,21 +92,21 @@ void Camera::setOrthographicProjection(const int left,const int right,const int 
 	
 	glm::vec4 v1 = glm::vec4( (float)2 / 400, 0, 0, 0);
 	glm::vec4 v2 = glm::vec4(0, (float)2 / (top - bottom), 0, 0);
-	glm::vec4 v3 = glm::vec4(0, 0, (float)2 / (_near - _far), 0);
-	glm::vec4 v4 = glm::vec4(-(float)(right + left) / (right - left), -(float)(top + bottom) /(top - bottom), -(float)(_far + _near) / (_far - _near), 1);
+	glm::vec4 v3 = glm::vec4(0, 0, (float)2 / (zNear - zFar), 0);
+	glm::vec4 v4 = glm::vec4(-(float)(right + left) / (right - left), -(float)(top + bottom) /(top - bottom), -(float)(zFar + zNear) / (zFar - zNear), 1);
 
 	//this->orthographicTransformation = glm::mat4(v1, v2, v3, v4);
-	this->orthographicTransformation = glm::ortho<float>(left, right, bottom, top);
+	this->orthographicTransformation = glm::ortho<int>(left, right, bottom, top);
 }
 
 void Camera::setPerspectiveProjection(float &fovy, float &aspectRatio, int &near, int &far)
 {
-	float nearHeight = 2 * near * tan(0.5*fovy * PI / 180);
+	float nearHeight = 2.0f * near * tan(0.5f * fovy * PI / 180.f);
 	float nearWidth = aspectRatio * nearHeight;
-	float t = 0.5 * nearHeight;
-	float b = -0.5 * nearHeight;
-	float l = -0.5 * nearWidth;
-	float r = 0.5 * nearWidth;
+	float t = 0.5f * nearHeight;
+	float b = -0.5f * nearHeight;
+	float l = -0.5f * nearWidth;
+	float r = 0.5f * nearWidth;
 	if (near == far || t == b) return;
 	/*std::cout << "near " << near << std::endl;
 	for (size_t i = 0; i < 4; i++)
@@ -126,7 +121,7 @@ void Camera::setPerspectiveProjection(float &fovy, float &aspectRatio, int &near
 	glm::vec4 v3((r + l) / (r - l), (t + b) / (t - b), -1 * (far + near) / (far - near), -1);
 	glm::vec4 v4(0, 0, -2 *( far * near )/ (far - near), 0);
 
-	this->perspectiveTransformation = glm::perspective<float>(fovy*PI / 180, aspectRatio, near, far);
+	this->perspectiveTransformation = glm::perspective<float>((float)fovy*PI / 180.f, aspectRatio, near, far);
 	//this->perspectiveTransformation = glm::mat4(v1, v2, v3, v4);
 	/*this->perspectiveTransformation = glm::mat4(glm::vec4(2 * near / (r - l), 0, (r + l) / (r - l), 0),
 											   glm::vec4(0, 2 * near / (t - b), (t + b) / (t - b), 0),
