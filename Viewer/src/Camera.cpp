@@ -25,15 +25,15 @@ Camera::~Camera()
 }
 void Camera::init()
 {
-	this->isOrtho = false;
+	this->isOrtho = true;
 	FOV = 45.0f;
 	aspectRatio = 0.7f;
-	left = -200;
-	right = 200;
-	top = 200;
-	bottom = -200;
-	zNear = 100;
-	zFar = 500;
+	left = LEFT;
+	right = RIGHT;
+	top = TOP;
+	bottom = BOTTOM;
+	zNear = NEAR;
+	zFar = FAR;
 	this->viewTransformation = glm::mat4(1);
 	this->perspectiveTransformation = glm::mat4(1);
 	this->orthographicTransformation = glm::mat4(1);

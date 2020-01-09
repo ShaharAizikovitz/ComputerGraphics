@@ -172,6 +172,11 @@ glm::vec4 Utils::Centeroid(glm::vec4 v1, glm::vec4 v2, glm::vec4 v3)
 	return result;
 }
 
+glm::vec4 Utils::fromHomogeneousToPerspective(glm::vec4 v)
+{
+	return glm::vec4(v[0] / v[3], v[1] / v[3], v[2] / v[3], 1.0f); 
+}
+
 std::string Utils::GetFileName(const std::string& filePath)
 {
 	if (filePath.empty()) {

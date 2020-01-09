@@ -44,7 +44,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 		ImGui::ShowDemoWindow(&showDemoWindow);
 	}*/
 
-	{
+	/*{
 		static bool isdragged = true;
 		static bool firstClick = true;
 		ImVec2 size = ImGui::GetWindowSize();
@@ -56,11 +56,11 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 			cursorLast = ImGui::GetMousePos();
 			firstClick = true;
 		}
-		if (ImGui::IsMouseDown(0) /*&& renderer.getCurrentModel() != NULL*/)
+		if (ImGui::IsMouseDown(0))
 		{
 			if (!firstClick)
 			{
-				if (!ImGui::IsMouseHoveringAnyWindow())
+				if (!ImGui::IsMouseHoveringAnyWindow() && renderer.isHasModel() )
 				{
 					cursorCurrent = ImGui::GetMousePos();
 					scene.getCurrentModel()->setRotationTransform(1.0f, (cursorCurrent.x - cursorLast.x), 1.0f);
@@ -72,7 +72,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 		}
 		if (ImGui::IsMouseReleased(0))
 			isdragged = true;
-	}
+	}*/
 
 	// 2. Show controls window
 	if ( showControlWindow )
@@ -146,13 +146,13 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 			scene.getCurrentModel()->setRotationTransform(1.0f, 1.0f, rotateLocalZ);
 		}
 		ImGui::Text("Local Translations");
-		if (ImGui::SliderFloat("Translate local x", &translateLocalX, 0.0, 360.0f) && renderer.isHasModel()) {
+		if (ImGui::SliderFloat("Translate local x", &translateLocalX, LEFT_MOVEMENT, RIGHT_MOVEMENT) && renderer.isHasModel()) {
 			scene.getCurrentModel()->setTranslationTransform(translateLocalX, translateLocalY, translateLocalZ);
 		}
-		if (ImGui::SliderFloat("Translate local y", &translateLocalY, 0.0, 360.0f) && renderer.isHasModel()) {
+		if (ImGui::SliderFloat("Translate local y", &translateLocalY, BOTTOM_MOVEMENT, TOP_MOVEMENT) && renderer.isHasModel()) {
 			scene.getCurrentModel()->setTranslationTransform(translateLocalX, translateLocalY, translateLocalZ);
 		}
-		if (ImGui::SliderFloat("Translate local z", &translateLocalZ, 0.0, 360.0f) && renderer.isHasModel()) {
+		if (ImGui::SliderFloat("Translate local z", &translateLocalZ, NEAR_MOVEMENT, FAR_MOVEMENT) && renderer.isHasModel()) {
 			scene.getCurrentModel()->setTranslationTransform(translateLocalX, translateLocalY, translateLocalZ);
 		}
 		//scaling
@@ -162,13 +162,13 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 		}
 		// world transformations
 		ImGui::Text("World Translations");
-		if (ImGui::SliderFloat("X:", &worldX, 0.0f, 1280.0f)) {
+		if (ImGui::SliderFloat("X:", &worldX, LEFT_MOVEMENT, RIGHT_MOVEMENT)) {
 			scene.getCurrentModel()->setWorldTranslation(worldX, worldY, worldZ);
 		}
-		if (ImGui::SliderFloat("Y:", &worldY, 0.0f, 1280.0f)) {
+		if (ImGui::SliderFloat("Y:", &worldY, BOTTOM_MOVEMENT, TOP_MOVEMENT)) {
 			scene.getCurrentModel()->setWorldTranslation(worldX, worldY, worldZ);
 		}
-		if (ImGui::SliderFloat("Z:", &worldZ, 0.0f, 80.0f)) {
+		if (ImGui::SliderFloat("Z:", &worldZ, NEAR_MOVEMENT, FAR_MOVEMENT)) {
 			scene.getCurrentModel()->setWorldTranslation(worldX, worldY, worldZ);
 		}
 		ImGui::Text("World Rotations");
@@ -400,16 +400,16 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 	if (showCameraControlWindow && scene.getCameras().size())
 	{
 		std::shared_ptr<Camera> camera = scene.getActiveCamera();
+		const glm::vec4 eye = camera->getEye();
+		const glm::vec4 at = camera->getAt();
+		const glm::vec4 up = camera->getUp();
 		//const viewVolume vv = camera->getViewVolume();
 		static float e_x = camera->getEye().x, e_y = camera->getEye().y, e_z = camera->getEye().z;
 		static float a_x = camera->getAt().x, a_y = camera->getAt().y, a_z = camera->getAt().z;
 		static float u_x = camera->getUp().x, u_y = camera->getUp().y, u_z = camera->getUp().z;
-		const glm::vec4 eye = camera->getEye();
-		const glm::vec4 at = camera->getAt();
-		const glm::vec4 up = camera->getUp();
 		static bool table = true;
-		static float fov;
-		static float ar;
+		static float fov = 30.0f;
+		static float ar = 0.7f;
 		const int _near = camera->getNear(), _far = camera->getFar(), left = camera->getLeft(), right = camera->getRight(), bottom = camera->getBottom(), top = camera->getTop();
 		static int ortho = 0;
 		ImGui::Begin("cameras control window", &showCameraControlWindow);
@@ -444,7 +444,7 @@ void DrawImguiMenus(ImGuiIO& io, Scene& scene, Renderer& renderer)
 		//ImGui::Separator();
 
 		//ImGui::Columns(3);
-		ImGui::Text("Eye:");;
+		ImGui::Text("Eye:");
 		if (ImGui::SliderFloat("eye x:", (float*)&e_x, -100.0f, 100.0f)) { camera->setEye(glm::vec4(e_x, e_y, e_z, 1.0f)); }
 		if (ImGui::SliderFloat("eye y:", (float*)&e_y, -100.0f, 100.0f)) { camera->setEye(glm::vec4(e_x, e_y, e_z, 1.0f)); }
 		if (ImGui::SliderFloat("eye z:", (float*)&e_z, -100.0f, 100.0f)) { camera->setEye(glm::vec4(e_x, e_y, e_z, 1.0f)); }
